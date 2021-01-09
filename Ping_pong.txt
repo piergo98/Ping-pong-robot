@@ -1,0 +1,118 @@
+﻿ROBOT PING PONG
+
+
+
+
+Oggetti:
+
+
+-robot 2D con due motori con regolatori PID--> racchetta
+
+-camera che segue la pallina
+
+-pallina che si muove nel piano
+-racchetta utilizzata dall'utente (o dall'altro robot)
+
+-tavolo che comprende la rete
+
+-tabellone del punteggio che definisce le regole del gioco
+
+-legenda
+
+
+
+
+
+Concetti:
+
+
+PALLINA: consideriamo l'energia trasmessa alla pallina dalla racchetta in base all'accelerazione (forza) con cui viene colpita.
+Oltre alla legge del moto dobbiamo considerare anche un angolo di incidenza pallina/racchetta.
+
+
+ROBOT_MOTOR: si posiziona nella sua posizione di riposo (che potrebbe anche essere l'ultima in cui ha colpito la pallina) e poi interpreta i dati della telecamera
+	     muovendo di conseguenza i motori(x e y), ciascuno controllato da un regolatore PID.
+
+
+ROBOT_CAMERA: insegue la pallina e manda la sua posizione stimata al robot.
+
+
+AMBIENTE: controlla che la pallina rimbalzi sul tavolo e se questo non accade, assegna un punto ad uno dei due giocatori, a seconda di chi è stato l'ultimo a toccare
+	  la pallina. Tiene conto del punteggio.
+
+
+AVVERSARIO: se settato su uomo --> la racchetta è mossa dal mouse.
+	    
+	se settato su robot --> la racchetta si muove sfruttando i task robot.
+
+
+
+IN PIÙ SI DEVE TENER CONTO DI TUTTI I CASI WORST CASE, PER GARANTIRE LA FAULT TOLLERANCE.
+
+
+CAMERA: due viste per permettere al robot di valutare la posizione della pallina nello spazio tridimensionale
+
+
+DEFINIZIONE ASSI CARTESIANI
+
+ASSE Z =  lunghezza del tavolo varia in base all'energia (forza) trasmessa alla pallina dalla racchetta;
+ASSE Y =  altezza della pallina rispetto al tavolo (dipende dalla forza di gravità), urtano il tavolo in modo elastico.
+ASSE X =  larghezza del tavolo che varia in base all'angolo di incidenza pallina/racchetta.
+
+Considerando la proiezione ortogonale del tavolo da ping-pong, le telecamere devono visualizzare i piani PO e PV in modo da tener traccia di tutte le dimensioni dello spazio in cui si trova la pallina.
+Il robot deve essere cartesiano (2 giunti prismatici), in questo modo è in grado di dare la spinta alla pallina mantenendo la stessa coordinata y.
+
+FACCIAMO UN UNICO TASK GRAFICO!!!!
+
+
+DEFINIZIONE TASK
+
+TASK PALLINA: (task periodico)
+
+Variabili di stato: x, y, z, Vx, Vy, Vz.
+
+Vx = Vx(racchetta) - Vx(arrivo)
+Vy = -1/2*g*t^2
+Vz = - Vz(impatto) + Vz(racchetta)
+
+x = x0 + Vx * t
+y = y0 - Vy * t
+z = z0 + Vz * t
+
+
+[x(impatto)-x(partenza racchetta)/delta_t] + rumore gaussiano
+
+
+TASK AMBIENTE:
+
+E' il task che decide quando la pallina cade nel campo avversario e quando nel campo del robot. E' inoltre in grado di distinguere se colpisce la rete oppure no.
+Infine, sulla base di tutto questo, decide a chi assegnare il punto, tenendo conto anche del fatto che la pallina può non cadere sul tavolo.
+Chiaramente tiene conto del punteggio della partita e in base a quello vede se uno dei due giocatori ha vinto.
+
+TASK ROBOT_CAMERA: (peridico)
+
+Implementa una camera che segue la pallina da un'angolazione: PO
+Il tracking viene effettuato tramite la camera e poi la posizione predetta viene usata come segnale di riferimento da inviare in ingresso al controllo dei robot.
+Seguire gli step to achieve the goal.
+-IMAGE SCANNING
+-THRESHOLDING
+-CENTROID COMPUTATION
+-CAMERA CONTROL
+-MOTOR SIMULATION --> dobbiamo definire una fdt valida per entrambi i motori e che permetta di controllarli
+
+L'unica cosa da fare è la previsione della posizione della pallina.
+Sorting con vision = distingue la pallina dal tavolo, dalla rete, dalle racchette.
+
+TASK ROBOT_MOTOR: (aperiodico)
+
+Implementa il modello del motore con controllo PID.
+Ad ogni accensione il robot sta in posizione di riposo. 
+
+TASK GRAFICO:
+
+Le dimensioni dello schermo sono 640x480 con una profondità di colori a 16 bit.
+Le dimensioni del tavolo da gioco sono: P1 = (180, 240), P2 = (200, 120), P3 = (440, 120), P4 = (480, 360), avente come colore un verde 0x9acd32.
+La rete si trova alle coordinate: (x1, y1) = (180, 240) e (x2, y2) = (460, 240).
+
+
+
