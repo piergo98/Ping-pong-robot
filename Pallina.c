@@ -42,7 +42,7 @@ void store_trail( int i)
 
 void handle_bounce(int i)                                                           //rimbalza quando incontra racchetta
 {
-    if (ball.z <= robot_z.position + ball.r && ball.x <= robot_x.position + RACC_MAX/2 && ball.x >= robot_x.position - RACC_MIN)
+    if (ball.z <= robot_z.position + ball.r && ball.x <= robot_x.position + (RACC_MAX - RACC_MIN)/2 && ball.x >= robot_x.position - (RACC_MAX - RACC_MIN)/2)
     {
         ball.z = ball.r;
         ball.vz = - ball.vz + robot_z.speed;
@@ -51,7 +51,7 @@ void handle_bounce(int i)                                                       
 
     if (ball.z <= adversary_z.position + ball.r && ball.x <= adversary_x.position + (RACC_MAX - RACC_MIN)/2 && ball.x >= adversary_x.position - (RACC_MAX - RACC_MIN)/2)
     {
-        ball.z = ball.r;
+        ball.z = adversary_z.position - ball.r;
         ball.vz = - ball.vz + adversary_z.speed;
         ball.vx = - ball.vx + adversary_x.speed + frand(ERR_MIN, ERR_MAX);          //robusto a rimbalzo dritto continuo
     }
