@@ -26,6 +26,8 @@ extern struct	task_par	tp[NT];
 
 extern          pthread_t   tid[NT];   
 
+extern int end;                    //end flag
+
 /* Dichiarazione prototipi delle funzioni che effettuano operazioni sulle variabili temporali */
 
 void    time_copy (struct timespec *td, struct timespec ts);

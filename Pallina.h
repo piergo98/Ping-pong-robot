@@ -21,6 +21,13 @@
 #define ERR_MIN      0
 #define ERR_MAX      1
 
+#define RACC_MAX     20     // max racchetta
+#define RACC_MIN     20     // min racchetta
+
+int tflag;                  //trail flag
+int tl;                     //actual trail lenght
+float g;                    //acceleration of gravity
+
 /* guardando il PO vediamo solo le coordinate x e z */
 
 struct status {             // ball structure

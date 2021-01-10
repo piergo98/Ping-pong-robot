@@ -1,9 +1,9 @@
 #include "Pallina.h"
 
-int tflag = 0;                  //trail flag
-int tl = 10;                    //actual trail lenght
-int end = 0;                    //end flag
-float g = G0;                   //acceleration of gravity
+tflag = 0;                  //trail flag
+tl = 10;                    //actual trail lenght
+end = 0;                    //end flag
+g = G0;                   //acceleration of gravity
 
 
 void* balltask(void* arg)
@@ -18,7 +18,8 @@ void* balltask(void* arg)
         
         while (!end) {
             
-            ball.vy -= g*dt;
+            ball.y;                                         //scrivere legge di y
+
             ball.x  += ball.vx * dt - BETA * ball.vx * dt;
             ball.z  += ball.vz * dt - BETA * ball.vz * dt;
             
@@ -51,7 +52,7 @@ void handle_bounce(int i)                                                       
 
     if (ball.z <= adversary_z.position + ball.r && ball.x <= adversary_x.position + (RACC_MAX - RACC_MIN)/2 && ball.x >= adversary_x.position - (RACC_MAX - RACC_MIN)/2)
     {
-        ball.z = adversary_z.position - ball.r;
+        ball.z = adversary_z.position - ball.r;                                     //da sistemare le cordinate assegnate!!!
         ball.vz = - ball.vz + adversary_z.speed;
         ball.vx = - ball.vx + adversary_x.speed + frand(ERR_MIN, ERR_MAX);          //robusto a rimbalzo dritto continuo
     }
