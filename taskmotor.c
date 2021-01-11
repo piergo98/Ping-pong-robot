@@ -54,7 +54,7 @@ void* motortask_z(void* arg)
         while(!end) {
 
             vd = 0;
-            xd = buffer[NEXT].y;              //aggiungere errore in caso di necessita'
+            xd = buffer[NEXT].y;
             get_state(&x, &v, &robot_z);
             u = KP*(xd - x) + KD*(vd - v);
             z = delay(u);

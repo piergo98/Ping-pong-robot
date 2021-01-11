@@ -82,6 +82,8 @@ z = z0 + Vz * t
 
 [x(impatto)-x(partenza racchetta)/delta_t] + rumore gaussiano
 
+Aggiunta di una legge cosinusoidale per la y della pallina, con il periodo che dipende da Vz. 
+
 
 TASK AMBIENTE:
 

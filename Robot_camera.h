@@ -14,6 +14,8 @@
 #define     NOW             1           //centro attuale
 #define     NEXT            2           //centro successivo
 #define     INCREASE        50          //incremento delle dimensioni della finestra di ricesca
+#define     SIZE_X          100         //lunghezza finestra di ricerca
+#define     SIZE_Y          100         //altezza finestra di ricerca
 
 
 struct win{        /* struttura che definisce la finestra di ricerca dell'oggetto */
@@ -33,6 +35,10 @@ struct coord{      /* struttura che contiene le coordinate di un punto */
 
 struct coord buffer[DIM];
 
+struct win*   window;       //finestra di ricerca
+
 int centroid(struct win w, struct  coord   *target);    /* Calcola il centro di un certo target, specificato dal colore */
 
-void prediction(struct win w);    /* Predice il centro successivo e aggiorna la finestra di ricerca */
+void prediction(struct win* w);    /* Predice il centro successivo e aggiorna la finestra di ricerca */
+
+void* camera(void* arg);          /* Task camera */

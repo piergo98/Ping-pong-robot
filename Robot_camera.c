@@ -24,16 +24,16 @@ int centroid(struct win w, struct coord *target){
         return 0;                       //target non trovato    
 }
 
-void prediction(struct win w){
+void prediction(struct win* w){
 
     int i, r;
 
     buffer[BEFORE].x = buffer[NEXT].x;
     buffer[BEFORE].y = buffer[NEXT].y;
 
-    while (!centroid(w, buffer)){
-        w.xsize += INCREASE;
-        w.ysize += INCREASE;
+    while (!centroid(*w, buffer)){
+        w->xsize += INCREASE;
+        w->ysize += INCREASE;
     }
     /* predizione lungo x */
     buffer[NEXT].x = (2 * buffer[NOW].x) - buffer[BEFORE].x;
@@ -41,6 +41,25 @@ void prediction(struct win w){
     buffer[NEXT].y = (2 * buffer[NOW].y) - buffer[BEFORE].y;
     
     /* sposto la finestra di ricerca */
-    w.x0 = buffer[NEXT].x - (w.xsize / 2);
-    w.y0 = buffer[NEXT].y - (w.ysize / 2);
+    w->x0 = buffer[NEXT].x - (w->xsize / 2);
+    w->y0 = buffer[NEXT].y - (w->ysize / 2);
+}
+
+void* camera(void* arg){
+
+    int i;      //task index
+    
+    /* Inizializzo la struttura puntata da window */
+    window->x0 = 0;
+    window->y0 = 0;
+    window->xsize = SIZE_X;
+    window->ysize = SIZE_Y;
+
+    i = get_task_index(arg);
+
+    while(!end){
+
+        prediction(window);
+        wait_for_activation(i);
+    }
 }
