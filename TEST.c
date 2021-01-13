@@ -20,7 +20,7 @@ int main(void){
         x = mouse_x;
         y = mouse_y;
         stretch_sprite(screen, rac, x, y, we, he);
-        draw_sprite(screen, rac, x, y);
+        //draw_sprite(screen, rac, x, y);
         //show_mouse(screen);
     }    
     //readkey();
