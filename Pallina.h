@@ -21,6 +21,19 @@
 #define ERR_MIN      0
 #define ERR_MAX      1
 
+#define BALL_RADIUS  10
+#define BALL_COLOR   0xFFC060 //arancione  
+
+void draw_ball(int i)
+{
+    int x, y;
+    
+    x = P2_X + ball.x;
+    y = P2_Y + ball.y;
+    
+    circlefill(screen, x, y, BALL_RADIUS, BALL_COLOR);
+}
+
 #define RACC_MAX     20     // max racchetta
 #define RACC_MIN     20     // min racchetta
 
