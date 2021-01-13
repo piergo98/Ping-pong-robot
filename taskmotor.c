@@ -19,7 +19,7 @@ void* motortask_x(void* arg)
         prevtheta.out[NOW] = 0;
         prevtheta.out[BEFORE] = 0;
 
-        while(1) {
+        while(!end) {
 
             vd = 0;
             xd = buffer[NOW].x;
