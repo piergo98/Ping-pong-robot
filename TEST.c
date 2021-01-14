@@ -4,8 +4,8 @@
 int main(void){
 
     BITMAP* rac;
-    int we = 50;
-    int he = 50;
+    int we = 70;
+    int he = 70;
 
     init_screen();
     draw_screen();

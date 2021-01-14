@@ -7,6 +7,7 @@
 #define     VERTEX  8
 #define     P_X     20
 #define     P_Y     20
+#define     X_LEG   480
 #define     FIELD   0x9acd32        //colore del campo in esadecimale
 #define     WHITE   0xffffff        //bianco in esadecimale
 #define     BLACK   0x000000        //nero in esadecimale
@@ -16,13 +17,13 @@
 // PUNTI TAVOLO
 //------------------------------------------------------------------------------
 #define     P1_X    100 
-#define     P1_Y    380
+#define     P1_Y    420
 #define     P2_X    180
-#define     P2_Y    60
+#define     P2_Y    100
 #define     P3_X    460
-#define     P3_Y    60
+#define     P3_Y    100
 #define     P4_X    540 
-#define     P4_Y    380    
+#define     P4_Y    420    
 //------------------------------------------------------------------------------
 // PARAMETRI PALLINA
 //------------------------------------------------------------------------------
