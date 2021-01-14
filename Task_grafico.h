@@ -34,11 +34,11 @@ void init_screen(void); //inizializza lo schermo
 
 void new_bitmap(BITMAP* b, int w, int h);  /* Crea un bitmap di dimensioni (w x h) */
 
-void draw_screen(void);     /* Disegna l'interfaccia */
+void draw_screen(void);          /* Disegna l'interfaccia */
 
 void white2pink(BITMAP* b);      /* Converte lo sfondo della sprite in rosa */
 
 void racchetta(BITMAP* bmp, int w, int h);       /* Disegna una racchetta sullo schermo */
 
-void draw_ball(int i);          /* Disegna la pallina */
+void draw_ball(int i);           /* Disegna la pallina */
 
