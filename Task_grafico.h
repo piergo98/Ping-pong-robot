@@ -40,5 +40,5 @@ void white2pink(BITMAP* b);      /* Converte lo sfondo della sprite in rosa */
 
 void racchetta(BITMAP* bmp, int w, int h);       /* Disegna una racchetta sullo schermo */
 
-void draw_ball(int i);           /* Disegna la pallina */
+void draw_ball(void);           /* Disegna la pallina */
 

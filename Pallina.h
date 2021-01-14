@@ -25,9 +25,9 @@
 #define RACC_MAX     20     // max racchetta
 #define RACC_MIN     20     // min racchetta
 
-int tflag;                  //trail flag
-int tl;                     //actual trail lenght
-float g;                    //acceleration of gravity
+//int tflag;                  //trail flag
+//int tl;                     //actual trail lenght
+//float g;                    //acceleration of gravity
 
 /* guardando il PO vediamo solo le coordinate x e z */
 
@@ -62,3 +62,5 @@ void store_trail( int i);
 void handle_bounce(int i);
 
 float frand(float vxmin, float vxmax);
+
+void init_ball(void);

@@ -82,7 +82,7 @@ void racchetta(BITMAP* bmp, int w, int h){
     int x, y, x_old, y_old;
     BITMAP* aux;
 
-    new_bitmap(aux, w, h);
+    aux = create_bitmap(w, h);
 
     x = mouse_x;
     y = mouse_y;
@@ -96,14 +96,14 @@ void racchetta(BITMAP* bmp, int w, int h){
     
         x_old = x;
         y_old = y;
-        //x = mouse_x;
-        //y = mouse_y;
+        x = mouse_x;
+        y = mouse_y;
 
         blit(aux, screen, x_old, y_old, x_old, y_old, w, h);
     }    
 }
 
-void draw_ball(int i)
+void draw_ball(void)
 {
     int x, y;
     

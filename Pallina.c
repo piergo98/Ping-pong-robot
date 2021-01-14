@@ -1,9 +1,9 @@
 #include "Pallina.h"
 
-tflag = 0;                  //trail flag
-tl = 10;                    //actual trail lenght
-end = 0;                    //end flag
-g = G0;                     //acceleration of gravity
+int tflag = 0;                  //trail flag
+int tl = 10;                    //actual trail lenght
+int end = 0;                    //end flag
+float g = G0;                     //acceleration of gravity
 
 
 void* balltask(void* arg)
@@ -11,10 +11,10 @@ void* balltask(void* arg)
     int i;                  // task index
     float dt;               // integration interval
         
-        i = task_argument(arg);
+        i = get_task_index(arg);
         
-        init_ball(i);
-        dt = TSCALE* (float)task_period(i) /1000;
+        init_ball();
+        dt = TSCALE* (float)tp[i].period /1000;
         
         while (!end) {
             
@@ -25,7 +25,7 @@ void* balltask(void* arg)
             
             handle_bounce(i);
             store_trail(i);
-            wait_for_period(i);
+            wait_for_activation(i);
         }
 }
 
@@ -65,4 +65,17 @@ float frand(float vxmin, float vxmax)
     r = rand() / (float)RAND_MAX;   // rand in [0,1)
     
     return vxmin + (vxmax - vxmin) * r;
+}
+
+void init_ball(void)
+{
+   ball.vx = 0;
+   ball.vy = 0;
+   ball.vz = 0;
+   
+   ball.x = 0;
+   ball.y = 0;
+   ball.z = 0; 
+
+   return;
 }
