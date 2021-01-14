@@ -5,9 +5,6 @@
 
 #define NT  10            //numero massimo di thread
 
-/*#ifndef PTask_h
-#define PTask_h
-#endif*/
 
 struct task_par{	    //struttura che memorizza tutti i parametri del thread
 
@@ -22,11 +19,9 @@ struct task_par{	    //struttura che memorizza tutti i parametri del thread
 
 };
 
-extern struct	task_par	tp[NT];
-
-extern          pthread_t   tid[NT];   
-
-extern int end;                    //end flag
+struct	    task_par	tp[NT];
+pthread_t               tid[NT];  
+int                     end;                    //end flag
 
 /* Dichiarazione prototipi delle funzioni che effettuano operazioni sulle variabili temporali */
 

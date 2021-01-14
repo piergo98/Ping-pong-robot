@@ -1,5 +1,6 @@
 #include    <allegro.h>
 
+#define     D       2               //Dimesione buffer di BITMAP
 #define     WIDTH   640
 #define     HEIGTH  480
 #define     COLOR   32              //profondita di colori: 16 bit
@@ -23,6 +24,11 @@
 #define     P4_X    540 
 #define     P4_Y    380    
 //------------------------------------------------------------------------------
+// PARAMETRI PALLINA
+//------------------------------------------------------------------------------
+#define BALL_RADIUS  10
+#define BALL_COLOR   0xFFC060 //arancione 
+
 
 void init_screen(void); //inizializza lo schermo
 
@@ -31,4 +37,8 @@ void new_bitmap(BITMAP* b, int w, int h);  /* Crea un bitmap di dimensioni (w x 
 void draw_screen(void);     /* Disegna l'interfaccia */
 
 void white2pink(BITMAP* b);      /* Converte lo sfondo della sprite in rosa */
+
+void racchetta(BITMAP* bmp, int w, int h);       /* Disegna una racchetta sullo schermo */
+
+void draw_ball(int i);          /* Disegna la pallina */
 

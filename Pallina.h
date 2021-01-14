@@ -5,9 +5,9 @@
 #include    <pthread.h>
 #include    <time.h>
 
-#include    "PTask.h"
+//#include    "PTask.h"
 #include    "taskmotor.h"
-#include    "Robot_camera.h"
+//#include    "Robot_camera.h"
 
 #define G0           9.8    // acceleration of gravity
 #define TLEN         30     // trail length
@@ -19,20 +19,8 @@
 #define TSCALE       10     // time scale factor
 #define BETA         0.2    // adimensional braking coefficient
 #define ERR_MIN      0
-#define ERR_MAX      1
+#define ERR_MAX      1 
 
-#define BALL_RADIUS  10
-#define BALL_COLOR   0xFFC060 //arancione  
-
-void draw_ball(int i)
-{
-    int x, y;
-    
-    x = P2_X + ball.x;
-    y = P2_Y + ball.y;
-    
-    circlefill(screen, x, y, BALL_RADIUS, BALL_COLOR);
-}
 
 #define RACC_MAX     20     // max racchetta
 #define RACC_MIN     20     // min racchetta

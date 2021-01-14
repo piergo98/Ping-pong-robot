@@ -3,7 +3,7 @@
 #include <pthread.h>
 #include <time.h>
 
-#include "PTask.h"
+//#include "PTask.h"
 #include "Robot_camera.h" 
 
 #define X_MAX 1    //limiti posizione

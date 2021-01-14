@@ -1,5 +1,6 @@
 #include "PTask.h"
 
+
 /*Definizione delle funzioni che operano sulle variabili temporali*/
 
 void time_copy (struct timespec *td, struct timespec ts){     //copia ts nella variabile temporale puntata da td

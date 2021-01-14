@@ -2,6 +2,7 @@
 #include    <stdio.h>
 
 #include    "Task_grafico.h"
+#include    "Pallina.h"
 
 char    punti_rob[DIM_S];
 char    punti_avv[DIM_S];
@@ -61,20 +62,53 @@ void white2pink(BITMAP* b){
     PALETTE pal;
     int     i, j, c;
     int     pink;
-    float   hue, sat, val;
     
     pink = makecol(255, 0, 255);
-    b = load_bitmap("racchetta.bmp", NULL);
+    b = load_bitmap("racchetta_nosfondo32.bmp", NULL);
     racp = create_bitmap(b->w, b->h);
     for (i = 0; i < b->w; i++){
         for (j = 0; j < b->h; j++){
             c = getpixel(b, i, j);
-            rgb_to_hsv(getr(c), getg(c), getb(c), &hue, &sat, &val);
-            val *= 255;
-            if (val >= 240) c = pink;
+            if (c == WHITE) c = pink;
             putpixel(racp, i, j, c);
         }
     }
     get_palette(pal);
     save_bitmap("racp.bmp", racp, pal);
+}
+
+void racchetta(BITMAP* bmp, int w, int h){
+
+    int x, y, x_old, y_old;
+    BITMAP* aux;
+
+    new_bitmap(aux, w, h);
+
+    x = mouse_x;
+    y = mouse_y;
+    x_old = x;
+    y_old = y;
+
+    while(!keypressed()){
+
+        blit(screen, aux, x, y, x, y, w, h);
+        stretch_sprite(screen, bmp, x, y, w, h);
+    
+        x_old = x;
+        y_old = y;
+        //x = mouse_x;
+        //y = mouse_y;
+
+        blit(aux, screen, x_old, y_old, x_old, y_old, w, h);
+    }    
+}
+
+void draw_ball(int i)
+{
+    int x, y;
+    
+    x = P2_X + ball.x;
+    y = P2_Y + ball.y;
+    
+    circlefill(screen, x, y, BALL_RADIUS, BALL_COLOR);
 }
