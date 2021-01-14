@@ -25,7 +25,7 @@ void* motortask_x(void* arg)
             xd = buffer[NOW].x;
             get_state(&x, &v, &robot_x);
             u = KP*(xd - x) + KD*(vd - v);
-            z = delay(u);
+            //z = delay(u);
             y = motor(z);
             update_state(y, T, x_min, x_max, &robot_x);
             wait_for_activation(i);
@@ -57,7 +57,7 @@ void* motortask_z(void* arg)
             xd = buffer[NEXT].y;
             get_state(&x, &v, &robot_z);
             u = KP*(xd - x) + KD*(vd - v);
-            z = delay(u);
+            //z = delay(u);
             y = motor(z);
             update_state(y, T, z_min, z_max, &robot_z);
             wait_for_activation(i);
@@ -97,7 +97,7 @@ void update_state(float y, int T, int p_min, int p_max, struct state *robot_tmp)
     return;
 }
 
-void get_state(float *xi, float *vi, struct state *robot_tmp)
+void get_state(int *xi, int *vi, struct state *robot_tmp)
 {
     *xi = robot_tmp->position;
     *vi = robot_tmp->speed;

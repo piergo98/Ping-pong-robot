@@ -42,4 +42,4 @@ float motor(float k);
 
 void update_state(float y, int T, int p_min, int p_max, struct state *robot_tmp);
 
-void get_state(float *xi, float *vi, struct state *robot_tmp);
+void get_state(int *xi, int *vi, struct state *robot_tmp);
