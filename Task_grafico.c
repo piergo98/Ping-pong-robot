@@ -185,7 +185,21 @@ void display_camera(){
     
 
         //blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
-    //}
+    //} 
 
 
+}
+
+void prospective_view(int x, int y, int z)
+{
+    int x1, y1, z1;
+
+    /* Rotazione su x di un angolo theta */
+    x1 = x;
+    y1 = COS_THETA * y - SIN_THETA * z;
+    z1 = SIN_THETA * y + COS_THETA * z;
+
+    /* Determinazione coordinate su piano prospettico */
+    gcord.x = P2_X + x1 * POV_DIST / (POV_DIST - z1);
+    gcord.z = P2_Z + y1 * POV_DIST / (POV_DIST - z1);
 }

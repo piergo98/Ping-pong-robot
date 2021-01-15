@@ -35,8 +35,21 @@
 //------------------------------------------------------------------------------
 // PARAMETRI PALLINA
 //------------------------------------------------------------------------------
-#define BALL_RADIUS  5
-#define BALL_COLOR   0xfa6717 //arancione 
+#define     BALL_RADIUS  5
+#define     BALL_COLOR   0xfa6717      //arancione 
+//------------------------------------------------------------------------------
+// VISTA PROSPETTICA: theta = 45gradi
+//------------------------------------------------------------------------------
+#define POV_DIST  300
+#define COS_THETA 0.707 
+#define SIN_THETA 0.707
+
+struct g_pos {
+
+    int x;
+    int z;
+
+} gcord;
 
 
 void init_screen(void);  /* Inizializza lo schermo e crea il task grafico */
@@ -53,3 +66,4 @@ void *display(void* arg);       /* Task grafico */
 
 void display_camera(void);      /* Disegna la vista della camera del robot */
 
+void prospective_view(int x, int y, int z);      /* Genera cordinate per vista prospettica */
