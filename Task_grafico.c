@@ -12,6 +12,7 @@ BITMAP* rac;            //buffer per copiare lo schermo
 
 void init_screen(void){
 
+    init_camera();
     allegro_init();
     set_color_depth(COLOR);
     set_gfx_mode(GFX_AUTODETECT_WINDOWED, WIDTH, HEIGTH, 0, 0);
@@ -21,19 +22,6 @@ void init_screen(void){
     rac = load_bitmap("racchetta_nosfondo32.bmp", NULL);
     white2pink(rac);
     rac = load_bitmap("racp.bmp", NULL);
-
-    /* Inizializzo la struttura puntata da window (DA METTERE NELLA FUNZIONE INIT()*/
-    window->x0 = 320;
-    window->z0 = 240;
-    window->xsize = SIZE_X;
-    window->zsize = SIZE_Z;
-    /*buffer[BEFORE].x = 0;
-    buffer[BEFORE].z = 0;
-    buffer[NOW].x = 0;
-    buffer[NOW].z = 0;
-    buffer[NEXT].x = 0;
-    buffer[NEXT].z = 0;*/
-    //-----------------------------------------------------------------------------
 
     //task_create(display, indice, periodo, drel, priorita);
 
@@ -150,7 +138,7 @@ void* display(void* arg){
 
     draw_screen();
     while(1)
-        racchetta(rac, we, he);
+        //racchetta(rac, we, he);
 
     if (deadline_miss(i))
         //show_dmiss
@@ -172,20 +160,18 @@ void display_camera(){
     rect(buf, C_X1, C_Z1, C_X2, C_Z2, WHITE);
     line(buf, 320, 420, 320, 60, WHITE);     // linea che divide il campo in due meta verticalmente
     line(buf, 140, 240, 500, 240, WHITE);    // linea della rete
-    rect(buf, window->x0, window->z0+SIZE_Z, window->x0+SIZE_X, window->z0, RED);
     blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
     draw_ball();
     unscare_mouse();
     
-    //while (!keypressed()){
+    while (!keypressed()){      //da aggiustare il while
         /* Predice la posizione della pallina */
-        //prediction(window);
+        prediction(&window);
         /* Disegna la finestra di ricerca della pallina */
-        //rect(buf, window->x0, window->z0+SIZE_Z, window->x0+SIZE_X, window->z0, RED);
+        rect(buf, window.x0-(SIZE_X/2), window.z0+(SIZE_Z/2), window.x0+(SIZE_X/2), window.z0-(SIZE_Z/2), RED);
     
-
-        //blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
-    //} 
+        blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
+    } 
 
 
 }

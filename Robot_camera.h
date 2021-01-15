@@ -36,10 +36,12 @@ struct coord{      /* struttura che contiene le coordinate di un punto */
 
 struct coord buffer[DIM];
 
-struct win*   window;       //finestra di ricerca
+struct win   window;       //finestra di ricerca
+
+void init_camera(void);
 
 int centroid(struct win w, struct  coord   *target);    /* Calcola il centro di un certo target, specificato dal colore */
 
-void prediction(struct win* w);    /* Predice il centro successivo e aggiorna la finestra di ricerca */
+void prediction(struct win *w);    /* Predice il centro successivo e aggiorna la finestra di ricerca */
 
 void* camera(void* arg);          /* Task camera */

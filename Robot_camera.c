@@ -1,5 +1,19 @@
 #include    "Robot_camera.h"
 
+void init_camera(){
+
+    /* Inizializzo la struttura puntata da window (DA METTERE NELLA FUNZIONE INIT()*/
+    window.x0 = 320;
+    window.z0 = 240;
+    window.xsize = SIZE_X;
+    window.zsize = SIZE_Z;
+    buffer[BEFORE].x = 0;
+    buffer[BEFORE].z = 0;
+    buffer[NOW].x = 0;
+    buffer[NOW].z = 0;
+    buffer[NEXT].x = 0;
+    buffer[NEXT].z = 0;
+}
 
 int centroid(struct win w, struct coord *target){
 
@@ -51,16 +65,16 @@ void* camera(void* arg){
     int i;      //task index
     
     /* Inizializzo la struttura puntata da window */
-    window->x0 = 320;
-    window->z0 = 240;
-    window->xsize = SIZE_X;
-    window->zsize = SIZE_Z;
+    /*window.x0 = 320;
+    window.z0 = 240;
+    window.xsize = SIZE_X;
+    window.zsize = SIZE_Z;*/
 
     i = get_task_index(arg);
 
     while(!end){
 
-        prediction(window);
+        prediction(&window);
         wait_for_activation(i);
     }
 }
