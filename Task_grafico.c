@@ -22,6 +22,19 @@ void init_screen(void){
     white2pink(rac);
     rac = load_bitmap("racp.bmp", NULL);
 
+    /* Inizializzo la struttura puntata da window (DA METTERE NELLA FUNZIONE INIT()*/
+    window->x0 = 320;
+    window->z0 = 240;
+    window->xsize = SIZE_X;
+    window->zsize = SIZE_Z;
+    /*buffer[BEFORE].x = 0;
+    buffer[BEFORE].z = 0;
+    buffer[NOW].x = 0;
+    buffer[NOW].z = 0;
+    buffer[NEXT].x = 0;
+    buffer[NEXT].z = 0;*/
+    //-----------------------------------------------------------------------------
+
     //task_create(display, indice, periodo, drel, priorita);
 
 }
@@ -29,7 +42,7 @@ void init_screen(void){
 void draw_screen(void){
 
     int i;
-    int vertici[VERTEX] = {P1_X, P1_Y, P2_X, P2_Y, P3_X, P3_Y, P4_X, P4_Y};
+    int vertici[VERTEX] = {P1_X, P1_Z, P2_X, P2_Z, P3_X, P3_Z, P4_X, P4_Z};
     p_avv = 0;
     p_rob = 0;
     BITMAP* buf;
@@ -53,16 +66,16 @@ void draw_screen(void){
     }
     
     unscare_mouse();
-    textout_ex(buf, font, "PUNTEGGIO", P_X, P_Y, WHITE, TRASP);
+    textout_ex(buf, font, "PUNTEGGIO", P_X, P_Z, WHITE, TRASP);
     sprintf(punti_rob, "ROB = %d", p_rob);
-    textout_ex(buf, font, punti_rob, P_X, P_Y + 20, WHITE, TRASP);  
+    textout_ex(buf, font, punti_rob, P_X, P_Z + 20, WHITE, TRASP);  
     sprintf(punti_avv, "AVV = %d", p_avv);
-    textout_ex(buf, font, punti_avv, P_X, P_Y + 40, WHITE, TRASP);
-    textout_ex(buf, font, "LEGENDA:", X_LEG, P_Y, WHITE, TRASP);
-    textout_ex(buf, font, "R -> Gioca robot", X_LEG, P_Y + 20, WHITE, TRASP);
-    textout_ex(buf, font, "U -> Gioca utente", X_LEG, P_Y + 40, WHITE, TRASP);
-    textout_ex(buf, font, "SPACE -> Battuta", X_LEG, P_Y + 60, WHITE, TRASP);
-    textout_ex(buf, font, "utente", X_LEG + 80, P_Y + 70, WHITE, TRASP);
+    textout_ex(buf, font, punti_avv, P_X, P_Z + 40, WHITE, TRASP);
+    textout_ex(buf, font, "LEGENDA:", X_LEG, P_Z, WHITE, TRASP);
+    textout_ex(buf, font, "R -> Gioca robot", X_LEG, P_Z + 20, WHITE, TRASP);
+    textout_ex(buf, font, "U -> Gioca utente", X_LEG, P_Z + 40, WHITE, TRASP);
+    textout_ex(buf, font, "SPACE -> Battuta", X_LEG, P_Z + 60, WHITE, TRASP);
+    textout_ex(buf, font, "utente", X_LEG + 80, P_Z + 70, WHITE, TRASP);
     //trasferisco la bitmap sullo schermo
     blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
 }
@@ -121,16 +134,16 @@ void draw_ball(void)
     int x, y;
     
     x = P2_X + ball.x;
-    y = P2_Y + ball.y;
+    y = P2_Z + ball.y;
     
     circlefill(screen, x, y, BALL_RADIUS, BALL_COLOR);
 }
 
 void* display(void* arg){
 
-    int i;      //task index
-    int we = 70;
-    int he = 70;
+    int i;              //task index
+    int we = DIM_RAC;
+    int he = DIM_RAC;
 
     i = get_task_index(arg);
     set_activation(i);
@@ -142,4 +155,37 @@ void* display(void* arg){
     if (deadline_miss(i))
         //show_dmiss
     wait_for_activation(i);
+}
+
+void display_camera(){
+
+    BITMAP* buf;
+
+    //crea un buffer per realizzare lo sfondo
+    buf = create_bitmap(WIDTH, HEIGTH);
+    clear_bitmap(buf);
+
+    //nasconde il cursore del mouse
+    scare_mouse();
+    // Disegna il tavolo visto dall'alto
+    rectfill(buf, C_X1, C_Z1, C_X2, C_Z2, FIELD);
+    rect(buf, C_X1, C_Z1, C_X2, C_Z2, WHITE);
+    line(buf, 320, 420, 320, 60, WHITE);     // linea che divide il campo in due meta verticalmente
+    line(buf, 140, 240, 500, 240, WHITE);    // linea della rete
+    rect(buf, window->x0, window->z0+SIZE_Z, window->x0+SIZE_X, window->z0, RED);
+    blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
+    draw_ball();
+    unscare_mouse();
+    
+    //while (!keypressed()){
+        /* Predice la posizione della pallina */
+        //prediction(window);
+        /* Disegna la finestra di ricerca della pallina */
+        //rect(buf, window->x0, window->z0+SIZE_Z, window->x0+SIZE_X, window->z0, RED);
+    
+
+        //blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
+    //}
+
+
 }

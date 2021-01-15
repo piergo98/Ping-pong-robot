@@ -15,6 +15,7 @@
 #define HMAX         390    // max initial height
 #define VXMIN        20     // min initial hor. speed
 #define VXMAX        10     // max initial hor. speed
+#define Y_0          100    // initial heigth
 #define DUMP         0.9    // dumping coefficient
 #define TSCALE       10     // time scale factor
 #define BETA         0.2    // adimensional braking coefficient
@@ -22,7 +23,7 @@
 #define ERR_MAX      1 
 
 
-#define RACC_MAX     20     // max racchetta
+#define RACC_MAX     60     // max racchetta
 #define RACC_MIN     20     // min racchetta
 
 //int tflag;                  //trail flag
@@ -49,8 +50,8 @@ struct cbuf {               // circular buffer structure
     
     int top;                // index of the current element
     int x[TLEN];            // array of x coordinates
+    int y[TLEN];            // array of y coordinates
     int z[TLEN];            // array of z coordinates
-    int y[TLEN];
     
 };
 

@@ -21,6 +21,7 @@ void* balltask(void* arg)
             ball.y;                                         //scrivere legge di y
 
             ball.x  += ball.vx * dt - BETA * ball.vx * dt;
+            ball.y  += Y_0 + ball.vy * dt - g * dt * dt / 2;
             ball.z  += ball.vz * dt - BETA * ball.vz * dt;
             
             handle_bounce(i);
@@ -41,20 +42,27 @@ void store_trail( int i)
     trail.top = k;
 }
 
-void handle_bounce(int i)                                                           //rimbalza quando incontra racchetta
+void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racchetta e il tavolo
 {
-    if (ball.z <= robot_z.position + ball.r && ball.x <= robot_x.position + (RACC_MAX - RACC_MIN)/2 && ball.x >= robot_x.position - (RACC_MAX - RACC_MIN)/2)
+    /* Gestioni rimbalzo con la racchetta del robot */
+    if ((ball.z <= robot_z.position + ball.r) && (ball.x <= robot_x.position + (RACC_MAX - RACC_MIN)/2) && (ball.x >= robot_x.position - (RACC_MAX - RACC_MIN)/2))
     {
         ball.z = ball.r;
         ball.vz = - ball.vz + robot_z.speed;
         ball.vx = - ball.vx + robot_x.speed + frand(ERR_MIN, ERR_MAX);              //robusto a rimbalzo dritto continuo
     }
 
-    if (ball.z <= adversary_z.position + ball.r && ball.x <= adversary_x.position + (RACC_MAX - RACC_MIN)/2 && ball.x >= adversary_x.position - (RACC_MAX - RACC_MIN)/2)
+    /* Gestioni rimbalzo con la racchetta dell'avversario */
+    if ((ball.z <= adversary_z.position + ball.r) && (ball.x <= adversary_x.position + (RACC_MAX - RACC_MIN)/2) && (ball.x >= adversary_x.position - (RACC_MAX - RACC_MIN)/2))
     {
         ball.z = adversary_z.position - ball.r;                                     //da sistemare le cordinate assegnate!!!
         ball.vz = - ball.vz + adversary_z.speed;
         ball.vx = - ball.vx + adversary_x.speed + frand(ERR_MIN, ERR_MAX);          //robusto a rimbalzo dritto continuo
+    }
+
+    if (ball.y == 0)
+    {
+        ball.vy = -ball.vy;
     }
 }
 

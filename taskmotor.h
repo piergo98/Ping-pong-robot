@@ -33,7 +33,7 @@ struct state       // va messa a zero quando accendo il sistema
     int speed;
 };
 
-struct state robot_x;        //getsiti del taskmotor
+struct state robot_x;        //gestiti dal taskmotor
 struct state robot_z;
 struct state adversary_x;    //gestiti dal task adversary 
 struct state adversary_z;

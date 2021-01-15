@@ -13,24 +13,25 @@
 #define     BEFORE          0           //centro precedente
 #define     NOW             1           //centro attuale
 #define     NEXT            2           //centro successivo
-#define     INCREASE        50          //incremento delle dimensioni della finestra di ricesca
+#define     DELTA_X         40          //incremento delle dimensioni della finestra di ricerca lungo x
+#define     DELTA_Z         30          //incremento delle dimensioni della finestra di ricerca lungo x
 #define     SIZE_X          100         //lunghezza finestra di ricerca
-#define     SIZE_Y          100         //altezza finestra di ricerca
+#define     SIZE_Z          100         //altezza finestra di ricerca
 
 
 struct win{        /* struttura che definisce la finestra di ricerca dell'oggetto */
 
     int x0;
-    int y0;
+    int z0;
     int xsize;
-    int ysize;
+    int zsize;
 
 };
 
 struct coord{      /* struttura che contiene le coordinate di un punto */
 
     int x;
-    int y;
+    int z;
 };
 
 struct coord buffer[DIM];
