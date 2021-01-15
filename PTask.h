@@ -9,13 +9,13 @@
 struct task_par{	    //struttura che memorizza tutti i parametri del thread
 
     int     arg;            //argomento del task
-    int     wcet;           //wcet in microsecondi
-    int     period;         //periodo del task
+    int     wcet;           //wcet in microsecondi (ms)
+    int     period;         //periodo del task (ms)
     int     deadline;       //deadline relativa (ms)
-    int     priority;       //priorità del task
+    int     priority;       //priorità del task [0,99]
     int     dmiss;          //numero di deadline misses
-    struct  timespec at;        //attivazione successiva
-    struct  timespec dl;        //deadline assoluta
+    struct  timespec at;    //attivazione successiva
+    struct  timespec dl;    //deadline assoluta
 
 };
 

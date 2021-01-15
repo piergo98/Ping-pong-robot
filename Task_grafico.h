@@ -31,9 +31,7 @@
 #define BALL_COLOR   0xFFC060 //arancione 
 
 
-void init_screen(void); //inizializza lo schermo
-
-void new_bitmap(BITMAP* b, int w, int h);  /* Crea un bitmap di dimensioni (w x h) */
+void init_screen(void);  /* Inizializza lo schermo e crea il task grafico */
 
 void draw_screen(void);          /* Disegna l'interfaccia */
 
@@ -42,4 +40,6 @@ void white2pink(BITMAP* b);      /* Converte lo sfondo della sprite in rosa */
 void racchetta(BITMAP* bmp, int w, int h);       /* Disegna una racchetta sullo schermo */
 
 void draw_ball(void);           /* Disegna la pallina */
+
+void* display(void* arg);       /* Task grafico */
 

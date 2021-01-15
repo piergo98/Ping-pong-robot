@@ -8,7 +8,7 @@ char    punti_rob[DIM_S];
 char    punti_avv[DIM_S];
 int     p_rob;          //punteggio robot
 int     p_avv;          //punteggio avversario
-//BITMAP* buf;            //buffer per copiare lo schermo
+BITMAP* rac;            //buffer per copiare lo schermo
 
 void init_screen(void){
 
@@ -18,6 +18,12 @@ void init_screen(void){
     clear_to_color(screen, BLACK);  //schermo nero
     install_keyboard();
     install_mouse();
+    rac = load_bitmap("racchetta_nosfondo32.bmp", NULL);
+    white2pink(rac);
+    rac = load_bitmap("racp.bmp", NULL);
+
+    //task_create(display, indice, periodo, drel, priorita);
+
 }
 
 void draw_screen(void){
@@ -59,14 +65,6 @@ void draw_screen(void){
     textout_ex(buf, font, "utente", X_LEG + 80, P_Y + 70, WHITE, TRASP);
     //trasferisco la bitmap sullo schermo
     blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
-}
-
-void new_bitmap(BITMAP* b, int w, int h){
-
-    b = create_bitmap(w, h);
-    /* inizializza la bitmap */
-    clear_bitmap(b);
-    clear_to_color(b, BLACK);
 }
 
 void white2pink(BITMAP* b){
@@ -114,7 +112,7 @@ void racchetta(BITMAP* bmp, int w, int h){
         x = mouse_x;
         y = mouse_y;
 
-        //blit(aux, screen, x_old, y_old, x_old, y_old, w, h);
+        blit(aux, screen, x_old, y_old, x_old, y_old, w, h);
     }    
 }
 
@@ -126,4 +124,22 @@ void draw_ball(void)
     y = P2_Y + ball.y;
     
     circlefill(screen, x, y, BALL_RADIUS, BALL_COLOR);
+}
+
+void* display(void* arg){
+
+    int i;      //task index
+    int we = 70;
+    int he = 70;
+
+    i = get_task_index(arg);
+    set_activation(i);
+
+    draw_screen();
+    while(1)
+        racchetta(rac, we, he);
+
+    if (deadline_miss(i))
+        //show_dmiss
+    wait_for_activation(i);
 }
