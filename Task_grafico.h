@@ -1,5 +1,7 @@
 #include    <allegro.h>
 
+
+
 #define     WIDTH   640
 #define     HEIGTH  480
 #define     COLOR   32              //profondita di colori: 16 bit
@@ -48,7 +50,7 @@
 #define COS_THETA 0.707 
 #define SIN_THETA 0.707
 
-struct g_pos {
+struct gpos{
 
     int x;
     int z;
@@ -62,7 +64,9 @@ void draw_screen(void);          /* Disegna l'interfaccia */
 
 void white2pink(BITMAP* b);      /* Converte lo sfondo della sprite in rosa */
 
-void racchetta(BITMAP* bmp, int w, int h);       /* Disegna una racchetta sullo schermo */
+void racchetta_avversario(BITMAP* bmp, int w, int h);       /* Disegna una racchetta sullo schermo */
+
+void racchetta_robot(BITMAP* bmp, int w, int h);
 
 void draw_ball(void);           /* Disegna la pallina */
 
