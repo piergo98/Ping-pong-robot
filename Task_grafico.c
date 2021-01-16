@@ -8,6 +8,7 @@ char    punti_rob[DIM_S];
 char    punti_avv[DIM_S];
 int     p_rob;          //punteggio robot
 int     p_avv;          //punteggio avversario
+int     pview;          //indicatore rappresentazione prospettica
 BITMAP* rac;            //buffer per copiare lo schermo
 
 void init_screen(void){
@@ -119,9 +120,24 @@ void racchetta(BITMAP* bmp, int w, int h){
 
 void draw_ball(void)
 {
-    prospective_view(ball.x, ball.y, ball.z);
+    int x, z;
+
+    if (pview)
+    {
+       prospective_view(ball.x, ball.y, ball.z);
+
+       x = gcord.x;
+       z = gcord.z;
+
+    }
+
+    else 
+    {
+        x = ball.x;
+        z = ball.z;
+    }
     
-    circlefill(screen, gcord.x, gcord.z, BALL_RADIUS, BALL_COLOR);
+    circlefill(screen, x, z, BALL_RADIUS, BALL_COLOR);
 }
 
 void* display(void* arg){
@@ -185,4 +201,6 @@ void prospective_view(int x, int y, int z)
     /* Determinazione coordinate su piano prospettico */
     gcord.x = P2_X + x1 * POV_DIST / (POV_DIST - z1);
     gcord.z = P2_Z + y1 * POV_DIST / (POV_DIST - z1);
+
+    return();
 }
