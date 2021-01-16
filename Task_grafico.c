@@ -119,12 +119,9 @@ void racchetta(BITMAP* bmp, int w, int h){
 
 void draw_ball(void)
 {
-    int x, y;
+    prospective_view(ball.x, ball.y, ball.z);
     
-    x = P2_X + ball.x;
-    y = P2_Z + ball.y;
-    
-    circlefill(screen, x, y, BALL_RADIUS, BALL_COLOR);
+    circlefill(screen, gcord.x, gcord.z, BALL_RADIUS, BALL_COLOR);
 }
 
 void* display(void* arg){
