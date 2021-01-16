@@ -11,8 +11,8 @@ void* motortask_x(void* arg)
         i = get_task_index(arg);
         T = tp[i].deadline;         //la utilizzo per il rapp. inc.
 
-        x_min = X_MIN;
-        x_max = X_MAX;
+        x_min = C_X3 - OFFSET_X;
+        x_max = C_X2 + OFFSET_X;
         
         prevtheta.in[NOW] = 0;      //sarebbe stato piu' bello un for?
         prevtheta.in[BEFORE] = 0;
@@ -43,8 +43,8 @@ void* motortask_z(void* arg)
         i = get_task_index(arg);
         T = tp[i].deadline;       //la utilizzo per il rapp. inc.
 
-        z_min = Z_MIN;
-        z_max = Z_MAX;
+        z_min = C_Z3 - OFFSET_Z / 3;
+        z_max = C_Z3 + OFFSET_Z;
 
         prevtheta.in[NOW] = 0;
         prevtheta.in[BEFORE] = 0;
@@ -85,14 +85,7 @@ void update_state(float y, int T, int p_min, int p_max, struct state *robot_tmp)
     
     robot_tmp->speed = ((int)y - robot_tmp->position)/ T;         //rapp. incrementale
     
-    if (y > p_max) 
-        robot_tmp->position = p_max;
     
-    else if (y < p_min) 
-        robot_tmp->position = p_min;
-    
-    else   
-        robot_tmp->position = (int)y;
     
     return;
 }

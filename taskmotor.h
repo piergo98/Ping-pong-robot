@@ -4,12 +4,16 @@
 #include <time.h>
 
 //#include "PTask.h"
-#include "Robot_camera.h" 
+#include "Robot_camera.h"
+#include "Task_grafico.h" 
 
-#define X_MAX 1    //limiti posizione
+#define X_MAX  1    //limiti posizione
 #define X_MIN -1
-#define Z_MAX 1    //limiti posizione
+#define Z_MAX  1    //limiti posizione
 #define Z_MIN -1
+
+#define OFFSET_X 90     //distanza raggiungibile al di fuori del tavolo
+#define OFFSET_Z 180
 
 
 #define P 0.19     // parametri funzione di trasferimento:
