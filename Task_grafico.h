@@ -1,7 +1,6 @@
 #include    <allegro.h>
 
 
-
 #define     WIDTH   640
 #define     HEIGTH  480
 #define     COLOR   32              //profondita di colori: 16 bit
@@ -55,10 +54,13 @@ struct gpos{
     int x;
     int z;
 
-} gcord;
+}; 
 
+struct gpos gcord;
 
 void init_screen(void);  /* Inizializza lo schermo e crea il task grafico */
+
+void testo(BITMAP* buf);       /* Stampa il testo sullo schermo */
 
 void draw_screen(void);          /* Disegna l'interfaccia */
 
