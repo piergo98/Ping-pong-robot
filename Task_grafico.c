@@ -201,6 +201,4 @@ void prospective_view(int x, int y, int z)
     /* Determinazione coordinate su piano prospettico */
     gcord.x = P2_X + x1 * POV_DIST / (POV_DIST - z1);
     gcord.z = P2_Z + y1 * POV_DIST / (POV_DIST - z1);
-
-    return();
 }
