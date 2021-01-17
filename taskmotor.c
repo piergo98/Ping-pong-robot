@@ -85,15 +85,19 @@ void update_state(float y, int T, int p_min, int p_max, struct state *robot_tmp)
     
     robot_tmp->speed = ((int)y - robot_tmp->position)/ T;         //rapp. incrementale
     
-    
-    
-    return;
+        if (y >= p_max)
+            robot_tmp->position = p_max;
+
+        else if (y <= p_min)
+            robot_tmp->position = p_min;
+
+        else
+            robot_tmp->position = (int)y; 
+      
 }
 
 void get_state(int *xi, int *vi, struct state *robot_tmp)
 {
     *xi = robot_tmp->position;
     *vi = robot_tmp->speed;
-
-    return;
 }

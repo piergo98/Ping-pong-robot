@@ -228,7 +228,7 @@ void draw_ball(void)
         z = ball.z;
     }
     
-    circlefill(screen, ball.x, ball.z, BALL_RADIUS, BALL_COLOR);
+    circlefill(screen, x, z, BALL_RADIUS, BALL_COLOR);
 }
 
 void* display(void* arg){
