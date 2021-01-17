@@ -1,9 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <sched.h>
 #include <pthread.h>
 #include <time.h>
 
-#define NT  10            //numero massimo di thread
+#define NT  7            //numero massimo di task
 
 
 struct task_par{	    //struttura che memorizza tutti i parametri del thread
@@ -44,3 +45,5 @@ void    set_activation (int i);
 int     deadline_miss(int i);
 
 void wait_for_activation(int i);
+
+int wait_for_end(int i);

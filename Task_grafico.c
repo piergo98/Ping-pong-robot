@@ -10,7 +10,7 @@ char    punti_avv[DIM_S];
 int     p_rob;          //punteggio robot
 int     p_avv;          //punteggio avversario
 int     pview;          //indicatore per rappresentazione prospettica
-BITMAP* rac;            //buffer per copiare lo schermo
+BITMAP* rac_r, *rac_a;  //buffer per copiare lo schermo
 
 void init_screen(void){
 
@@ -20,9 +20,10 @@ void init_screen(void){
     clear_to_color(screen, BLACK);  //schermo nero
     install_keyboard();
     install_mouse();
-    rac = load_bitmap("racchetta_nosfondo32.bmp", NULL);
-    white2pink(rac);
-    rac = load_bitmap("racp.bmp", NULL);
+    rac_r = load_bitmap("racchetta_nosfondo32.bmp", NULL);
+    white2pink(rac_r);
+    rac_r = load_bitmap("racp.bmp", NULL);
+    rac_a = load_bitmap("racp.bmp", NULL);
 }
 
 void testo(BITMAP* buf){
@@ -226,9 +227,11 @@ void* display(void* arg){
     i = get_task_index(arg);
     set_activation(i);
 
-    draw_screen();
+    display_camera();
     while(!end){
-        //racchetta(rac, we, he);
+        draw_ball();
+        racchetta_robot(rac_r, we, he);
+        racchetta_avversario(rac_a, we , he);
 
         //if (deadline_miss(i))
             //show_dmiss

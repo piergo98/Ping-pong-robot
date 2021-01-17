@@ -11,6 +11,7 @@ void* adversarytask_x(void* arg)
     float   u, z, y;                // temporary variables
         
         i = get_task_index(arg);
+        set_activation(i);
         T = tp[i].deadline;         //la utilizzo per il rapp. inc.
 
         x_min = C_X1 - OFFSET_X;
@@ -43,6 +44,7 @@ void* adversarytask_z(void* arg)
     float   u, z, y;    // temporary variables
         
         i = get_task_index(arg);
+        set_activation(i);
         T = tp[i].deadline;       //la utilizzo per il rapp. inc.
 
         z_min = C_Z1 - OFFSET_Z;

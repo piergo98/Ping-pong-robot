@@ -65,6 +65,7 @@ void* camera(void* arg){
     int i;      //task index
 
     i = get_task_index(arg);
+    set_activation(i);
 
     while(!end){
 

@@ -9,6 +9,7 @@ void* motortask_x(void* arg)
     float   u, z, y;                // temporary variables
         
         i = get_task_index(arg);
+        set_activation(i);
         T = tp[i].deadline;         //la utilizzo per il rapp. inc.
 
         x_min = C_X3 - OFFSET_X;
@@ -41,6 +42,7 @@ void* motortask_z(void* arg)
     float   u, z, y;    // temporary variables
         
         i = get_task_index(arg);
+        set_activation(i);
         T = tp[i].deadline;       //la utilizzo per il rapp. inc.
 
         z_min = C_Z3 - OFFSET_Z / 3;

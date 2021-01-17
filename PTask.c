@@ -109,3 +109,8 @@ void wait_for_activation (int i){   //sospende l'esecuzione del thread fino alla
     time_add_ms(&(tp[i].at), tp[i].period);
     time_add_ms(&(tp[i].dl), tp[i].deadline);
 }
+
+int wait_for_end(int i){    //attende la terminazione del task
+
+    return pthread_join(tid[i], NULL);
+}

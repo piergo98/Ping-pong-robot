@@ -12,8 +12,9 @@ void* balltask(void* arg)
     float dt;               // integration interval
         
         i = get_task_index(arg);
+        set_activation(i);
         
-        init_ball();
+        //init_ball();
         dt = TSCALE* (float)tp[i].period /1000;
         
         while (!end) {
@@ -45,7 +46,6 @@ void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racc
     /* Gestioni rimbalzo con la racchetta del robot */
     if ((robot_z.position >= ball.z - ball.r) && (ball.x - ball.r >= robot_x.position) && (ball.x + ball.r <= robot_x.position + RACC_MAX))
     {
-        //ball.z = ball.r;
         ball.vz = - ball.vz + robot_z.speed;
         ball.vx = - ball.vx + robot_x.speed + frand(ERR_MIN, ERR_MAX);              //robusto a rimbalzo dritto continuo
     }
@@ -53,7 +53,6 @@ void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racc
     /* Gestioni rimbalzo con la racchetta dell'avversario */
     if ((adversary_z.position >= ball.z + ball.r) && (ball.x - ball.r >= adversary_x.position) && (ball.x + ball.r <= adversary_x.position + RACC_MAX))
     {
-        //ball.z = adversary_z.position - ball.r;                                     //da sistemare le cordinate assegnate!!!
         ball.vz = - ball.vz + adversary_z.speed;
         ball.vx = - ball.vx + adversary_x.speed + frand(ERR_MIN, ERR_MAX);          //robusto a rimbalzo dritto continuo
     }
@@ -75,9 +74,9 @@ float frand(float vxmin, float vxmax)
 
 void init_ball(void)
 {
-   ball.vx = 0;
+   ball.vx = 10;
    ball.vy = 0;
-   ball.vz = 0;
+   ball.vz = -10;
    
    ball.x = 320;
    ball.y = Y_0;
