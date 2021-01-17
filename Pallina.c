@@ -17,8 +17,6 @@ void* balltask(void* arg)
         dt = TSCALE* (float)tp[i].period /1000;
         
         while (!end) {
-            
-            ball.y;                                         //scrivere legge di y
 
             ball.x  += ball.vx * dt - BETA * ball.vx * dt;
             ball.y  += Y_0 + ball.vy * dt - g * dt * dt / 2;
@@ -45,17 +43,17 @@ void store_trail( int i)
 void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racchetta e il tavolo
 {
     /* Gestioni rimbalzo con la racchetta del robot */
-    if ((ball.z <= robot_z.position + ball.r) && (ball.x <= robot_x.position + (RACC_MAX - RACC_MIN)/2) && (ball.x >= robot_x.position - (RACC_MAX - RACC_MIN)/2))
+    if ((robot_z.position >= ball.z - ball.r) && (ball.x - ball.r >= robot_x.position) && (ball.x + ball.r <= robot_x.position + RACC_MAX))
     {
-        ball.z = ball.r;
+        //ball.z = ball.r;
         ball.vz = - ball.vz + robot_z.speed;
         ball.vx = - ball.vx + robot_x.speed + frand(ERR_MIN, ERR_MAX);              //robusto a rimbalzo dritto continuo
     }
 
     /* Gestioni rimbalzo con la racchetta dell'avversario */
-    if ((ball.z <= adversary_z.position + ball.r) && (ball.x <= adversary_x.position + (RACC_MAX - RACC_MIN)/2) && (ball.x >= adversary_x.position - (RACC_MAX - RACC_MIN)/2))
+    if ((adversary_z.position >= ball.z + ball.r) && (ball.x - ball.r >= adversary_x.position) && (ball.x + ball.r <= adversary_x.position + RACC_MAX))
     {
-        ball.z = adversary_z.position - ball.r;                                     //da sistemare le cordinate assegnate!!!
+        //ball.z = adversary_z.position - ball.r;                                     //da sistemare le cordinate assegnate!!!
         ball.vz = - ball.vz + adversary_z.speed;
         ball.vx = - ball.vx + adversary_x.speed + frand(ERR_MIN, ERR_MAX);          //robusto a rimbalzo dritto continuo
     }
@@ -81,9 +79,9 @@ void init_ball(void)
    ball.vy = 0;
    ball.vz = 0;
    
-   ball.x = 0;
-   ball.y = 0;
-   ball.z = 0; 
+   ball.x = 320;
+   ball.y = Y_0;
+   ball.z = 330; 
 
    return;
 }

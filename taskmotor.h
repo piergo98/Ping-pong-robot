@@ -3,9 +3,7 @@
 #include <pthread.h>
 #include <time.h>
 
-//#include "PTask.h"
-#include "Robot_camera.h"
-#include "Task_grafico.h" 
+#include "Robot_camera.h" 
 
 #define X_MAX  1    //limiti posizione
 #define X_MIN -1
@@ -24,6 +22,12 @@
 #define KD 0.5
 
 #define R 5        //raggio puleggia in mm
+//---------------------------------------------------------------
+// PUNTI UTILI RIPRESI DALLA VISTA DALL'ALTO
+//---------------------------------------------------------------
+#define     C_X2    480
+#define     C_X3    160
+#define     C_Z3    60
 
 struct m_tfunc     //va inizializzata nel motortask (?)                                   
 {

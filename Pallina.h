@@ -5,9 +5,8 @@
 #include    <pthread.h>
 #include    <time.h>
 
-//#include    "PTask.h"
 #include    "taskmotor.h"
-//#include    "Robot_camera.h"
+
 
 #define G0           9.8    // acceleration of gravity
 #define TLEN         30     // trail length
@@ -23,7 +22,7 @@
 #define ERR_MAX      1 
 
 
-#define RACC_MAX     60     // max racchetta
+#define RACC_MAX     70     // max racchetta
 #define RACC_MIN     20     // min racchetta
 
 //int tflag;                  //trail flag

@@ -4,11 +4,12 @@
 #include    "Task_grafico.h"
 #include    "Pallina.h"
 
+
 char    punti_rob[DIM_S];
 char    punti_avv[DIM_S];
 int     p_rob;          //punteggio robot
 int     p_avv;          //punteggio avversario
-int     pview;          //indicatore rappresentazione prospettica
+int     pview;          //indicatore per rappresentazione prospettica
 BITMAP* rac;            //buffer per copiare lo schermo
 
 void init_screen(void){
@@ -28,6 +29,25 @@ void init_screen(void){
 
 }
 
+void testo(BITMAP* buf){
+
+    //crea un buffer per realizzare lo sfondo
+    //buf = create_bitmap(WIDTH, HEIGTH);
+    //blit(screen, buf, 0, 0, 0, 0, WIDTH, HEIGTH);
+
+    textout_ex(buf, font, "PUNTEGGIO", P_X, P_Z, WHITE, TRASP);
+    sprintf(punti_rob, "ROB = %d", p_rob);
+    textout_ex(buf, font, punti_rob, P_X, P_Z + 20, WHITE, TRASP);  
+    sprintf(punti_avv, "AVV = %d", p_avv);
+    textout_ex(buf, font, punti_avv, P_X, P_Z + 40, WHITE, TRASP);
+    textout_ex(buf, font, "LEGENDA:", X_LEG, P_Z, WHITE, TRASP);
+    textout_ex(buf, font, "R -> Gioca robot", X_LEG, P_Z + 20, WHITE, TRASP);
+    textout_ex(buf, font, "U -> Gioca utente", X_LEG, P_Z + 40, WHITE, TRASP);
+    //textout_ex(screen, font, "V -> Vista verticale", X_LEG, P_Z + 60, WHITE, TRASP);
+    textout_ex(buf, font, "SPACE -> Battuta", X_LEG, P_Z + 80, WHITE, TRASP);
+    textout_ex(buf, font, "utente", X_LEG + 80, P_Z + 90, WHITE, TRASP);
+}
+
 void draw_screen(void){
 
     int i;
@@ -38,10 +58,9 @@ void draw_screen(void){
 
     //crea un buffer per realizzare lo sfondo
     buf = create_bitmap(WIDTH, HEIGTH);
-    clear_bitmap(buf);
+    //blit(screen, buf, 0, 0, 0, 0, WIDTH, HEIGTH);
 
-    //nasconde il cursore del mouse
-    scare_mouse();
+
     // Disegna il tavolo
     polygon(buf, 4, vertici, FIELD);
     line(buf, 320, 420, 320, 100, WHITE);
@@ -53,18 +72,10 @@ void draw_screen(void){
     for (i = 0;i < 31;i += 5){
         line(buf, 130, 210 + i, 510, 210 + i, WHITE);
     }
+    blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
+    testo(buf);
+    textout_ex(buf, font, "V -> Vista verticale", X_LEG, P_Z + 60, WHITE, TRASP);
     
-    unscare_mouse();
-    textout_ex(buf, font, "PUNTEGGIO", P_X, P_Z, WHITE, TRASP);
-    sprintf(punti_rob, "ROB = %d", p_rob);
-    textout_ex(buf, font, punti_rob, P_X, P_Z + 20, WHITE, TRASP);  
-    sprintf(punti_avv, "AVV = %d", p_avv);
-    textout_ex(buf, font, punti_avv, P_X, P_Z + 40, WHITE, TRASP);
-    textout_ex(buf, font, "LEGENDA:", X_LEG, P_Z, WHITE, TRASP);
-    textout_ex(buf, font, "R -> Gioca robot", X_LEG, P_Z + 20, WHITE, TRASP);
-    textout_ex(buf, font, "U -> Gioca utente", X_LEG, P_Z + 40, WHITE, TRASP);
-    textout_ex(buf, font, "SPACE -> Battuta", X_LEG, P_Z + 60, WHITE, TRASP);
-    textout_ex(buf, font, "utente", X_LEG + 80, P_Z + 70, WHITE, TRASP);
     //trasferisco la bitmap sullo schermo
     blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
 }
@@ -90,31 +101,111 @@ void white2pink(BITMAP* b){
     save_bitmap("racp.bmp", racp, pal);
 }
 
-void racchetta(BITMAP* bmp, int w, int h){
+void racchetta_avversario(BITMAP* bmp, int w, int h){
 
-    int x, y, x_old, y_old;
+    int x, z, x_old, z_old;
     BITMAP* aux, *buf;
 
     aux = create_bitmap(WIDTH, HEIGTH);
     clear_bitmap(aux);
 
-    x = mouse_x;
-    y = mouse_y;
+    if (pview)
+    {
+       prospective_view(adversary_x.position, Y_0, adversary_z.position);
+
+       x = gcord.x;
+       z = gcord.z;
+
+    }
+
+    else 
+    {
+        x = adversary_x.position;
+        z = adversary_z.position;
+    }
+    
     x_old = x;
-    y_old = y;
+    z_old = z;
 
     while(!keypressed()){
 
         blit(screen, aux, 0, 0, 0, 0, WIDTH, HEIGTH);
-        blit(screen, aux, x, y, x, y, w, h);
-        stretch_sprite(screen, bmp, x, y, w, h);
+        blit(screen, aux, x, z, x, z, w, h);
+        stretch_sprite(screen, bmp, x, z, w, h);
     
         x_old = x;
-        y_old = y;
-        x = mouse_x;
-        y = mouse_y;
+        z_old = z;
+        
+        if (pview)
+        {
+            prospective_view(adversary_x.position, Y_0, adversary_z.position);
 
-        blit(aux, screen, x_old, y_old, x_old, y_old, w, h);
+            x = gcord.x;
+            z = gcord.z;
+
+        }
+
+        else 
+        {
+            x = adversary_x.position;
+            z = adversary_z.position;
+        }
+
+        blit(aux, screen, x_old, z_old, x_old, z_old, w, h);
+    }    
+}
+
+void racchetta_robot(BITMAP* bmp, int w, int h){
+
+    int x, z, x_old, z_old;
+    BITMAP* aux, *buf;
+
+    aux = create_bitmap(WIDTH, HEIGTH);
+    clear_bitmap(aux);
+
+    if (pview)
+    {
+       prospective_view(robot_x.position, Y_0, robot_z.position);
+
+       x = gcord.x;
+       z = gcord.z;
+
+    }
+
+    else 
+    {
+        x = robot_x.position;
+        z = robot_z.position;
+    }
+    
+    x_old = x;
+    z_old = z;
+
+    while(!keypressed()){
+
+        blit(screen, aux, 0, 0, 0, 0, WIDTH, HEIGTH);
+        blit(screen, aux, x, z, x, z, w, h);
+        stretch_sprite(screen, bmp, x, z, w, h);
+    
+        x_old = x;
+        z_old = z;
+        
+        if (pview)
+        {
+            prospective_view(robot_x.position, Y_0, robot_z.position);
+
+            x = gcord.x;
+            z = gcord.z;
+
+        }
+
+        else 
+        {
+            x = robot_x.position;
+            z = robot_z.position;
+        }
+
+        blit(aux, screen, x_old, z_old, x_old, z_old, w, h);
     }    
 }
 
@@ -137,7 +228,7 @@ void draw_ball(void)
         z = ball.z;
     }
     
-    circlefill(screen, x, z, BALL_RADIUS, BALL_COLOR);
+    circlefill(screen, ball.x, ball.z, BALL_RADIUS, BALL_COLOR);
 }
 
 void* display(void* arg){
@@ -174,17 +265,21 @@ void display_camera(){
     line(buf, 320, 420, 320, 60, WHITE);     // linea che divide il campo in due meta verticalmente
     line(buf, 140, 240, 500, 240, WHITE);    // linea della rete
     blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
-    draw_ball();
+    //testo(buf);
+    textout_ex(buf, font, "V -> Indietro", X_LEG + 40, P_Z + 60, WHITE, TRASP);
+
+    blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
+    //draw_ball();
     unscare_mouse();
     
-    while (!keypressed()){      //da aggiustare il while
+    //while (!keypressed()){      //da aggiustare il while
         /* Predice la posizione della pallina */
-        prediction(&window);
+        //prediction(&window);
         /* Disegna la finestra di ricerca della pallina */
-        rect(buf, window.x0-(SIZE_X/2), window.z0+(SIZE_Z/2), window.x0+(SIZE_X/2), window.z0-(SIZE_Z/2), RED);
+        //rect(buf, window.x0-(SIZE_X/2), window.z0+(SIZE_Z/2), window.x0+(SIZE_X/2), window.z0-(SIZE_Z/2), RED);
     
-        blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
-    } 
+        //blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
+    //} 
 
 
 }
