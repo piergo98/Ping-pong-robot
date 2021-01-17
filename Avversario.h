@@ -5,9 +5,7 @@
 #include    <pthread.h>
 #include    <time.h>
 
-//#include    "PTask.h"
 #include    "taskmotor.h"
-//#include    "Robot_camera.h"
 
 //------------------------------------------------------------------------------
 // PUNTI TAVOLO VISTO DALL'ALTO

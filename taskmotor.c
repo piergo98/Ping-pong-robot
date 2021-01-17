@@ -101,3 +101,18 @@ void get_state(int *xi, int *vi, struct state *robot_tmp)
     *xi = robot_tmp->position;
     *vi = robot_tmp->speed;
 }
+
+void init_motor(){
+
+    /* Inizializza le posizioni dei robot */
+    robot_x.position = C_X1;
+    robot_z.position = C_Z2;
+    adversary_x.position = C_X2;
+    adversary_z.position = C_Z1;
+
+    /* Inizializza le velocita' dei robot */
+    robot_x.speed = 0;
+    robot_z.speed = 0;
+    adversary_x.speed = 0;
+    adversary_z.speed = 0;
+}

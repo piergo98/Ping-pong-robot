@@ -3,7 +3,7 @@
 int tflag = 0;                  //trail flag
 int tl = 10;                    //actual trail lenght
 int end = 0;                    //end flag
-float g = G0;                     //acceleration of gravity
+float g = G0;                   //acceleration of gravity
 
 
 void* balltask(void* arg)
@@ -81,7 +81,5 @@ void init_ball(void)
    
    ball.x = 320;
    ball.y = Y_0;
-   ball.z = 330; 
-
-   return;
+   ball.z = 330;
 }

@@ -22,12 +22,17 @@
 #define KD 0.5
 
 #define R 5        //raggio puleggia in mm
-//---------------------------------------------------------------
-// PUNTI UTILI RIPRESI DALLA VISTA DALL'ALTO
-//---------------------------------------------------------------
+//------------------------------------------------------------------------------
+// PUNTI TAVOLO VISTO DALL'ALTO
+//------------------------------------------------------------------------------
+#define     C_X1    160
+#define     C_Z1    420
 #define     C_X2    480
+#define     C_Z2    60
 #define     C_X3    160
 #define     C_Z3    60
+#define     C_X4    480
+#define     C_Z4    420
 
 struct m_tfunc     //va inizializzata nel motortask (?)                                   
 {
@@ -51,3 +56,9 @@ float motor(float k);
 void update_state(float y, int T, int p_min, int p_max, struct state *robot_tmp);
 
 void get_state(int *xi, int *vi, struct state *robot_tmp);
+
+void* motortask_x(void* arg);
+
+void* motortask_z(void* arg);
+
+void init_motor(void);

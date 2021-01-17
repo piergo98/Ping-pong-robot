@@ -14,7 +14,6 @@ BITMAP* rac;            //buffer per copiare lo schermo
 
 void init_screen(void){
 
-    init_camera();
     allegro_init();
     set_color_depth(COLOR);
     set_gfx_mode(GFX_AUTODETECT_WINDOWED, WIDTH, HEIGTH, 0, 0);
@@ -24,9 +23,6 @@ void init_screen(void){
     rac = load_bitmap("racchetta_nosfondo32.bmp", NULL);
     white2pink(rac);
     rac = load_bitmap("racp.bmp", NULL);
-
-    //task_create(display, indice, periodo, drel, priorita);
-
 }
 
 void testo(BITMAP* buf){
@@ -107,7 +103,7 @@ void racchetta_avversario(BITMAP* bmp, int w, int h){
     BITMAP* aux, *buf;
 
     aux = create_bitmap(WIDTH, HEIGTH);
-    clear_bitmap(aux);
+    blit(screen, aux, 0, 0, 0, 0, WIDTH, HEIGTH);
 
     if (pview)
     {
@@ -127,32 +123,28 @@ void racchetta_avversario(BITMAP* bmp, int w, int h){
     x_old = x;
     z_old = z;
 
-    while(!keypressed()){
-
-        blit(screen, aux, 0, 0, 0, 0, WIDTH, HEIGTH);
-        blit(screen, aux, x, z, x, z, w, h);
-        stretch_sprite(screen, bmp, x, z, w, h);
+    blit(screen, aux, x, z, x, z, w, h);
+    stretch_sprite(screen, bmp, x, z, w, h);
     
-        x_old = x;
-        z_old = z;
+    x_old = x;
+    z_old = z;
         
-        if (pview)
-        {
-            prospective_view(adversary_x.position, Y_0, adversary_z.position);
+    if (pview)
+    {
+        prospective_view(adversary_x.position, Y_0, adversary_z.position);
 
-            x = gcord.x;
-            z = gcord.z;
+        x = gcord.x;
+        z = gcord.z;
 
-        }
+    }
 
-        else 
-        {
-            x = adversary_x.position;
-            z = adversary_z.position;
-        }
+    else 
+    {
+        x = adversary_x.position;
+        z = adversary_z.position;
+    }
 
-        blit(aux, screen, x_old, z_old, x_old, z_old, w, h);
-    }    
+    blit(aux, screen, x_old, z_old, x_old, z_old, w, h);    
 }
 
 void racchetta_robot(BITMAP* bmp, int w, int h){
@@ -161,7 +153,7 @@ void racchetta_robot(BITMAP* bmp, int w, int h){
     BITMAP* aux, *buf;
 
     aux = create_bitmap(WIDTH, HEIGTH);
-    clear_bitmap(aux);
+    blit(screen, aux, 0, 0, 0, 0, WIDTH, HEIGTH);
 
     if (pview)
     {
@@ -181,32 +173,26 @@ void racchetta_robot(BITMAP* bmp, int w, int h){
     x_old = x;
     z_old = z;
 
-    while(!keypressed()){
-
-        blit(screen, aux, 0, 0, 0, 0, WIDTH, HEIGTH);
-        blit(screen, aux, x, z, x, z, w, h);
-        stretch_sprite(screen, bmp, x, z, w, h);
+    blit(screen, aux, x, z, x, z, w, h);
+    stretch_sprite(screen, bmp, x, z, w, h);
     
-        x_old = x;
-        z_old = z;
+    x_old = x;
+    z_old = z;
         
-        if (pview)
-        {
-            prospective_view(robot_x.position, Y_0, robot_z.position);
+    if (pview)
+    {
+        prospective_view(robot_x.position, Y_0, robot_z.position);
 
-            x = gcord.x;
-            z = gcord.z;
+        x = gcord.x;
+        z = gcord.z;
+    }
+    else 
+    {
+        x = robot_x.position;
+        z = robot_z.position;
+    }
 
-        }
-
-        else 
-        {
-            x = robot_x.position;
-            z = robot_z.position;
-        }
-
-        blit(aux, screen, x_old, z_old, x_old, z_old, w, h);
-    }    
+    blit(aux, screen, x_old, z_old, x_old, z_old, w, h);   
 }
 
 void draw_ball(void)
@@ -241,12 +227,13 @@ void* display(void* arg){
     set_activation(i);
 
     draw_screen();
-    while(1)
+    while(!end){
         //racchetta(rac, we, he);
 
-    if (deadline_miss(i))
-        //show_dmiss
-    wait_for_activation(i);
+        //if (deadline_miss(i))
+            //show_dmiss
+        wait_for_activation(i);
+    }
 }
 
 void display_camera(){
@@ -297,3 +284,29 @@ void prospective_view(int x, int y, int z)
     gcord.x = P2_X + x1 * POV_DIST / (POV_DIST - z1);
     gcord.z = P2_Z + y1 * POV_DIST / (POV_DIST - z1);
 }
+
+void* keyboard(void* arg){
+
+    int a, i;
+
+    a = i = 0;
+
+    while(!key[KEY_ESC]){
+
+        if (a == 0 && key[KEY_V]){
+            a = 1;
+            i = 0;
+        }
+        else if (a == 1 && key[KEY_V]){
+            a = 0;
+            i = 0;
+        }
+    }
+}
+
+
+/*if (a == 0 && i == 0)
+            draw_screen();
+        else if(a == 1 && i == 0)
+            display_camera();
+        i = 1;*/

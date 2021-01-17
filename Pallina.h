@@ -5,7 +5,7 @@
 #include    <pthread.h>
 #include    <time.h>
 
-#include    "taskmotor.h"
+#include    "Avversario.h"
 
 
 #define G0           9.8    // acceleration of gravity
@@ -64,3 +64,5 @@ void handle_bounce(int i);
 float frand(float vxmin, float vxmax);
 
 void init_ball(void);
+
+void* balltask(void* arg);

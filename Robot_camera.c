@@ -63,12 +63,6 @@ void prediction(struct win* w){
 void* camera(void* arg){
 
     int i;      //task index
-    
-    /* Inizializzo la struttura puntata da window */
-    /*window.x0 = 320;
-    window.z0 = 240;
-    window.xsize = SIZE_X;
-    window.zsize = SIZE_Z;*/
 
     i = get_task_index(arg);
 

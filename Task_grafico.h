@@ -77,3 +77,5 @@ void *display(void* arg);       /* Task grafico */
 void display_camera(void);      /* Disegna la vista della camera del robot */
 
 void prospective_view(int x, int y, int z);      /* Genera cordinate per vista prospettica */
+
+void* keyboard(void* arg);          // aggiorna i flag in base ai tasti premuti
