@@ -7,10 +7,14 @@
 
 char    punti_rob[DIM_S];
 char    punti_avv[DIM_S];
+char    string[DIM_S];
 int     p_rob;          //punteggio robot
 int     p_avv;          //punteggio avversario
-int     pview;          //indicatore per rappresentazione prospettica
+int     pview_flag;     //indicatore per rappresentazione prospettica
+int     ball_miss, camera_miss, motor_x_miss, motor_z_miss, adv_x_miss, adv_z_miss, display_miss, tastiera_miss;
+
 BITMAP* rac_r, *rac_a;  //buffer per copiare lo schermo
+BITMAP* memory;         //bitmap provvisoria in cui ho una replica dell'interfaccia da disegnare
 
 void init_screen(void){
 
@@ -24,38 +28,57 @@ void init_screen(void){
     white2pink(rac_r);
     rac_r = load_bitmap("racp.bmp", NULL);
     rac_a = load_bitmap("racp.bmp", NULL);
+
+    pview_flag = 1;                  //valore di default
+    ball_miss = camera_miss = motor_x_miss = motor_z_miss = adv_x_miss = adv_z_miss = display_miss = tastiera_miss = 0;
 }
 
 void testo(BITMAP* buf){
 
-    //crea un buffer per realizzare lo sfondo
-    //buf = create_bitmap(WIDTH, HEIGTH);
-    //blit(screen, buf, 0, 0, 0, 0, WIDTH, HEIGTH);
-
+    /* Punteggio */
     textout_ex(buf, font, "PUNTEGGIO", P_X, P_Z, WHITE, TRASP);
     sprintf(punti_rob, "ROB = %d", p_rob);
     textout_ex(buf, font, punti_rob, P_X, P_Z + 20, WHITE, TRASP);  
     sprintf(punti_avv, "AVV = %d", p_avv);
     textout_ex(buf, font, punti_avv, P_X, P_Z + 40, WHITE, TRASP);
+     /* Legenda */
     textout_ex(buf, font, "LEGENDA:", X_LEG, P_Z, WHITE, TRASP);
     textout_ex(buf, font, "R -> Gioca robot", X_LEG, P_Z + 20, WHITE, TRASP);
     textout_ex(buf, font, "U -> Gioca utente", X_LEG, P_Z + 40, WHITE, TRASP);
-    //textout_ex(screen, font, "V -> Vista verticale", X_LEG, P_Z + 60, WHITE, TRASP);
     textout_ex(buf, font, "SPACE -> Battuta", X_LEG, P_Z + 80, WHITE, TRASP);
     textout_ex(buf, font, "utente", X_LEG + 80, P_Z + 90, WHITE, TRASP);
+
+    /* Deadline misses */
+    //rect(buf, );
+    sprintf(string, "ball = %d", ball_miss);
+    textout_ex(buf, font, string, 160, 440, WHITE, TRASP);
+    sprintf(string, "camera = %d", camera_miss);
+    textout_ex(buf, font, string, 160, 460, WHITE, TRASP);
+    sprintf(string, "motor_x = %d", motor_x_miss);
+    textout_ex(buf, font, string, 200, 440, WHITE, TRASP);
+    sprintf(string, "motor_z = %d", motor_z_miss);
+    textout_ex(buf, font, string, 200, 460, WHITE, TRASP);
+    sprintf(string, "adv_x = %d", adv_x_miss);
+    textout_ex(buf, font, string, 240, 440, WHITE, TRASP);
+    sprintf(string, "adv_z = %d", adv_z_miss);
+    textout_ex(buf, font, string, 240, 460, WHITE, TRASP);
+    sprintf(string, "display = %d", display_miss);
+    textout_ex(buf, font, string, 280, 440, WHITE, TRASP);
+    sprintf(string, "tastiera = %d", tastiera_miss);
+    textout_ex(buf, font, string, 280, 460, WHITE, TRASP);
+
 }
 
-void draw_screen(void){
+void draw_screen(BITMAP* buf){
 
     int i;
     int vertici[VERTEX] = {P1_X, P1_Z, P2_X, P2_Z, P3_X, P3_Z, P4_X, P4_Z};
     p_avv = 0;
     p_rob = 0;
-    BITMAP* buf;
 
     //crea un buffer per realizzare lo sfondo
     buf = create_bitmap(WIDTH, HEIGTH);
-    //blit(screen, buf, 0, 0, 0, 0, WIDTH, HEIGTH);
+    clear_bitmap(buf);
 
 
     // Disegna il tavolo
@@ -72,9 +95,6 @@ void draw_screen(void){
     blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
     testo(buf);
     textout_ex(buf, font, "V -> Vista verticale", X_LEG, P_Z + 60, WHITE, TRASP);
-    
-    //trasferisco la bitmap sullo schermo
-    blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
 }
 
 void white2pink(BITMAP* b){
@@ -100,112 +120,49 @@ void white2pink(BITMAP* b){
 
 void racchetta_avversario(BITMAP* bmp, int w, int h){
 
-    int x, z, x_old, z_old;
-    BITMAP* aux, *buf;
+    int x, z;
 
-    aux = create_bitmap(WIDTH, HEIGTH);
-    blit(screen, aux, 0, 0, 0, 0, WIDTH, HEIGTH);
-
-    if (pview)
+    if (pview_flag)
     {
        prospective_view(adversary_x.position, Y_0, adversary_z.position);
 
        x = gcord.x;
        z = gcord.z;
-
+       stretch_sprite(screen, bmp, x, z, w, h);
     }
-
     else 
     {
         x = adversary_x.position;
         z = adversary_z.position;
-    }
-    
-    x_old = x;
-    z_old = z;
-
-    blit(screen, aux, x, z, x, z, w, h);
-    stretch_sprite(screen, bmp, x, z, w, h);
-    
-    x_old = x;
-    z_old = z;
-        
-    if (pview)
-    {
-        prospective_view(adversary_x.position, Y_0, adversary_z.position);
-
-        x = gcord.x;
-        z = gcord.z;
-
-    }
-
-    else 
-    {
-        x = adversary_x.position;
-        z = adversary_z.position;
-    }
-
-    blit(aux, screen, x_old, z_old, x_old, z_old, w, h);    
+        rectfill(screen, x - 20, z - 20, x + 20, z + 20, RED);
+    } 
 }
 
 void racchetta_robot(BITMAP* bmp, int w, int h){
 
     int x, z, x_old, z_old;
-    BITMAP* aux, *buf;
 
-    buf = create_bitmap(WIDTH, HEIGTH);
-    clear_bitmap(buf);
-
-    /*aux = create_bitmap(WIDTH, HEIGTH);
-    blit(screen, aux, 0, 0, 0, 0, WIDTH, HEIGTH);
-
-    if (pview)
+    if (pview_flag)
     {
        prospective_view(robot_x.position, Y_0, robot_z.position);
 
-       x = gcord.x;
-       z = gcord.z;
-
-    }
-
-    else 
-    {
-        x = robot_x.position;
-        z = robot_z.position;
-    }
-    
-    x_old = x;
-    z_old = z;
-
-    blit(screen, aux, x, z, x, z, w, h);
-    stretch_sprite(screen, bmp, x, z, w, h);*/
-    
-    x_old = x;
-    z_old = z;
-        
-    if (pview)
-    {
-        prospective_view(robot_x.position, Y_0, robot_z.position);
-
         x = gcord.x;
         z = gcord.z;
+        stretch_sprite(screen, bmp, x, z, w, h);
     }
     else 
     {
         x = robot_x.position;
         z = robot_z.position;
-    }
-
-    /*blit(aux, screen, x_old, z_old, x_old, z_old, w, h);*/
-
-    rectfill(screen, x - 20, z - 20, x + 20, z + 20, RED);
+        rectfill(screen, x - 20, z - 20, x + 20, z + 20, RED);
+    } 
 } 
 
 void draw_ball(void)
 {
     int x, z;
 
-    if (pview)
+    if (pview_flag)
     {
        prospective_view(ball.x, ball.y, ball.z);
 
@@ -213,7 +170,6 @@ void draw_ball(void)
        z = gcord.z;
 
     }
-
     else 
     {
         x = ball.x;
@@ -232,15 +188,21 @@ void* display(void* arg){
     i = get_task_index(arg);
     set_activation(i);
 
+    if (pview_flag)
+        draw_screen(memory);
+    else
+        display_camera_view(memory);
 
-    draw_screen();
-    //display_camera();
     while(!end){
+        blit(memory, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
         draw_ball();
-        pview = 1;
+        
         racchetta_robot(rac_r, we, he);
         racchetta_avversario(rac_a, we , he);
-        pview = 0;
+
+        /* Disegna la finestra di ricerca della pallina */
+        if (!pview_flag)
+            rect(screen, window.x0-(SIZE_X/2), window.z0+(SIZE_Z/2), window.x0+(SIZE_X/2), window.z0-(SIZE_Z/2), RED);
 
         //if (deadline_miss(i))
             //show_dmiss
@@ -248,39 +210,20 @@ void* display(void* arg){
     }
 }
 
-void display_camera(){
-
-    BITMAP* buf;
+void display_camera_view(BITMAP* buf){
 
     //crea un buffer per realizzare lo sfondo
     buf = create_bitmap(WIDTH, HEIGTH);
     clear_bitmap(buf);
 
-    //nasconde il cursore del mouse
-    scare_mouse();
     // Disegna il tavolo visto dall'alto
     rectfill(buf, C_X1, C_Z1, C_X2, C_Z2, FIELD);
     rect(buf, C_X1, C_Z1, C_X2, C_Z2, WHITE);
     line(buf, 320, 420, 320, 60, WHITE);     // linea che divide il campo in due meta verticalmente
     line(buf, 140, 240, 500, 240, WHITE);    // linea della rete
-    blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
-    //testo(buf);
-    textout_ex(buf, font, "V -> Indietro", X_LEG + 40, P_Z + 60, WHITE, TRASP);
 
-    blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
-    //draw_ball();
-    unscare_mouse();
-    
-    //while (!keypressed()){      //da aggiustare il while
-        /* Predice la posizione della pallina */
-        //prediction(&window);
-        /* Disegna la finestra di ricerca della pallina */
-        //rect(buf, window.x0-(SIZE_X/2), window.z0+(SIZE_Z/2), window.x0+(SIZE_X/2), window.z0-(SIZE_Z/2), RED);
-    
-        //blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
-    //} 
-
-
+    testo(buf);
+    textout_ex(buf, font, "P -> Indietro", X_LEG + 40, P_Z + 60, WHITE, TRASP);
 }
 
 void prospective_view(int x, int y, int z)
@@ -297,28 +240,61 @@ void prospective_view(int x, int y, int z)
     gcord.z = P2_Z + y1 * POV_DIST / (POV_DIST - z1);
 }
 
-void* keyboard(void* arg){
+void* command(void* arg){
 
-    int a, i;
+    int i;
+    char scan;
 
-    a = i = 0;
+    i = get_task_index(arg);
 
-    while(!key[KEY_ESC]){
-
-        if (a == 0 && key[KEY_V]){
-            a = 1;
-            i = 0;
+    do {
+        scan = 0;
+        if (keypressed()) scan = readkey() >> 8;
+        switch(scan){
+            case KEY_V:
+                pview_flag = 0;
+                break;
+            case KEY_P:
+                pview_flag = 1;
+                break;
+            default: break; //da aggiungere altre opzioni
         }
-        else if (a == 1 && key[KEY_V]){
-            a = 0;
-            i = 0;
-        }
-    }
+        
+    } while(scan != KEY_ESC);
+    end = 1;
+    wait_for_activation(i);
 }
 
+void show_dmiss(int i){
 
-/*if (a == 0 && i == 0)
-            draw_screen();
-        else if(a == 1 && i == 0)
-            display_camera();
-        i = 1;*/
+    char string[DIM_S];
+
+    switch(i){
+
+        case 0:
+            ball_miss += 1;
+            break;
+        case 1:
+            camera_miss += 1;
+            break;
+        case 2:
+            motor_x_miss += 1;
+            break;
+        case 3:
+            motor_z_miss += 1;
+            break;
+        case 4:
+            adv_x_miss += 1;
+            break;
+        case 5:
+            adv_z_miss += 1;
+            break;
+        case 6:
+            display_miss += 1;
+            break;
+        case 7:
+            tastiera_miss += 1;
+            break;
+        default: break;
+    }
+}

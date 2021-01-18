@@ -13,7 +13,7 @@
 #define     BLACK   0x000000        //nero in esadecimale
 #define     RED     0xff0000        //rosso in esadecimale
 #define     TRASP   -1
-#define     DIM_S   10              //dimensioni stringa punteggio
+#define     DIM_S   30              //dimensioni stringa punteggio
 #define     DIM_RAC 70              //dimensioni racchetta
 //------------------------------------------------------------------------------
 // PUNTI TAVOLO IN PROSPETTIVA
@@ -62,7 +62,7 @@ void init_screen(void);  /* Inizializza lo schermo e crea il task grafico */
 
 void testo(BITMAP* buf);       /* Stampa il testo sullo schermo */
 
-void draw_screen(void);          /* Disegna l'interfaccia */
+void draw_screen(BITMAP* buf);          /* Disegna l'interfaccia su una bitmap */
 
 void white2pink(BITMAP* b);      /* Converte lo sfondo della sprite in rosa */
 
@@ -74,8 +74,10 @@ void draw_ball(void);           /* Disegna la pallina */
 
 void *display(void* arg);       /* Task grafico */
 
-void display_camera(void);      /* Disegna la vista della camera del robot */
+void display_camera_view(BITMAP* buf);      /* Disegna la vista della camera del robot */
 
 void prospective_view(int x, int y, int z);      /* Genera cordinate per vista prospettica */
 
-void* keyboard(void* arg);          // aggiorna i flag in base ai tasti premuti
+void* command(void* arg);          // aggiorna i flag in base ai tasti premuti
+
+void show_diss(int i);          //mostra il numero di deadline miss
