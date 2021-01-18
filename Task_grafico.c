@@ -153,7 +153,10 @@ void racchetta_robot(BITMAP* bmp, int w, int h){
     int x, z, x_old, z_old;
     BITMAP* aux, *buf;
 
-    aux = create_bitmap(WIDTH, HEIGTH);
+    buf = create_bitmap(WIDTH, HEIGTH);
+    clear_bitmap(buf);
+
+    /*aux = create_bitmap(WIDTH, HEIGTH);
     blit(screen, aux, 0, 0, 0, 0, WIDTH, HEIGTH);
 
     if (pview)
@@ -175,7 +178,7 @@ void racchetta_robot(BITMAP* bmp, int w, int h){
     z_old = z;
 
     blit(screen, aux, x, z, x, z, w, h);
-    stretch_sprite(screen, bmp, x, z, w, h);
+    stretch_sprite(screen, bmp, x, z, w, h);*/
     
     x_old = x;
     z_old = z;
@@ -193,8 +196,10 @@ void racchetta_robot(BITMAP* bmp, int w, int h){
         z = robot_z.position;
     }
 
-    blit(aux, screen, x_old, z_old, x_old, z_old, w, h);   
-}
+    /*blit(aux, screen, x_old, z_old, x_old, z_old, w, h);*/
+
+    rectfill(screen, x - 20, z - 20, x + 20, z + 20, RED);
+} 
 
 void draw_ball(void)
 {
@@ -227,11 +232,15 @@ void* display(void* arg){
     i = get_task_index(arg);
     set_activation(i);
 
-    display_camera();
+
+    draw_screen();
+    //display_camera();
     while(!end){
         draw_ball();
+        pview = 1;
         racchetta_robot(rac_r, we, he);
         racchetta_avversario(rac_a, we , he);
+        pview = 0;
 
         //if (deadline_miss(i))
             //show_dmiss
