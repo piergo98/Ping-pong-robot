@@ -30,8 +30,10 @@ void* adversarytask_x(void* arg)
             u = KP*(xd - x) + KD*(vd - v);
             //z = delay(u);
             y = motor(z);
+            if (player)
+                mouse_x_flag = 1;
             update_state(y, T, x_min, x_max, &adversary_x);
-
+            mouse_x_flag = 0;
             if (deadline_miss(i))
                 show_dmiss(i);
 
@@ -67,8 +69,10 @@ void* adversarytask_z(void* arg)
             u = KP*(xd - x) + KD*(vd - v);
             //z = delay(u);
             y = motor(z);
+            if (player)
+                mouse_z_flag = 1;
             update_state(y, T, z_min, z_max, &adversary_z);
-
+            mouse_z_flag = 0;
             if (deadline_miss(i))
                 show_dmiss(i);
                 

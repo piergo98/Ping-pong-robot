@@ -47,7 +47,7 @@ void* motortask_z(void* arg)
         
         i = get_task_index(arg);
         set_activation(i);
-        T = tp[i].deadline;       //la utilizzo per il rapp. inc.
+        T = tp[i].period / 10;       //la utilizzo per il rapp. inc.
 
         z_min = C_Z3 - OFFSET_Z / 3;
         z_max = C_Z3 + OFFSET_Z;
@@ -95,11 +95,17 @@ void update_state(float y, int T, int p_min, int p_max, struct state *robot_tmp)
     
     robot_tmp->speed = ((int)y - robot_tmp->position)/ T;         //rapp. incrementale
     
-        if (y >= p_max)
+        if (y > p_max)
             robot_tmp->position = p_max;
 
-        else if (y <= p_min)
+        else if (y < p_min)
             robot_tmp->position = p_min;
+
+        else if (mouse_x_flag == 1)
+            robot_tmp->position = mouse_x;
+
+        else if (mouse_z_flag == 1)
+            robot_tmp->position = mouse_y;
 
         else
             robot_tmp->position = (int)y; 
@@ -125,4 +131,8 @@ void init_motor(){
     robot_z.speed = 0;
     adversary_x.speed = 0;
     adversary_z.speed = 0;
+
+    player = 0;
+    mouse_x_flag = 0;
+    mouse_z_flag = 0;
 }

@@ -18,8 +18,8 @@
 #define A 0.019    // tau = 0.19s, T = 20 ms, K = 19.23 
 #define B 0.019
 
-#define KP 0.5     //costanti proporzionali e derivative del PID 
-#define KD 0.5
+#define KP 1     //costanti proporzionali e derivative del PID 
+#define KD 1
 
 #define R 5        //raggio puleggia in mm
 //------------------------------------------------------------------------------
@@ -50,6 +50,9 @@ struct state robot_x;        //gestiti dal taskmotor
 struct state robot_z;
 struct state adversary_x;    //gestiti dal task adversary 
 struct state adversary_z;
+
+int player; //flag per la scelta dell'avversario
+int mouse_x_flag, mouse_z_flag;
 
 float motor(float k);
 

@@ -21,7 +21,7 @@ void* balltask(void* arg)
 
             ball.x  += ball.vx * dt - BETA * ball.vx * dt;
             ball.y  += Y_0 + ball.vy * dt - g * dt * dt / 2;
-            ball.z  += ball.vz * dt - BETA * ball.vz * dt;
+            ball.z  -= ball.vz * dt - BETA * ball.vz * dt;
             
             handle_bounce(i);
             store_trail(i);
@@ -78,11 +78,11 @@ float frand(float vxmin, float vxmax)
 
 void init_ball(void)
 {
-   ball.vx = 10;
+   ball.vx = 0;
    ball.vy = 0;
-   ball.vz = -10;
+   ball.vz = -5;
    
    ball.x = 320;
    ball.y = Y_0;
-   ball.z = 330;
+   ball.z = 60;
 }

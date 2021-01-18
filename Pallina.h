@@ -8,18 +8,20 @@
 #include    "Avversario.h"
 
 
-#define G0           9.8    // acceleration of gravity
-#define TLEN         30     // trail length
-#define HMIN         200    // min initial height
-#define HMAX         390    // max initial height
-#define VXMIN        20     // min initial hor. speed
-#define VXMAX        10     // max initial hor. speed
-#define Y_0          100    // initial heigth
-#define DUMP         0.9    // dumping coefficient
-#define TSCALE       10     // time scale factor
-#define BETA         0.2    // adimensional braking coefficient
-#define ERR_MIN      0
-#define ERR_MAX      1 
+#define     G0           9.8    // acceleration of gravity
+#define     TLEN         30     // trail length
+#define     HMIN         200    // min initial height
+#define     HMAX         390    // max initial height
+#define     VXMIN        20     // min initial hor. speed
+#define     VXMAX        10     // max initial hor. speed
+#define     Y_0          100    // initial heigth
+#define     DUMP         0.9    // dumping coefficient
+#define     TSCALE       10     // time scale factor
+#define     BETA         0.2    // adimensional braking coefficient
+#define     ERR_MIN      0
+#define     ERR_MAX      1 
+#define     WIDTH   640
+#define     HEIGTH  480
 
 
 #define RACC_MAX     70     // max racchetta

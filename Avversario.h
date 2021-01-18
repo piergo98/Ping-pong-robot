@@ -19,6 +19,7 @@
 #define     C_X4    480
 #define     C_Z4    420
 
+
 void* adversarytask_x(void* arg);
 
 void* adversarytask_z(void* arg);

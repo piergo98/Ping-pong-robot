@@ -10,7 +10,6 @@ char    punti_avv[DIM_S];
 char    string[DIM_S];
 int     p_rob;          //punteggio robot
 int     p_avv;          //punteggio avversario
-int     pview_flag;     //indicatore per rappresentazione prospettica
 
 BITMAP* rac_r, *rac_a;  //buffer per copiare lo schermo
 BITMAP* memory;         //bitmap provvisoria in cui ho una replica dell'interfaccia da disegnare
@@ -28,9 +27,10 @@ void init_screen(void){
     rac_r = load_bitmap("racp.bmp", NULL);
     rac_a = load_bitmap("racp.bmp", NULL);
 
-    pview_flag = 1;                  //valore di default
+    pview_flag = 0;                  //valore di default
     ball_miss = camera_miss = motor_x_miss = motor_z_miss = adv_x_miss = adv_z_miss = display_miss = tastiera_miss = 0;
-
+    memory = create_bitmap(WIDTH, HEIGTH);
+    clear_bitmap(memory);
 }
 
 void testo(BITMAP* buf){
@@ -49,23 +49,22 @@ void testo(BITMAP* buf){
     textout_ex(buf, font, "utente", X_LEG + 80, P_Z + 90, WHITE, TRASP);
 
     /* Deadline misses */
-    //rect(buf, );
     sprintf(string, "ball = %d", ball_miss);
     textout_ex(buf, font, string, 160, 440, WHITE, TRASP);
     sprintf(string, "camera = %d", camera_miss);
     textout_ex(buf, font, string, 160, 460, WHITE, TRASP);
     sprintf(string, "motor_x = %d", motor_x_miss);
-    textout_ex(buf, font, string, 200, 440, WHITE, TRASP);
+    textout_ex(buf, font, string, 260, 440, WHITE, TRASP);
     sprintf(string, "motor_z = %d", motor_z_miss);
-    textout_ex(buf, font, string, 200, 460, WHITE, TRASP);
+    textout_ex(buf, font, string, 260, 460, WHITE, TRASP);
     sprintf(string, "adv_x = %d", adv_x_miss);
-    textout_ex(buf, font, string, 240, 440, WHITE, TRASP);
+    textout_ex(buf, font, string, 360, 440, WHITE, TRASP);
     sprintf(string, "adv_z = %d", adv_z_miss);
-    textout_ex(buf, font, string, 240, 460, WHITE, TRASP);
+    textout_ex(buf, font, string, 360, 460, WHITE, TRASP);
     sprintf(string, "display = %d", display_miss);
-    textout_ex(buf, font, string, 280, 440, WHITE, TRASP);
+    textout_ex(buf, font, string, 460, 440, WHITE, TRASP);
     sprintf(string, "tastiera = %d", tastiera_miss);
-    textout_ex(buf, font, string, 280, 460, WHITE, TRASP);
+    textout_ex(buf, font, string, 460, 460, WHITE, TRASP);
 
 }
 
@@ -77,7 +76,7 @@ void draw_screen(BITMAP* buf){
         p_rob = 0;
 
         //crea un buffer per realizzare lo sfondo
-        buf = create_bitmap(WIDTH, HEIGTH);
+        //buf = create_bitmap(WIDTH, HEIGTH);
         clear_bitmap(buf);
 
 
@@ -187,17 +186,17 @@ void* display(void* arg){
         i = get_task_index(arg);
         set_activation(i);
 
-        if (pview_flag)
-            draw_screen(memory);
-        else
-            display_camera_view(memory);
-
         while(!end){
+            if (pview_flag)
+                draw_screen(memory);
+            else
+                display_camera_view(memory);
             blit(memory, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
+
             draw_ball();
         
-            racchetta_robot(rac_r, we, he);
             racchetta_avversario(rac_a, we , he);
+            racchetta_robot(rac_r, we, he);
 
             /* Disegna la finestra di ricerca della pallina */
             if (!pview_flag)
@@ -211,11 +210,8 @@ void* display(void* arg){
 
 void display_camera_view(BITMAP* buf){
 
-    //crea un buffer per realizzare lo sfondo
-    buf = create_bitmap(WIDTH, HEIGTH);
-    clear_bitmap(buf);
-
     // Disegna il tavolo visto dall'alto
+    clear_bitmap(buf);
     rectfill(buf, C_X1, C_Z1, C_X2, C_Z2, FIELD);
     rect(buf, C_X1, C_Z1, C_X2, C_Z2, WHITE);
     line(buf, 320, 420, 320, 60, WHITE);     // linea che divide il campo in due meta verticalmente
@@ -235,8 +231,8 @@ void prospective_view(int x, int y, int z)
         z1 = SIN_THETA * y + COS_THETA * z;
 
         /* Determinazione coordinate su piano prospettico */
-        gcord.x = P2_X + x1 * POV_DIST / (POV_DIST - z1);
-        gcord.z = P2_Z + y1 * POV_DIST / (POV_DIST - z1);
+        gcord.x = -x1 * POV_DIST / (POV_DIST - z1);
+        gcord.z = y1 * POV_DIST / (POV_DIST - z1);
 }
 
 void* command(void* arg){

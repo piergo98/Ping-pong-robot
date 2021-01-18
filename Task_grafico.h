@@ -1,8 +1,6 @@
 #include    <allegro.h>
 
 
-#define     WIDTH   640
-#define     HEIGTH  480
 #define     COLOR   32              //profondita di colori: 16 bit
 #define     VERTEX  8
 #define     P_X     20
@@ -56,6 +54,8 @@ struct gpos{
 }; 
 
 struct gpos gcord;
+
+int     pview_flag;     //indicatore per rappresentazione prospettica
 
 void init_screen(void);  /* Inizializza lo schermo e crea il task grafico */
 
