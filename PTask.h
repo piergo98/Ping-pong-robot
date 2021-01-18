@@ -4,7 +4,11 @@
 #include <pthread.h>
 #include <time.h>
 
-#define NT  7            //numero massimo di task
+#define     NT  7            //numero massimo di task
+#define     DIM_S   30       //dimensioni stringa
+
+int     ball_miss, camera_miss, motor_x_miss, motor_z_miss, adv_x_miss, adv_z_miss, display_miss, tastiera_miss;
+
 
 
 struct task_par{	    //struttura che memorizza tutti i parametri del thread
@@ -34,8 +38,6 @@ int     time_cmp (struct timespec t1, struct timespec t2);
 
 /* Dichiarazione prototipi delle funzioni di PTask */
 
-void    *task (void *arg);
-
 int     task_create (void* (*task) (void *), int i, int period, int drel, int prio);
 
 int     get_task_index (void* arg);
@@ -47,3 +49,5 @@ int     deadline_miss(int i);
 void wait_for_activation(int i);
 
 int wait_for_end(int i);
+
+void show_dmiss(int i);          //mostra il numero di deadline miss

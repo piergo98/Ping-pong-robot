@@ -25,6 +25,10 @@ void* balltask(void* arg)
             
             handle_bounce(i);
             store_trail(i);
+
+            if (deadline_miss(i))
+                show_dmiss(i);
+                
             wait_for_activation(i);
         }
 }

@@ -29,6 +29,10 @@ void* motortask_x(void* arg)
             //z = delay(u);
             y = motor(z);
             update_state(y, T, x_min, x_max, &robot_x);
+
+            if (deadline_miss(i))
+                show_dmiss(i);
+
             wait_for_activation(i);
         }
 }
@@ -62,6 +66,10 @@ void* motortask_z(void* arg)
             //z = delay(u);
             y = motor(z);
             update_state(y, T, z_min, z_max, &robot_z);
+
+            if (deadline_miss(i))
+                show_dmiss(i);
+                
             wait_for_activation(i);
         }
 }

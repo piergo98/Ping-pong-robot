@@ -1,6 +1,5 @@
 #include "PTask.h"
 
-
 /*Definizione delle funzioni che operano sulle variabili temporali*/
 
 void time_copy (struct timespec *td, struct timespec ts){     //copia ts nella variabile temporale puntata da td
@@ -31,22 +30,6 @@ int  time_cmp (struct timespec t1, struct timespec t2){       //compara due vari
 }
 
 /*Definizione delle funzioni di PTASK*/
-
-void *task (void *arg){
-
-    int ti;
-
-    ti = get_task_index (arg);
-    set_activation(ti);
-
-    while(1){
-
-        /*task body*/
-
-        if (deadline_miss(ti))  /*fai qualcosa*/;
-        wait_for_activation(ti);
-    }
-}
 
 int task_create (void* (*task) (void *), int i, int period, int drel, int prio){    //crea un task
 
@@ -113,4 +96,38 @@ void wait_for_activation (int i){   //sospende l'esecuzione del thread fino alla
 int wait_for_end(int i){    //attende la terminazione del task
 
     return pthread_join(tid[i], NULL);
+}
+
+void show_dmiss(int i){
+
+    char    string[DIM_S];
+
+            switch(i){
+
+                case 0:
+                    ball_miss += 1;
+                    break;
+                case 1:
+                    camera_miss += 1;
+                    break;
+                case 2:
+                    motor_x_miss += 1;
+                    break;
+                case 3:
+                    motor_z_miss += 1;
+                    break;
+                case 4:
+                    adv_x_miss += 1;
+                    break;
+                case 5:
+                    adv_z_miss += 1;
+                    break;
+                case 6:
+                    display_miss += 1;
+                    break;
+                case 7:
+                    tastiera_miss += 1;
+                    break;
+                default: break;
+            }
 }

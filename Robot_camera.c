@@ -64,12 +64,16 @@ void* camera(void* arg){
 
     int i;      //task index
 
-    i = get_task_index(arg);
-    set_activation(i);
+        i = get_task_index(arg);
+        set_activation(i);
 
-    while(!end){
+        while(!end){
 
-        prediction(&window);
-        wait_for_activation(i);
-    }
+            prediction(&window);
+
+            if (deadline_miss(i))
+                show_dmiss(i);
+                
+            wait_for_activation(i);
+        }
 }

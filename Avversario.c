@@ -31,6 +31,10 @@ void* adversarytask_x(void* arg)
             //z = delay(u);
             y = motor(z);
             update_state(y, T, x_min, x_max, &adversary_x);
+
+            if (deadline_miss(i))
+                show_dmiss(i);
+
             wait_for_activation(i);
         }
 }
@@ -64,6 +68,10 @@ void* adversarytask_z(void* arg)
             //z = delay(u);
             y = motor(z);
             update_state(y, T, z_min, z_max, &adversary_z);
+
+            if (deadline_miss(i))
+                show_dmiss(i);
+                
             wait_for_activation(i);
         }
 }

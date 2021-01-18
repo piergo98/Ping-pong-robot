@@ -13,7 +13,6 @@
 #define     BLACK   0x000000        //nero in esadecimale
 #define     RED     0xff0000        //rosso in esadecimale
 #define     TRASP   -1
-#define     DIM_S   30              //dimensioni stringa punteggio
 #define     DIM_RAC 70              //dimensioni racchetta
 //------------------------------------------------------------------------------
 // PUNTI TAVOLO IN PROSPETTIVA
@@ -80,4 +79,4 @@ void prospective_view(int x, int y, int z);      /* Genera cordinate per vista p
 
 void* command(void* arg);          // aggiorna i flag in base ai tasti premuti
 
-void show_diss(int i);          //mostra il numero di deadline miss
+

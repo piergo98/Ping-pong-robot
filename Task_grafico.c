@@ -11,7 +11,6 @@ char    string[DIM_S];
 int     p_rob;          //punteggio robot
 int     p_avv;          //punteggio avversario
 int     pview_flag;     //indicatore per rappresentazione prospettica
-int     ball_miss, camera_miss, motor_x_miss, motor_z_miss, adv_x_miss, adv_z_miss, display_miss, tastiera_miss;
 
 BITMAP* rac_r, *rac_a;  //buffer per copiare lo schermo
 BITMAP* memory;         //bitmap provvisoria in cui ho una replica dell'interfaccia da disegnare
@@ -31,6 +30,7 @@ void init_screen(void){
 
     pview_flag = 1;                  //valore di default
     ball_miss = camera_miss = motor_x_miss = motor_z_miss = adv_x_miss = adv_z_miss = display_miss = tastiera_miss = 0;
+
 }
 
 void testo(BITMAP* buf){
@@ -73,28 +73,28 @@ void draw_screen(BITMAP* buf){
 
     int i;
     int vertici[VERTEX] = {P1_X, P1_Z, P2_X, P2_Z, P3_X, P3_Z, P4_X, P4_Z};
-    p_avv = 0;
-    p_rob = 0;
+        p_avv = 0;
+        p_rob = 0;
 
-    //crea un buffer per realizzare lo sfondo
-    buf = create_bitmap(WIDTH, HEIGTH);
-    clear_bitmap(buf);
+        //crea un buffer per realizzare lo sfondo
+        buf = create_bitmap(WIDTH, HEIGTH);
+        clear_bitmap(buf);
 
 
-    // Disegna il tavolo
-    polygon(buf, 4, vertici, FIELD);
-    line(buf, 320, 420, 320, 100, WHITE);
+        // Disegna il tavolo
+        polygon(buf, 4, vertici, FIELD);
+        line(buf, 320, 420, 320, 100, WHITE);
 
-    // Disegna la rete
-    for (i = 0;i < 381;i += 5){
+        // Disegna la rete
+        for (i = 0;i < 381;i += 5)
         line(buf, 130 + i, 240, 130 + i, 210, WHITE);
-    }
-    for (i = 0;i < 31;i += 5){
-        line(buf, 130, 210 + i, 510, 210 + i, WHITE);
-    }
-    blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
-    testo(buf);
-    textout_ex(buf, font, "V -> Vista verticale", X_LEG, P_Z + 60, WHITE, TRASP);
+
+        for (i = 0;i < 31;i += 5)
+            line(buf, 130, 210 + i, 510, 210 + i, WHITE);
+    
+        //blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
+        testo(buf);
+        textout_ex(buf, font, "V -> Vista verticale", X_LEG, P_Z + 60, WHITE, TRASP);
 }
 
 void white2pink(BITMAP* b){
@@ -104,79 +104,78 @@ void white2pink(BITMAP* b){
     int     i, j, c;
     int     pink;
     
-    pink = makecol(255, 0, 255);
-    b = load_bitmap("racchetta_nosfondo32.bmp", NULL);
-    racp = create_bitmap(b->w, b->h);
-    for (i = 0; i < b->w; i++){
-        for (j = 0; j < b->h; j++){
-            c = getpixel(b, i, j);
-            if (c == WHITE) c = pink;
-            putpixel(racp, i, j, c);
-        }
-    }
-    get_palette(pal);
-    save_bitmap("racp.bmp", racp, pal);
+            pink = makecol(255, 0, 255);
+            b = load_bitmap("racchetta_nosfondo32.bmp", NULL);
+            racp = create_bitmap(b->w, b->h);
+            for (i = 0; i < b->w; i++){
+                for (j = 0; j < b->h; j++){
+                    c = getpixel(b, i, j);
+                    if (c == WHITE) c = pink;
+                    putpixel(racp, i, j, c);
+                }
+            }
+            get_palette(pal);
+            save_bitmap("racp.bmp", racp, pal);
 }
 
 void racchetta_avversario(BITMAP* bmp, int w, int h){
 
     int x, z;
 
-    if (pview_flag)
-    {
-       prospective_view(adversary_x.position, Y_0, adversary_z.position);
+        if (pview_flag)
+        {
+            prospective_view(adversary_x.position, Y_0, adversary_z.position);
 
-       x = gcord.x;
-       z = gcord.z;
-       stretch_sprite(screen, bmp, x, z, w, h);
-    }
-    else 
-    {
-        x = adversary_x.position;
-        z = adversary_z.position;
-        rectfill(screen, x - 20, z - 20, x + 20, z + 20, RED);
-    } 
+            x = gcord.x;
+            z = gcord.z;
+            stretch_sprite(screen, bmp, x, z, w, h);
+        }
+        else 
+        {
+            x = adversary_x.position;
+            z = adversary_z.position;
+            rectfill(screen, x - 20, z - 20, x + 20, z + 20, RED);
+        } 
 }
 
 void racchetta_robot(BITMAP* bmp, int w, int h){
 
     int x, z, x_old, z_old;
 
-    if (pview_flag)
-    {
-       prospective_view(robot_x.position, Y_0, robot_z.position);
+        if (pview_flag)
+        {
+            prospective_view(robot_x.position, Y_0, robot_z.position);
 
-        x = gcord.x;
-        z = gcord.z;
-        stretch_sprite(screen, bmp, x, z, w, h);
-    }
-    else 
-    {
-        x = robot_x.position;
-        z = robot_z.position;
-        rectfill(screen, x - 20, z - 20, x + 20, z + 20, RED);
-    } 
+            x = gcord.x;
+            z = gcord.z;
+            stretch_sprite(screen, bmp, x, z, w, h);
+        }
+        else 
+        {
+            x = robot_x.position;
+            z = robot_z.position;
+            rectfill(screen, x - 20, z - 20, x + 20, z + 20, RED);
+        } 
 } 
 
 void draw_ball(void)
 {
     int x, z;
 
-    if (pview_flag)
-    {
-       prospective_view(ball.x, ball.y, ball.z);
+        if (pview_flag)
+        {
+            prospective_view(ball.x, ball.y, ball.z);
 
-       x = gcord.x;
-       z = gcord.z;
-
-    }
-    else 
-    {
-        x = ball.x;
-        z = ball.z;
-    }
+            x = gcord.x;
+            z = gcord.z;
+        }
+        else 
+        {
+            x = ball.x;
+            z = ball.z;
+        }
     
-    circlefill(screen, x, z, BALL_RADIUS, BALL_COLOR);
+        circlefill(screen, x, z, BALL_RADIUS, BALL_COLOR);
 }
 
 void* display(void* arg){
@@ -185,28 +184,28 @@ void* display(void* arg){
     int we = DIM_RAC;
     int he = DIM_RAC;
 
-    i = get_task_index(arg);
-    set_activation(i);
+        i = get_task_index(arg);
+        set_activation(i);
 
-    if (pview_flag)
-        draw_screen(memory);
-    else
-        display_camera_view(memory);
+        if (pview_flag)
+            draw_screen(memory);
+        else
+            display_camera_view(memory);
 
-    while(!end){
-        blit(memory, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
-        draw_ball();
+        while(!end){
+            blit(memory, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
+            draw_ball();
         
-        racchetta_robot(rac_r, we, he);
-        racchetta_avversario(rac_a, we , he);
+            racchetta_robot(rac_r, we, he);
+            racchetta_avversario(rac_a, we , he);
 
-        /* Disegna la finestra di ricerca della pallina */
-        if (!pview_flag)
-            rect(screen, window.x0-(SIZE_X/2), window.z0+(SIZE_Z/2), window.x0+(SIZE_X/2), window.z0-(SIZE_Z/2), RED);
+            /* Disegna la finestra di ricerca della pallina */
+            if (!pview_flag)
+                rect(screen, window.x0-(SIZE_X/2), window.z0+(SIZE_Z/2), window.x0+(SIZE_X/2), window.z0-(SIZE_Z/2), RED);
 
-        //if (deadline_miss(i))
-            //show_dmiss
-        wait_for_activation(i);
+            if (deadline_miss(i))
+                show_dmiss(i);
+            wait_for_activation(i);
     }
 }
 
@@ -230,71 +229,41 @@ void prospective_view(int x, int y, int z)
 {
     int x1, y1, z1;
 
-    /* Rotazione su x di un angolo theta */
-    x1 = x;
-    y1 = COS_THETA * y - SIN_THETA * z;
-    z1 = SIN_THETA * y + COS_THETA * z;
+        /* Rotazione su x di un angolo theta */
+        x1 = x;
+        y1 = COS_THETA * y - SIN_THETA * z;
+        z1 = SIN_THETA * y + COS_THETA * z;
 
-    /* Determinazione coordinate su piano prospettico */
-    gcord.x = P2_X + x1 * POV_DIST / (POV_DIST - z1);
-    gcord.z = P2_Z + y1 * POV_DIST / (POV_DIST - z1);
+        /* Determinazione coordinate su piano prospettico */
+        gcord.x = P2_X + x1 * POV_DIST / (POV_DIST - z1);
+        gcord.z = P2_Z + y1 * POV_DIST / (POV_DIST - z1);
 }
 
 void* command(void* arg){
 
-    int i;
-    char scan;
+    int     i;
+    char    scan;
 
-    i = get_task_index(arg);
+            i = get_task_index(arg);
 
-    do {
-        scan = 0;
-        if (keypressed()) scan = readkey() >> 8;
-        switch(scan){
-            case KEY_V:
-                pview_flag = 0;
-                break;
-            case KEY_P:
-                pview_flag = 1;
-                break;
-            default: break; //da aggiungere altre opzioni
-        }
-        
-    } while(scan != KEY_ESC);
-    end = 1;
-    wait_for_activation(i);
+            do {
+                scan = 0;
+                if (keypressed()) scan = readkey() >> 8;
+                switch(scan){
+                    case KEY_V:
+                        pview_flag = 0;
+                        break;
+                    case KEY_P:
+                        pview_flag = 1;
+                        break;
+                    default: break; //da aggiungere altre opzioni
+                }
+            } while(scan != KEY_ESC);
+            end = 1;
+
+            if (deadline_miss(i))
+                show_dmiss(i);
+
+            wait_for_activation(i);
 }
 
-void show_dmiss(int i){
-
-    char string[DIM_S];
-
-    switch(i){
-
-        case 0:
-            ball_miss += 1;
-            break;
-        case 1:
-            camera_miss += 1;
-            break;
-        case 2:
-            motor_x_miss += 1;
-            break;
-        case 3:
-            motor_z_miss += 1;
-            break;
-        case 4:
-            adv_x_miss += 1;
-            break;
-        case 5:
-            adv_z_miss += 1;
-            break;
-        case 6:
-            display_miss += 1;
-            break;
-        case 7:
-            tastiera_miss += 1;
-            break;
-        default: break;
-    }
-}

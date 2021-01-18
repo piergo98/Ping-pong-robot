@@ -8,14 +8,14 @@ int main(void){
 
     int i;
 
-    init();
+        init();
     
-    for (i = 0; i<7; i++) wait_for_end(i);
-    allegro_exit();
-    return 0;
+        for (i = 0; i<7; i++) wait_for_end(i);
+        allegro_exit();
+        return 0;
 }
 
-void init(){
+void init(void){
 
     init_ball();
     init_camera();
