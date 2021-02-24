@@ -45,7 +45,7 @@ void* adversarytask_z(void* arg)
 {
     int   i, T;         // task index
     int   z_min, z_max;             // limiti di movimento
-    int   xd, vd;       // desired position and speed
+    int   zd, vd;       // desired position and speed
     int   x,  v;        // actual  position and speed
     float   u, z, y;    // temporary variables
         
@@ -64,9 +64,9 @@ void* adversarytask_z(void* arg)
         while(!end) {
 
             vd = 0;
-            xd = buffer[NEXT].z;
+            zd = buffer[NEXT].z;
             get_state(&x, &v, &adversary_z);
-            u = KP*(xd - x) + KD*(vd - v);
+            u = KP*(zd - x) + KD*(vd - v);
             //z = delay(u);
             y = motor(z);
             if (player)

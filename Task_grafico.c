@@ -66,6 +66,26 @@ void testo(BITMAP* buf){
     sprintf(string, "tastiera = %d", tastiera_miss);
     textout_ex(buf, font, string, 460, 460, WHITE, TRASP);
 
+    /* Coordinate pallina e racchette */
+    sprintf(string, "Xp = %f", ball.x);
+    textout_ex(buf, font, string, 500, 140, WHITE, TRASP);
+    sprintf(string, "Yp = %f", ball.y);
+    textout_ex(buf, font, string, 500, 160, WHITE, TRASP);
+    sprintf(string, "Zp = %f", ball.z);
+    textout_ex(buf, font, string, 500, 180, WHITE, TRASP);
+    sprintf(string, "Xa = %d", adversary_x.position);
+    textout_ex(buf, font, string, 500, 200, WHITE, TRASP);
+    sprintf(string, "Za = %d", adversary_z.position);
+    textout_ex(buf, font, string, 500, 220, WHITE, TRASP);
+    sprintf(string, "Xr = %d", robot_x.position);
+    textout_ex(buf, font, string, 500, 240, WHITE, TRASP);
+    sprintf(string, "Zr = %d", robot_z.position);
+    textout_ex(buf, font, string, 500, 260, WHITE, TRASP);
+    sprintf(string, "Xc = %d", window.x0);
+    textout_ex(buf, font, string, 500, 280, WHITE, TRASP);
+    sprintf(string, "Zc = %d", window.z0);
+    textout_ex(buf, font, string, 500, 300, WHITE, TRASP);
+
 }
 
 void draw_screen(BITMAP* buf){
@@ -76,9 +96,7 @@ void draw_screen(BITMAP* buf){
         p_rob = 0;
 
         //crea un buffer per realizzare lo sfondo
-        //buf = create_bitmap(WIDTH, HEIGTH);
         clear_bitmap(buf);
-
 
         // Disegna il tavolo
         polygon(buf, 4, vertici, FIELD);
@@ -91,7 +109,6 @@ void draw_screen(BITMAP* buf){
         for (i = 0;i < 31;i += 5)
             line(buf, 130, 210 + i, 510, 210 + i, WHITE);
     
-        //blit(buf, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
         testo(buf);
         textout_ex(buf, font, "V -> Vista verticale", X_LEG, P_Z + 60, WHITE, TRASP);
 }
@@ -251,6 +268,12 @@ void* command(void* arg){
                         break;
                     case KEY_P:
                         pview_flag = 1;
+                        break;
+                    case KEY_U:
+                        player = 1;
+                        break;
+                    case KEY_R:
+                        player = 0;
                         break;
                     default: break; //da aggiungere altre opzioni
                 }

@@ -46,12 +46,12 @@ struct state       // va messa a zero quando accendo il sistema
     int speed;
 };
 
-struct state robot_x;        //gestiti dal taskmotor
+struct state robot_x;           //gestiti dal taskmotor
 struct state robot_z;
-struct state adversary_x;    //gestiti dal task adversary 
+struct state adversary_x;       //gestiti dal task adversary 
 struct state adversary_z;
 
-int player; //flag per la scelta dell'avversario
+int player;                     //flag per la scelta dell'avversario
 int mouse_x_flag, mouse_z_flag;
 
 float motor(float k);

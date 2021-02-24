@@ -2,23 +2,23 @@
 
 void* motortask_x(void* arg)
 {
-    int   i, T;                     // task index
-    int   x_min, x_max;             // limiti di movimento      
-    int   xd, vd;                   // desired position and speed
-    int   x,  v;                    // actual  position and speed
-    float   u, z, y;                // temporary variables
+    int     i,      T;                    // task index
+    int     x_min,  x_max;                // limiti di movimento      
+    int     xd,     vd;                   // desired position and speed
+    int     x,      v;                    // actual  position and speed
+    float   u,      z,      y;            // temporary variables
         
-        i = get_task_index(arg);
-        set_activation(i);
-        T = tp[i].deadline;         //la utilizzo per il rapp. inc.
+            i = get_task_index(arg);
+            set_activation(i);
+            T = tp[i].deadline;           //la utilizzo per il rapp. inc.
 
-        x_min = C_X3 - OFFSET_X;
-        x_max = C_X2 + OFFSET_X;
+            x_min = C_X3 - OFFSET_X;
+            x_max = C_X2 + OFFSET_X;
         
-        prevtheta.in[NOW] = 0;      //sarebbe stato piu' bello un for?
-        prevtheta.in[BEFORE] = 0;
-        prevtheta.out[NOW] = 0;
-        prevtheta.out[BEFORE] = 0;
+            prevtheta.in[NOW] = 0;        //sarebbe stato piu' bello un for?
+            prevtheta.in[BEFORE] = 0;
+            prevtheta.out[NOW] = 0;
+            prevtheta.out[BEFORE] = 0;
 
         while(!end) {
 
@@ -39,23 +39,23 @@ void* motortask_x(void* arg)
 
 void* motortask_z(void* arg)
 {
-    int   i, T;         // task index
-    int   z_min, z_max;             // limiti di movimento
-    int   xd, vd;       // desired position and speed
-    int   x,  v;        // actual  position and speed
-    float   u, z, y;    // temporary variables
+    int     i,      T;         // task index
+    int     z_min,  z_max;             // limiti di movimento
+    int     xd,     vd;       // desired position and speed
+    int     x,      v;        // actual  position and speed
+    float   u,      z,      y;    // temporary variables
         
-        i = get_task_index(arg);
-        set_activation(i);
-        T = tp[i].period / 10;       //la utilizzo per il rapp. inc.
+            i = get_task_index(arg);
+            set_activation(i);
+            T = tp[i].period / 10;       //la utilizzo per il rapp. inc.
 
-        z_min = C_Z3 - OFFSET_Z / 3;
-        z_max = C_Z3 + OFFSET_Z;
+            z_min = C_Z3 - OFFSET_Z / 3;
+            z_max = C_Z3 + OFFSET_Z;
 
-        prevtheta.in[NOW] = 0;
-        prevtheta.in[BEFORE] = 0;
-        prevtheta.out[NOW] = 0;
-        prevtheta.out[BEFORE] = 0;
+            prevtheta.in[NOW] = 0;
+            prevtheta.in[BEFORE] = 0;
+            prevtheta.out[NOW] = 0;
+            prevtheta.out[BEFORE] = 0;
 
         while(!end) {
 
@@ -132,7 +132,7 @@ void init_motor(){
     adversary_x.speed = 0;
     adversary_z.speed = 0;
 
-    player = 0;
+    player = 1;
     mouse_x_flag = 0;
     mouse_z_flag = 0;
 }

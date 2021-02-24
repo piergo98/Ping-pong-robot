@@ -5,7 +5,7 @@
 #define     VERTEX  8
 #define     P_X     20
 #define     P_Z     20
-#define     X_LEG   480
+#define     X_LEG   490
 #define     FIELD   0x9acd32        //colore del campo in esadecimale
 #define     WHITE   0xffffff        //bianco in esadecimale
 #define     BLACK   0x000000        //nero in esadecimale
