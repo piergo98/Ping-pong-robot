@@ -3,15 +3,16 @@
 #include <sched.h>
 #include <pthread.h>
 #include <time.h>
+#include <semaphore.h>
 
 #define     NT  7            //numero massimo di task
 #define     DIM_S   30       //dimensioni stringa
 
 int     ball_miss, camera_miss, motor_x_miss, motor_z_miss, adv_x_miss, adv_z_miss, display_miss, tastiera_miss;
 
+sem_t   s1, s2, s14, s15, s16, s17, s18, s19, s20, s21;
 
-
-struct task_par{	    //struttura che memorizza tutti i parametri del thread
+struct  task_par{	    //struttura che memorizza tutti i parametri del thread
 
     int     arg;            //argomento del task
     int     wcet;           //wcet in microsecondi (ms)
@@ -46,8 +47,10 @@ void    set_activation (int i);
 
 int     deadline_miss(int i);
 
-void wait_for_activation(int i);
+void    wait_for_activation(int i);
 
-int wait_for_end(int i);
+int     wait_for_end(int i);
 
-void show_dmiss(int i);          //mostra il numero di deadline miss
+void    show_dmiss(int i);          //mostra il numero di deadline miss
+
+void     autokill(int i);

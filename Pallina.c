@@ -2,7 +2,7 @@
 
 int tflag = 0;                  //trail flag
 int tl = 10;                    //actual trail lenght
-int end = 0;                    //end flag
+//int end = 0;                    //end flag
 float g = G0;                   //acceleration of gravity
 
 
@@ -20,7 +20,7 @@ void* balltask(void* arg)
         while (!end) {
 
             ball.x  += ball.vx * dt - BETA * ball.vx * dt;
-            ball.y  += Y_0 + ball.vy * dt - g * dt * dt / 2;
+            ball.y  += 0.01*(Y_0 + ball.vy * dt - g * dt * dt / 2);
             ball.z  -= ball.vz * dt - BETA * ball.vz * dt;
             
             handle_bounce(i);

@@ -31,7 +31,7 @@ int  time_cmp (struct timespec t1, struct timespec t2){       //compara due vari
 
 /*Definizione delle funzioni di PTASK*/
 
-int task_create (void* (*task) (void *), int i, int period, int drel, int prio){    //crea un task
+int     task_create (void* (*task) (void *), int i, int period, int drel, int prio){    //crea un task
 
     pthread_attr_t myatt;	    //definisco un puntatore alla struttura degli attributi
     struct sched_param mypar;	//definisco la struttura mypar, del tipo sched_param
@@ -39,11 +39,13 @@ int task_create (void* (*task) (void *), int i, int period, int drel, int prio){
 
     if (i > NT) return -1;
 
+    sem_wait(&s1);
     tp[i].arg = i;
     tp[i].period = period;
     tp[i].deadline = drel;
     tp[i].priority = prio;
     tp[i].dmiss = 0;
+    sem_post(&s1);
     pthread_attr_init (&myatt);
     pthread_attr_setinheritsched (&myatt, PTHREAD_EXPLICIT_SCHED);
     pthread_attr_setschedpolicy (&myatt, SCHED_RR);
@@ -55,7 +57,7 @@ int task_create (void* (*task) (void *), int i, int period, int drel, int prio){
     return tret;
 }
 
-int get_task_index (void* arg){     //restituisce l'indice del task
+int     get_task_index (void* arg){     //restituisce l'indice del task
 
     struct task_par *tpar;
 
@@ -63,7 +65,7 @@ int get_task_index (void* arg){     //restituisce l'indice del task
     return tpar->arg;
 }
 
-void set_activation (int i){        //legge il tempo corrente e calcola l'attivazione successiva e la deadline assoluta
+void    set_activation (int i){        //legge il tempo corrente e calcola l'attivazione successiva e la deadline assoluta
 
     struct timespec t;
 
@@ -74,7 +76,7 @@ void set_activation (int i){        //legge il tempo corrente e calcola l'attiva
     time_add_ms(&(tp[i].dl), tp[i].deadline);
 }
 
-int deadline_miss (int i){          //conta il numero di deadline misses
+int     deadline_miss (int i){          //conta il numero di deadline misses
 
     struct timespec now;
 
@@ -86,48 +88,69 @@ int deadline_miss (int i){          //conta il numero di deadline misses
     return 0;
 }
 
-void wait_for_activation (int i){   //sospende l'esecuzione del thread fino alla prossima attivazione
+void    wait_for_activation (int i){   //sospende l'esecuzione del thread fino alla prossima attivazione
 
     clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &(tp[i].at), NULL);
     time_add_ms(&(tp[i].at), tp[i].period);
     time_add_ms(&(tp[i].dl), tp[i].deadline);
 }
 
-int wait_for_end(int i){    //attende la terminazione del task
+int     wait_for_end(int i){    //attende la terminazione del task
 
     return pthread_join(tid[i], NULL);
 }
 
-void show_dmiss(int i){
+void    show_dmiss(int i){
 
     char    string[DIM_S];
 
             switch(i){
 
                 case 0:
+                    sem_wait(&s14);
                     ball_miss += 1;
+                    sem_post(&s14);
                     break;
                 case 1:
+                    sem_wait(&s15);
                     camera_miss += 1;
+                    sem_post(&s15);
                     break;
                 case 2:
+                    sem_wait(&s16);
                     motor_x_miss += 1;
+                    sem_post(&s16);
                     break;
                 case 3:
+                    sem_wait(&s17);
                     motor_z_miss += 1;
+                    sem_post(&s17);
                     break;
                 case 4:
+                    sem_wait(&s18);
                     adv_x_miss += 1;
+                    sem_post(&s18);
                     break;
                 case 5:
+                    sem_wait(&s19);
                     adv_z_miss += 1;
+                    sem_post(&s19);
                     break;
                 case 6:
+                    sem_wait(&s20);
                     display_miss += 1;
+                    sem_post(&s20);
                     break;
                 case 7:
+                    sem_wait(&s21);
                     tastiera_miss += 1;
+                    sem_post(&s21);
                     break;
                 default: break;
             }
+}
+
+void    autokill(int i){
+
+    pthread_exit(NULL);
 }
