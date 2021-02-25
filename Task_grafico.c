@@ -117,39 +117,45 @@ void testo(BITMAP* buf){
     /* Coordinate pallina e racchette */
     sem_wait(&s13);
     sprintf(string, "Xp = %f", ball.x);
-    textout_ex(buf, font, string, 500, 140, WHITE, TRASP);
-    sprintf(string, "Yp = %f", ball.y);
-    textout_ex(buf, font, string, 500, 160, WHITE, TRASP);
-    sprintf(string, "Zp = %f", ball.z);
-    textout_ex(buf, font, string, 500, 180, WHITE, TRASP);
     sem_post(&s13);
+    textout_ex(buf, font, string, 500, 140, WHITE, TRASP);
+    sem_wait(&s13);
+    sprintf(string, "Yp = %f", ball.y);
+    sem_post(&s13);
+    textout_ex(buf, font, string, 500, 160, WHITE, TRASP);
+    sem_wait(&s13);
+    sprintf(string, "Zp = %f", ball.z);
+    sem_post(&s13);
+    textout_ex(buf, font, string, 500, 180, WHITE, TRASP);    
 
     sem_wait(&s8);
     sprintf(string, "Xa = %d", adversary_x.position);
-    textout_ex(buf, font, string, 500, 200, WHITE, TRASP);
     sem_post(&s8);
+    textout_ex(buf, font, string, 500, 200, WHITE, TRASP);    
 
     sem_wait(&s9);
     sprintf(string, "Za = %d", adversary_z.position);
-    textout_ex(buf, font, string, 500, 220, WHITE, TRASP);
     sem_post(&s9);
+    textout_ex(buf, font, string, 500, 220, WHITE, TRASP);
 
     sem_wait(&s6);
     sprintf(string, "Xr = %d", robot_x.position);
-    textout_ex(buf, font, string, 500, 240, WHITE, TRASP);
     sem_post(&s6);
+    textout_ex(buf, font, string, 500, 240, WHITE, TRASP);
 
     sem_wait(&s7);
     sprintf(string, "Zr = %d", robot_z.position);
-    textout_ex(buf, font, string, 500, 260, WHITE, TRASP);
     sem_post(&s7);
+    textout_ex(buf, font, string, 500, 260, WHITE, TRASP);
     
     sem_wait(&s4);
     sprintf(string, "Xc = %d", window.x0);
-    textout_ex(buf, font, string, 500, 280, WHITE, TRASP);
-    sprintf(string, "Zc = %d", window.z0);
-    textout_ex(buf, font, string, 500, 300, WHITE, TRASP);
     sem_post(&s4);
+    textout_ex(buf, font, string, 500, 280, WHITE, TRASP);
+    sem_wait(&s4);
+    sprintf(string, "Zc = %d", window.z0);
+    sem_post(&s4);
+    textout_ex(buf, font, string, 500, 300, WHITE, TRASP); 
 
 }
 
@@ -218,11 +224,11 @@ void racchetta_avversario(BITMAP* bmp, int w, int h){
         else 
         {
             sem_wait(&s8);
-            sem_wait(&s9);
             x = adversary_x.position;
-            z = adversary_z.position;
-            sem_post(&s9);
             sem_post(&s8);
+            sem_wait(&s9);
+            z = adversary_z.position;
+            sem_post(&s9);            
 
             rectfill(screen, x - 20, z - 20, x + 20, z + 20, RED);
         } 
@@ -246,15 +252,14 @@ void racchetta_robot(BITMAP* bmp, int w, int h){
         }
         else 
         {
-            sem_wait(&s7);
+            
             sem_wait(&s6);
             x = robot_x.position;
             sem_post(&s6);
-            
-
+            sem_wait(&s7);
             z = robot_z.position;
-            rectfill(screen, x - 20, z - 20, x + 20, z + 20, RED);
             sem_post(&s7);
+            rectfill(screen, x - 20, z - 20, x + 20, z + 20, RED);
         } 
 } 
 
@@ -288,6 +293,7 @@ void* display(void* arg){
         i = get_task_index(arg);
         set_activation(i);
 
+        //sem_wait(&s2);
         while(!end){
             if (pview_flag)
                 draw_screen(memory);
@@ -310,7 +316,8 @@ void* display(void* arg){
             if (deadline_miss(i))
                 show_dmiss(i);
             wait_for_activation(i);
-    }
+        }
+        //sem_post(&s2);
 }
 
 void display_camera_view(BITMAP* buf){
@@ -359,18 +366,22 @@ void* command(void* arg){
                         pview_flag = 1;
                         break;
                     case KEY_U:
+                        sem_wait(&s10);
                         player = 1;
+                        sem_post(&s10);
                         break;
                     case KEY_R:
+                        sem_wait(&s10);
                         player = 0;
+                        sem_post(&s10);
                         break;
                     default: break; //da aggiungere altre opzioni
                 }
                 sem_post(&s10);
             } while(scan != KEY_ESC);
-            sem_wait(&s2);
+            //sem_wait(&s2);
             end = 1;
-            sem_post(&s2);
+            //sem_post(&s2);
 
             if (deadline_miss(i))
                 show_dmiss(i);

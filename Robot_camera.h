@@ -38,8 +38,6 @@ struct coord buffer[DIM];
 
 struct win   window;       //finestra di ricerca
 
-sem_t s3, s4;
-
 void init_camera(void);
 
 int centroid(struct win w, struct  coord   *target);    /* Calcola il centro di un certo target, specificato dal colore */

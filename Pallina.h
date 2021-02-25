@@ -59,8 +59,6 @@ struct cbuf {               // circular buffer structure
 struct cbuf trail;          
 struct status ball;
 
-sem_t s13;
-
 void store_trail( int i);
 
 void handle_bounce(int i);

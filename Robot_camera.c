@@ -76,6 +76,7 @@ void* camera(void* arg){
         i = get_task_index(arg);
         set_activation(i);
 
+        //sem_wait(&s2);
         while(!end){
 
             sem_wait(&s4);
@@ -87,4 +88,5 @@ void* camera(void* arg){
                 
             wait_for_activation(i);
         }
+        //sem_post(&s2);
 }

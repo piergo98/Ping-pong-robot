@@ -15,10 +15,11 @@ void* balltask(void* arg)
         set_activation(i);
         
         //init_ball();
-        sem_wait(&s1);
+        //sem_wait(&s1);
         dt = TSCALE* (float)tp[i].period /1000;
-        sem_post(&s1);
+        //sem_post(&s1);
         
+        //sem_wait(&s2);
         while (!end) {
             
             sem_wait(&s13);
@@ -35,6 +36,7 @@ void* balltask(void* arg)
                 
             wait_for_activation(i);
         }
+        //sem_post(&s2);
 }
 
 void store_trail( int i)
@@ -78,7 +80,9 @@ void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racc
     }
     sem_post(&s9);
     sem_post(&s8);
+    sem_post(&s13);
 
+    sem_wait(&s13);
     if (ball.y == 0)
     {
         ball.vy = -ball.vy;
