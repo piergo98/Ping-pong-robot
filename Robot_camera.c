@@ -3,16 +3,21 @@
 void init_camera(){
 
     /* Inizializzo la struttura puntata da window (DA METTERE NELLA FUNZIONE INIT()*/
+    sem_wait(&s4);
     window.x0 = 320;
     window.z0 = 240;
     window.xsize = SIZE_X;
     window.zsize = SIZE_Z;
+    sem_post(&s4);
+
+    sem_wait(&s3);
     buffer[BEFORE].x = 0;
     buffer[BEFORE].z = 0;
     buffer[NOW].x = 0;
     buffer[NOW].z = 0;
     buffer[NEXT].x = 0;
     buffer[NEXT].z = 0;
+    sem_post(&s3);
 }
 
 int centroid(struct win w, struct coord *target){
@@ -43,9 +48,11 @@ void prediction(struct win* w){
 
     int i, r;
 
+    sem_wait(&s3);
+
     buffer[BEFORE].x = buffer[NEXT].x;
     buffer[BEFORE].z = buffer[NEXT].z;
-
+    
     while (!centroid(*w, &buffer[NOW])){    //vede dove si trova la pallina adesso
         w->xsize += DELTA_X;
         w->zsize += DELTA_Z;
@@ -58,6 +65,8 @@ void prediction(struct win* w){
     /* sposto la finestra di ricerca */
     w->x0 = buffer[NEXT].x - (w->xsize / 2);
     w->z0 = buffer[NEXT].z - (w->zsize / 2);
+
+    sem_post(&s3);
 }
 
 void* camera(void* arg){
@@ -69,7 +78,9 @@ void* camera(void* arg){
 
         while(!end){
 
+            sem_wait(&s4);
             prediction(&window);
+            sem_post(&s4);
 
             if (deadline_miss(i))
                 show_dmiss(i);

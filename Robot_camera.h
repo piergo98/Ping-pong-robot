@@ -7,7 +7,7 @@
 
 #include    "PTask.h"
 
-#define     TARGET_COLOR    0xFFC060    //colore pallina
+#define     TARGET_COLOR    0xfa6717    //colore pallina
 #define     THRESHOLD       10          //numero minimo di pixel per riconoscere la pallina
 #define     DIM             3           //dimensioni buffer per memorizzare i valori passati del centro della pallina
 #define     BEFORE          0           //centro precedente
@@ -37,6 +37,8 @@ struct coord{      /* struttura che contiene le coordinate di un punto */
 struct coord buffer[DIM];
 
 struct win   window;       //finestra di ricerca
+
+sem_t s3, s4;
 
 void init_camera(void);
 

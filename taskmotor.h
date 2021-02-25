@@ -54,6 +54,8 @@ struct state adversary_z;
 int player;                     //flag per la scelta dell'avversario
 int mouse_x_flag, mouse_z_flag;
 
+sem_t s5, s6, s7, s8, s9, s10, s11, s12;
+
 float motor(float k);
 
 void update_state(float y, int T, int p_min, int p_max, struct state *robot_tmp);

@@ -47,7 +47,7 @@ void init(void){
     init_screen();
 
     task_create(balltask, 0, 40, 40, 80);
-    task_create(camera, 1, 40, 40, 70);
+    task_create(camera, 1, 20, 20, 70);
     task_create(motortask_x, 2, 50, 50, 60);
     task_create(motortask_z, 3, 50, 50, 60);
     task_create(adversarytask_x, 4, 50, 50, 60);

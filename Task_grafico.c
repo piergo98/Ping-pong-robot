@@ -115,24 +115,41 @@ void testo(BITMAP* buf){
     textout_ex(buf, font, string, 460, 460, WHITE, TRASP);   
     
     /* Coordinate pallina e racchette */
+    sem_wait(&s13);
     sprintf(string, "Xp = %f", ball.x);
     textout_ex(buf, font, string, 500, 140, WHITE, TRASP);
     sprintf(string, "Yp = %f", ball.y);
     textout_ex(buf, font, string, 500, 160, WHITE, TRASP);
     sprintf(string, "Zp = %f", ball.z);
     textout_ex(buf, font, string, 500, 180, WHITE, TRASP);
+    sem_post(&s13);
+
+    sem_wait(&s8);
     sprintf(string, "Xa = %d", adversary_x.position);
     textout_ex(buf, font, string, 500, 200, WHITE, TRASP);
+    sem_post(&s8);
+
+    sem_wait(&s9);
     sprintf(string, "Za = %d", adversary_z.position);
     textout_ex(buf, font, string, 500, 220, WHITE, TRASP);
+    sem_post(&s9);
+
+    sem_wait(&s6);
     sprintf(string, "Xr = %d", robot_x.position);
     textout_ex(buf, font, string, 500, 240, WHITE, TRASP);
+    sem_post(&s6);
+
+    sem_wait(&s7);
     sprintf(string, "Zr = %d", robot_z.position);
     textout_ex(buf, font, string, 500, 260, WHITE, TRASP);
+    sem_post(&s7);
+    
+    sem_wait(&s4);
     sprintf(string, "Xc = %d", window.x0);
     textout_ex(buf, font, string, 500, 280, WHITE, TRASP);
     sprintf(string, "Zc = %d", window.z0);
     textout_ex(buf, font, string, 500, 300, WHITE, TRASP);
+    sem_post(&s4);
 
 }
 
@@ -188,7 +205,11 @@ void racchetta_avversario(BITMAP* bmp, int w, int h){
 
         if (pview_flag)
         {
+            sem_wait(&s8);
+            sem_wait(&s9);
             prospective_view(adversary_x.position, Y_0, adversary_z.position);
+            sem_post(&s9);
+            sem_post(&s8);
 
             x = gcord.x;
             z = gcord.z;
@@ -196,8 +217,13 @@ void racchetta_avversario(BITMAP* bmp, int w, int h){
         }
         else 
         {
+            sem_wait(&s8);
+            sem_wait(&s9);
             x = adversary_x.position;
             z = adversary_z.position;
+            sem_post(&s9);
+            sem_post(&s8);
+
             rectfill(screen, x - 20, z - 20, x + 20, z + 20, RED);
         } 
 }
@@ -208,7 +234,11 @@ void racchetta_robot(BITMAP* bmp, int w, int h){
 
         if (pview_flag)
         {
+            sem_wait(&s7);
+            sem_wait(&s6);
             prospective_view(robot_x.position, Y_0, robot_z.position);
+            sem_post(&s6);
+            sem_post(&s7);
 
             x = gcord.x;
             z = gcord.z;
@@ -216,16 +246,22 @@ void racchetta_robot(BITMAP* bmp, int w, int h){
         }
         else 
         {
+            sem_wait(&s7);
+            sem_wait(&s6);
             x = robot_x.position;
+            sem_post(&s6);
+            
+
             z = robot_z.position;
             rectfill(screen, x - 20, z - 20, x + 20, z + 20, RED);
+            sem_post(&s7);
         } 
 } 
 
 void draw_ball(void)
 {
     int x, z;
-
+        sem_wait(&s13);
         if (pview_flag)
         {
             prospective_view(ball.x, ball.y, ball.z);
@@ -238,6 +274,7 @@ void draw_ball(void)
             x = ball.x;
             z = ball.z;
         }
+        sem_post(&s13);
     
         circlefill(screen, x, z, BALL_RADIUS, BALL_COLOR);
 }
@@ -265,7 +302,10 @@ void* display(void* arg){
 
             /* Disegna la finestra di ricerca della pallina */
             if (!pview_flag)
+            
+                sem_wait(&s4);
                 rect(screen, window.x0-(SIZE_X/2), window.z0+(SIZE_Z/2), window.x0+(SIZE_X/2), window.z0-(SIZE_Z/2), RED);
+                sem_post(&s4);
 
             if (deadline_miss(i))
                 show_dmiss(i);
@@ -310,6 +350,7 @@ void* command(void* arg){
             do {
                 scan = 0;
                 if (keypressed()) scan = readkey() >> 8;
+                sem_wait(&s10);
                 switch(scan){
                     case KEY_V:
                         pview_flag = 0;
@@ -325,6 +366,7 @@ void* command(void* arg){
                         break;
                     default: break; //da aggiungere altre opzioni
                 }
+                sem_post(&s10);
             } while(scan != KEY_ESC);
             sem_wait(&s2);
             end = 1;
