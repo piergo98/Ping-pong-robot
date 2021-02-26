@@ -350,7 +350,7 @@ void* command(void* arg){
             do {
                 scan = 0;
                 if (keypressed()) scan = readkey() >> 8;
-                sem_wait(&s10);
+                //sem_wait(&s10);
                 switch(scan){
                     case KEY_V:
                         pview_flag = 0;
@@ -366,11 +366,11 @@ void* command(void* arg){
                         break;
                     default: break; //da aggiungere altre opzioni
                 }
-                sem_post(&s10);
+                //sem_post(&s10);
             } while(scan != KEY_ESC);
-            sem_wait(&s2);
+            //sem_wait(&s2);
             end = 1;
-            sem_post(&s2);
+            //sem_post(&s2);
 
             if (deadline_miss(i))
                 show_dmiss(i);

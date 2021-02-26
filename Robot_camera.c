@@ -78,9 +78,9 @@ void* camera(void* arg){
 
         while(!end){
 
-            sem_wait(&s4);
+            //sem_wait(&s4);                      //Se decommento questo semaforo da' schermo nero
             prediction(&window);
-            sem_post(&s4);
+            //sem_post(&s4);
 
             if (deadline_miss(i))
                 show_dmiss(i);

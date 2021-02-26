@@ -160,12 +160,14 @@ void init_motor(){
     sem_wait(&s10);
     player = 1;
     sem_post(&s10);
+    
     sem_wait(&s11);
     sem_wait(&s12);
     mouse_x_flag = 0;
     mouse_z_flag = 0;
     sem_post(&s12);
     sem_post(&s11);
+    
     sem_post(&s9);
     sem_post(&s8);
     sem_post(&s7);
