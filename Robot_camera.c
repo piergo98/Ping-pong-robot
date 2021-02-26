@@ -44,44 +44,59 @@ int centroid(struct win w, struct coord *target){
         return 0;                       //target non trovato    
 }
 
-void prediction(struct win* w){
+void prediction(struct win* w, struct coord memory[DIM]){
 
     int i, r;
 
-    sem_wait(&s3);
+    memory[BEFORE].x = memory[NEXT].x;
+    memory[BEFORE].z = memory[NEXT].z;
 
-    buffer[BEFORE].x = buffer[NEXT].x;
-    buffer[BEFORE].z = buffer[NEXT].z;
-    
-    while (!centroid(*w, &buffer[NOW])){    //vede dove si trova la pallina adesso
+    while (!centroid(*w, &memory[NOW])){    //vede dove si trova la pallina adesso
         w->xsize += DELTA_X;
         w->zsize += DELTA_Z;
     }
     /* predizione lungo x */
-    buffer[NEXT].x = (2 * buffer[NOW].x) - buffer[BEFORE].x;
+    memory[NEXT].x = (2 * memory[NOW].x) - memory[BEFORE].x;
     /* predizione lungo y */
-    buffer[NEXT].z = (2 * buffer[NOW].z) - buffer[BEFORE].z;
+    memory[NEXT].z = (2 * memory[NOW].z) - memory[BEFORE].z;
     
     /* sposto la finestra di ricerca */
-    w->x0 = buffer[NEXT].x - (w->xsize / 2);
-    w->z0 = buffer[NEXT].z - (w->zsize / 2);
-
-    sem_post(&s3);
+    w->x0 = memory[NEXT].x - (w->xsize / 2);
+    w->z0 = memory[NEXT].z - (w->zsize / 2);
 }
 
 void* camera(void* arg){
 
-    int i;      //task index
+    int             i;          //task index
+    struct coord    temp[DIM]; 
 
         i = get_task_index(arg);
         set_activation(i);
 
+        sem_wait(&s3);
+        temp[BEFORE].x = buffer[BEFORE].x;
+        temp[BEFORE].z = buffer[BEFORE].z;
+        temp[NOW].x = buffer[NOW].x;
+        temp[NOW].z = buffer[NOW].z;
+        temp[NEXT].x = buffer[NEXT].x;
+        temp[NEXT].z = buffer[NEXT].z;
+        sem_post(&s3);
+
         //sem_wait(&s2);
         while(!end){
+            
+            //sem_wait(&s4);
+            prediction(&window, temp);
+            //sem_post(&s4);
 
-            sem_wait(&s4);
-            prediction(&window);
-            sem_post(&s4);
+            sem_wait(&s3);
+            buffer[BEFORE].x = temp[BEFORE].x;
+            buffer[BEFORE].z = temp[BEFORE].z;
+            buffer[NOW].x = temp[NOW].x;
+            buffer[NOW].z = temp[NOW].z;
+            buffer[NEXT].x = temp[NEXT].x;
+            buffer[NEXT].z = temp[NEXT].z;
+            sem_post(&s3);
 
             if (deadline_miss(i))
                 show_dmiss(i);

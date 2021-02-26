@@ -9,6 +9,7 @@ void* adversarytask_x(void* arg)
     int   xd, vd;                   // desired position and speed
     int   x,  v;                    // actual  position and speed
     float   u, z, y;                // temporary variables
+    struct  state   temp;           //temporary structure
         
         i = get_task_index(arg);
         set_activation(i);
@@ -26,18 +27,21 @@ void* adversarytask_x(void* arg)
         prevtheta.out[BEFORE] = 0;
         sem_post(&s5);
 
+        sem_wait(&s8);
+        temp.position = adversary_x.position;
+        temp.speed = adversary_x.speed;
+        sem_post(&s8);
+
         //sem_wait(&s2);
         while(!end) {
 
             vd = 0;
 
             sem_wait(&s3);
-            xd = buffer[NOW].x;
+            xd = buffer[NEXT].x;
             sem_post(&s3);
 
-            sem_wait(&s8);
-            get_state(&x, &v, &adversary_x);
-            sem_post(&s8);
+            get_state(&x, &v, &temp);
             u = KP*(xd - x) + KD*(vd - v);
             //z = delay(u);
             y = motor(z);
@@ -49,12 +53,16 @@ void* adversarytask_x(void* arg)
                 sem_post(&s11);
             }
             sem_post(&s10);
-            sem_wait(&s8);
-            update_state(y, T, x_min, x_max, &adversary_x);
-            sem_post(&s8);
+
+            update_state(y, T, x_min, x_max, &temp);
             sem_wait(&s11);
             mouse_x_flag = 0;
             sem_post(&s11);
+
+            sem_wait(&s8);
+            adversary_x.position = temp.position;
+            adversary_x.speed = temp.speed;
+            sem_post(&s8);
             
 
             if (deadline_miss(i))
@@ -67,11 +75,12 @@ void* adversarytask_x(void* arg)
 
 void* adversarytask_z(void* arg)
 {
-    int   i, T;         // task index
-    int   z_min, z_max;             // limiti di movimento
-    int   zd, vd;       // desired position and speed
-    int   x,  v;        // actual  position and speed
-    float   u, z, y;    // temporary variables
+    int   i, T;                 // task index
+    int   z_min, z_max;         // limiti di movimento
+    int   zd, vd;               // desired position and speed
+    int   x,  v;                // actual  position and speed
+    float   u, z, y;            // temporary variables
+    struct  state   temp;       //temporary structure
         
         i = get_task_index(arg);
         set_activation(i);
@@ -89,6 +98,11 @@ void* adversarytask_z(void* arg)
         prevtheta.out[BEFORE] = 0;
         sem_post(&s5);
 
+        sem_wait(&s9);
+        temp.position = adversary_z.position;
+        temp.speed = adversary_z.speed;
+        sem_post(&s9);
+
         //sem_wait(&s2);
         while(!end) {
 
@@ -98,19 +112,23 @@ void* adversarytask_z(void* arg)
             zd = buffer[NEXT].z;
             sem_post(&s3);
 
-            sem_wait(&s9);
-            get_state(&x, &v, &adversary_z);
+            get_state(&x, &v, &temp);
             u = KP*(zd - x) + KD*(vd - v);
             //z = delay(u);
             y = motor(z);
+
             sem_wait(&s12);
             sem_wait(&s10);
             if (player)
                 mouse_z_flag = 1;
             sem_post(&s10);
-            update_state(y, T, z_min, z_max, &adversary_z);
+            update_state(y, T, z_min, z_max, &temp);
             mouse_z_flag = 0;
             sem_post(&s12);
+
+            sem_wait(&s9);
+            adversary_z.position = temp.position;
+            adversary_z.speed = temp.speed;
             sem_post(&s9);
 
             if (deadline_miss(i))

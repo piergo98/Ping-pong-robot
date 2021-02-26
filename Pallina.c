@@ -25,7 +25,7 @@ void* balltask(void* arg)
             sem_wait(&s13);
             ball.x  += ball.vx * dt - BETA * ball.vx * dt;
             ball.y  += 0.01*(Y_0 + ball.vy * dt - g * dt * dt / 2);
-            ball.z  -= ball.vz * dt - BETA * ball.vz * dt;
+            ball.z  += ball.vz * dt - BETA * ball.vz * dt;
             sem_post(&s13);
 
             handle_bounce(i);

@@ -7,6 +7,7 @@ void* motortask_x(void* arg)
     int     xd,     vd;                   // desired position and speed
     int     x,      v;                    // actual  position and speed
     float   u,      z,      y;            // temporary variables
+    struct  state   temp;                 // temporary structure
         
             i = get_task_index(arg);
             set_activation(i);
@@ -24,21 +25,29 @@ void* motortask_x(void* arg)
             prevtheta.out[BEFORE] = 0;
             sem_post(&s5);
 
+            sem_wait(&s6);
+            temp.position = robot_x.position;
+            temp.speed = robot_x.speed;
+            sem_post(&s6);
+
             //sem_wait(&s2);
             while(!end) {
 
                 vd = 0;
 
                 sem_wait(&s3);
-                xd = buffer[NOW].x;
+                xd = buffer[NEXT].x;
                 sem_post(&s3);
 
-                sem_wait(&s6);
-                get_state(&x, &v, &robot_x);
+                get_state(&x, &v, &temp);
                 u = KP*(xd - x) + KD*(vd - v);
                 //z = delay(u);
                 y = motor(z);
-                update_state(y, T, x_min, x_max, &robot_x);
+                update_state(y, T, x_min, x_max, &temp);
+                
+                sem_wait(&s6);
+                robot_x.position = temp.position;
+                robot_x.speed = temp.speed;
                 sem_post(&s6);
 
                 if (deadline_miss(i))
@@ -51,11 +60,13 @@ void* motortask_x(void* arg)
 
 void* motortask_z(void* arg)
 {
-    int     i,      T;         // task index
-    int     z_min,  z_max;             // limiti di movimento
-    int     xd,     vd;       // desired position and speed
-    int     x,      v;        // actual  position and speed
-    float   u,      z,      y;    // temporary variables
+    int     i,      T;              // task index
+    int     z_min,  z_max;          // limiti di movimento
+    int     xd,     vd;             // desired position and speed
+    int     x,      v;              // actual  position and speed
+    float   u,      z,      y;      // temporary variables
+    struct  state   temp;           //temporary structure
+
         
             i = get_task_index(arg);
             set_activation(i);
@@ -73,6 +84,11 @@ void* motortask_z(void* arg)
             prevtheta.out[BEFORE] = 0;
             sem_post(&s5);
 
+            sem_wait(&s7);
+            temp.position = robot_z.position;
+            temp.speed = robot_z.speed;
+            sem_post(&s7);
+
             //sem_wait(&s2);
             while(!end) {
 
@@ -82,12 +98,15 @@ void* motortask_z(void* arg)
                 xd = buffer[NEXT].z;
                 sem_post(&s3);
 
-                sem_wait(&s7);
-                get_state(&x, &v, &robot_z);
+                get_state(&x, &v, &temp);
                 u = KP*(xd - x) + KD*(vd - v);
                 //z = delay(u);
                 y = motor(z);
-                update_state(y, T, z_min, z_max, &robot_z);
+                update_state(y, T, z_min, z_max, &temp);
+                
+                sem_wait(&s7);
+                robot_z.position = temp.position;
+                robot_z.speed = temp.speed;
                 sem_post(&s7);
 
                 if (deadline_miss(i))
@@ -149,35 +168,21 @@ void get_state(int *xi, int *vi, struct state *robot_tmp)
 
 void init_motor(){
 
-    
-    
-    
-    
-    /* Inizializza le posizioni dei robot */
+    /* Inizializza le posizioni e le velocità dei robot */
     sem_wait(&s6);
     robot_x.position = C_X1;
-    sem_post(&s6);
-    sem_wait(&s7);
-    robot_z.position = C_Z2;
-    sem_post(&s7);
-    sem_wait(&s8);
-    adversary_x.position = C_X2;
-    sem_post(&s8);
-    sem_wait(&s9);
-    adversary_z.position = C_Z1;
-    sem_post(&s9);
-
-    /* Inizializza le velocita' dei robot */
-    sem_wait(&s6);
     robot_x.speed = 0;
     sem_post(&s6);
     sem_wait(&s7);
+    robot_z.position = C_Z2;
     robot_z.speed = 0;
     sem_post(&s7);
     sem_wait(&s8);
+    adversary_x.position = C_X2;
     adversary_x.speed = 0;
     sem_post(&s8);
     sem_wait(&s9);
+    adversary_z.position = C_Z1;
     adversary_z.speed = 0;
     sem_post(&s9);
 
