@@ -3,21 +3,21 @@
 void init_camera(){
 
     /* Inizializzo la struttura puntata da window (DA METTERE NELLA FUNZIONE INIT()*/
-    sem_wait(&s4);
+    pthread_mutex_lock(&s4);
     window.x0 = 320;
     window.z0 = 240;
     window.xsize = SIZE_X;
     window.zsize = SIZE_Z;
-    sem_post(&s4);
+    pthread_mutex_unlock(&s4);
 
-    sem_wait(&s3);
+    pthread_mutex_lock(&s3);
     buffer[BEFORE].x = 0;
     buffer[BEFORE].z = 0;
     buffer[NOW].x = 0;
     buffer[NOW].z = 0;
     buffer[NEXT].x = 0;
     buffer[NEXT].z = 0;
-    sem_post(&s3);
+    pthread_mutex_unlock(&s3);
 }
 
 int centroid(struct win w, struct coord *target){
@@ -73,30 +73,30 @@ void* camera(void* arg){
         i = get_task_index(arg);
         set_activation(i);
 
-        sem_wait(&s3);
+        pthread_mutex_lock(&s3);
         temp[BEFORE].x = buffer[BEFORE].x;
         temp[BEFORE].z = buffer[BEFORE].z;
         temp[NOW].x = buffer[NOW].x;
         temp[NOW].z = buffer[NOW].z;
         temp[NEXT].x = buffer[NEXT].x;
         temp[NEXT].z = buffer[NEXT].z;
-        sem_post(&s3);
+        pthread_mutex_unlock(&s3);
 
         //sem_wait(&s2);
         while(!end){
             
-            //sem_wait(&s4);
+            //pthread_mutex_lock(&s4);
             prediction(&window, temp);
-            //sem_post(&s4);
+            //pthread_mutex_unlock(&s4);
 
-            sem_wait(&s3);
+            pthread_mutex_lock(&s3);
             buffer[BEFORE].x = temp[BEFORE].x;
             buffer[BEFORE].z = temp[BEFORE].z;
             buffer[NOW].x = temp[NOW].x;
             buffer[NOW].z = temp[NOW].z;
             buffer[NEXT].x = temp[NEXT].x;
             buffer[NEXT].z = temp[NEXT].z;
-            sem_post(&s3);
+            pthread_mutex_unlock(&s3);
 
             if (deadline_miss(i))
                 show_dmiss(i);

@@ -115,46 +115,46 @@ void testo(BITMAP* buf){
     textout_ex(buf, font, string, 460, 460, WHITE, TRASP);   
     
     /* Coordinate pallina e racchette */
-    sem_wait(&s13);
+    pthread_mutex_lock(&s13);
     sprintf(string, "Xp = %f", ball.x);
-    sem_post(&s13);
+    pthread_mutex_unlock(&s13);
     textout_ex(buf, font, string, 500, 140, WHITE, TRASP);
-    sem_wait(&s13);
+    pthread_mutex_lock(&s13);
     sprintf(string, "Yp = %f", ball.y);
-    sem_post(&s13);
+    pthread_mutex_unlock(&s13);
     textout_ex(buf, font, string, 500, 160, WHITE, TRASP);
-    sem_wait(&s13);
+    pthread_mutex_lock(&s13);
     sprintf(string, "Zp = %f", ball.z);
-    sem_post(&s13);
+    pthread_mutex_unlock(&s13);
     textout_ex(buf, font, string, 500, 180, WHITE, TRASP);    
 
-    sem_wait(&s8);
+    pthread_mutex_lock(&s8);
     sprintf(string, "Xa = %d", adversary_x.position);
-    sem_post(&s8);
+    pthread_mutex_unlock(&s8);
     textout_ex(buf, font, string, 500, 200, WHITE, TRASP);    
 
-    sem_wait(&s9);
+    pthread_mutex_lock(&s9);
     sprintf(string, "Za = %d", adversary_z.position);
-    sem_post(&s9);
+    pthread_mutex_unlock(&s9);
     textout_ex(buf, font, string, 500, 220, WHITE, TRASP);
 
-    sem_wait(&s6);
+    pthread_mutex_lock(&s6);
     sprintf(string, "Xr = %d", robot_x.position);
-    sem_post(&s6);
+    pthread_mutex_unlock(&s6);
     textout_ex(buf, font, string, 500, 240, WHITE, TRASP);
 
-    sem_wait(&s7);
+    pthread_mutex_lock(&s7);
     sprintf(string, "Zr = %d", robot_z.position);
-    sem_post(&s7);
+    pthread_mutex_unlock(&s7);
     textout_ex(buf, font, string, 500, 260, WHITE, TRASP);
     
-    sem_wait(&s4);
+    pthread_mutex_lock(&s4);
     sprintf(string, "Xc = %d", window.x0);
-    sem_post(&s4);
+    pthread_mutex_unlock(&s4);
     textout_ex(buf, font, string, 500, 280, WHITE, TRASP);
-    sem_wait(&s4);
+    pthread_mutex_lock(&s4);
     sprintf(string, "Zc = %d", window.z0);
-    sem_post(&s4);
+    pthread_mutex_unlock(&s4);
     textout_ex(buf, font, string, 500, 300, WHITE, TRASP); 
 
 }
@@ -211,11 +211,11 @@ void racchetta_avversario(BITMAP* bmp, int w, int h){
 
         if (pview_flag)
         {
-            sem_wait(&s8);
-            sem_wait(&s9);
+            pthread_mutex_lock(&s8);
+            pthread_mutex_lock(&s9);
             prospective_view(adversary_x.position, Y_0, adversary_z.position);
-            sem_post(&s9);
-            sem_post(&s8);
+            pthread_mutex_unlock(&s9);
+            pthread_mutex_unlock(&s8);
 
             x = gcord.x;
             z = gcord.z;
@@ -223,12 +223,12 @@ void racchetta_avversario(BITMAP* bmp, int w, int h){
         }
         else 
         {
-            sem_wait(&s8);
+            pthread_mutex_lock(&s8);
             x = adversary_x.position;
-            sem_post(&s8);
-            sem_wait(&s9);
+            pthread_mutex_unlock(&s8);
+            pthread_mutex_lock(&s9);
             z = adversary_z.position;
-            sem_post(&s9);            
+            pthread_mutex_unlock(&s9);            
 
             rectfill(screen, x - 20, z - 20, x + 20, z + 20, RED);
         } 
@@ -240,11 +240,11 @@ void racchetta_robot(BITMAP* bmp, int w, int h){
 
         if (pview_flag)
         {
-            sem_wait(&s7);
-            sem_wait(&s6);
+            pthread_mutex_lock(&s7);
+            pthread_mutex_lock(&s6);
             prospective_view(robot_x.position, Y_0, robot_z.position);
-            sem_post(&s6);
-            sem_post(&s7);
+            pthread_mutex_unlock(&s6);
+            pthread_mutex_unlock(&s7);
 
             x = gcord.x;
             z = gcord.z;
@@ -253,12 +253,12 @@ void racchetta_robot(BITMAP* bmp, int w, int h){
         else 
         {
             
-            sem_wait(&s6);
+            pthread_mutex_lock(&s6);
             x = robot_x.position;
-            sem_post(&s6);
-            sem_wait(&s7);
+            pthread_mutex_unlock(&s6);
+            pthread_mutex_lock(&s7);
             z = robot_z.position;
-            sem_post(&s7);
+            pthread_mutex_unlock(&s7);
             rectfill(screen, x - 20, z - 20, x + 20, z + 20, RED);
         } 
 } 
@@ -266,7 +266,7 @@ void racchetta_robot(BITMAP* bmp, int w, int h){
 void draw_ball(void)
 {
     int x, z;
-        sem_wait(&s13);
+        pthread_mutex_lock(&s13);
         if (pview_flag)
         {
             prospective_view(ball.x, ball.y, ball.z);
@@ -279,7 +279,7 @@ void draw_ball(void)
             x = ball.x;
             z = ball.z;
         }
-        sem_post(&s13);
+        pthread_mutex_unlock(&s13);
     
         circlefill(screen, x, z, BALL_RADIUS, BALL_COLOR);
 }
@@ -309,9 +309,9 @@ void* display(void* arg){
             /* Disegna la finestra di ricerca della pallina */
             if (!pview_flag)
             
-                sem_wait(&s4);
+                pthread_mutex_lock(&s4);
                 rect(screen, window.x0-(SIZE_X/2), window.z0+(SIZE_Z/2), window.x0+(SIZE_X/2), window.z0-(SIZE_Z/2), RED);
-                sem_post(&s4);
+                pthread_mutex_unlock(&s4);
 
             if (deadline_miss(i))
                 show_dmiss(i);
@@ -365,14 +365,14 @@ void* command(void* arg){
                         pview_flag = 1;
                         break;
                     case KEY_U:
-                        sem_wait(&s10);
+                        pthread_mutex_lock(&s10);
                         player = 1;
-                        sem_post(&s10);
+                        pthread_mutex_unlock(&s10);
                         break;
                     case KEY_R:
-                        sem_wait(&s10);
+                        pthread_mutex_lock(&s10);
                         player = 0;
-                        sem_post(&s10);
+                        pthread_mutex_unlock(&s10);
                         break;
                     default: break; //da aggiungere altre opzioni
                 }

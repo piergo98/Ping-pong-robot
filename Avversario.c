@@ -20,49 +20,49 @@ void* adversarytask_x(void* arg)
         x_min = C_X1 - OFFSET_X;
         x_max = C_X4 + OFFSET_X;
 
-        sem_wait(&s5); 
+        pthread_mutex_lock(&s5); 
         prevtheta.in[NOW] = 0;      //sarebbe stato piu' bello un for?
         prevtheta.in[BEFORE] = 0;
         prevtheta.out[NOW] = 0;
         prevtheta.out[BEFORE] = 0;
-        sem_post(&s5);
+        pthread_mutex_unlock(&s5);
 
-        sem_wait(&s8);
+        pthread_mutex_lock(&s8);
         temp.position = adversary_x.position;
         temp.speed = adversary_x.speed;
-        sem_post(&s8);
+        pthread_mutex_unlock(&s8);
 
         //sem_wait(&s2);
         while(!end) {
 
             vd = 0;
 
-            sem_wait(&s3);
+            pthread_mutex_lock(&s3);
             xd = buffer[NEXT].x;
-            sem_post(&s3);
+            pthread_mutex_unlock(&s3);
 
             get_state(&x, &v, &temp);
             u = KP*(xd - x) + KD*(vd - v);
             //z = delay(u);
             y = motor(z);
             
-            sem_wait(&s10);
+            pthread_mutex_lock(&s10);
             if (player){
-                sem_wait(&s11);
+                pthread_mutex_lock(&s11);
                 mouse_x_flag = 1;
-                sem_post(&s11);
+                pthread_mutex_unlock(&s11);
             }
-            sem_post(&s10);
+            pthread_mutex_unlock(&s10);
 
             update_state(y, T, x_min, x_max, &temp);
-            sem_wait(&s11);
+            pthread_mutex_lock(&s11);
             mouse_x_flag = 0;
-            sem_post(&s11);
+            pthread_mutex_unlock(&s11);
 
-            sem_wait(&s8);
+            pthread_mutex_lock(&s8);
             adversary_x.position = temp.position;
             adversary_x.speed = temp.speed;
-            sem_post(&s8);
+            pthread_mutex_unlock(&s8);
             
 
             if (deadline_miss(i))
@@ -91,45 +91,45 @@ void* adversarytask_z(void* arg)
         z_min = C_Z1 - OFFSET_Z;
         z_max = C_Z1 + OFFSET_Z / 3;
 
-        sem_wait(&s5);
+        pthread_mutex_lock(&s5);
         prevtheta.in[NOW] = 0;
         prevtheta.in[BEFORE] = 0;
         prevtheta.out[NOW] = 0;
         prevtheta.out[BEFORE] = 0;
-        sem_post(&s5);
+        pthread_mutex_unlock(&s5);
 
-        sem_wait(&s9);
+        pthread_mutex_lock(&s9);
         temp.position = adversary_z.position;
         temp.speed = adversary_z.speed;
-        sem_post(&s9);
+        pthread_mutex_unlock(&s9);
 
         //sem_wait(&s2);
         while(!end) {
 
             vd = 0;
 
-            sem_wait(&s3);
+            pthread_mutex_lock(&s3);
             zd = buffer[NEXT].z;
-            sem_post(&s3);
+            pthread_mutex_unlock(&s3);
 
             get_state(&x, &v, &temp);
             u = KP*(zd - x) + KD*(vd - v);
             //z = delay(u);
             y = motor(z);
 
-            sem_wait(&s12);
-            sem_wait(&s10);
+            pthread_mutex_lock(&s12);
+            pthread_mutex_lock(&s10);
             if (player)
                 mouse_z_flag = 1;
-            sem_post(&s10);
+            pthread_mutex_unlock(&s10);
             update_state(y, T, z_min, z_max, &temp);
             mouse_z_flag = 0;
-            sem_post(&s12);
+            pthread_mutex_unlock(&s12);
 
-            sem_wait(&s9);
+            pthread_mutex_lock(&s9);
             adversary_z.position = temp.position;
             adversary_z.speed = temp.speed;
-            sem_post(&s9);
+            pthread_mutex_unlock(&s9);
 
             if (deadline_miss(i))
                 show_dmiss(i);

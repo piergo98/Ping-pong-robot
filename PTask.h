@@ -10,9 +10,10 @@
 
 int     ball_miss, camera_miss, motor_x_miss, motor_z_miss, adv_x_miss, adv_z_miss, display_miss, tastiera_miss;
 
-//sem_t   s1, s2;
+sem_t   s1, s2, s14, s15, s16, s17, s18, s19, s20, s21;
 
-sem_t   s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19, s20, s21;
+pthread_mutex_t   s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13; 
+pthread_mutexattr_t    mux_att;
 
 struct  task_par{	    //struttura che memorizza tutti i parametri del thread
 
