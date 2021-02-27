@@ -25,58 +25,25 @@ int main(void){
     
             init();
 
-            task_create(balltask, 0, 20, 20, 80);
-            task_create(camera, 1, 60, 60, 70);
-            task_create(motortask_x, 2, 50, 50, 60);
-            task_create(motortask_z, 3, 50, 50, 60);
-            task_create(adversarytask_x, 4, 50, 50, 60);
-            task_create(adversarytask_z, 5, 50, 50, 60);
-            //task_create(command, 7, 5, 5, 40);
-            task_create(display, 6, 20, 20, 50);
+            task_create(balltask, 0, 40, 40, PRIO_BALL);
+            task_create(camera, 1, 40, 40, PRIO_CAMERA);
+            task_create(motortask_x, 2, 50, 50, PRIO_MOTOR_X);
+            task_create(motortask_z, 3, 50, 50, PRIO_MOTOR_Z);
+            task_create(adversarytask_x, 4, 50, 50, PRIO_ADV_X);
+            task_create(adversarytask_z, 5, 50, 50, PRIO_ADV_Z);
+            //task_create(command, 7, 5, 5, PRIO_KEY);
+            task_create(display, 6, 20, 20, PRIO_DISPLAY);
 
+            j = 8;
             while(!end){
-
-                /*sem_getvalue(&s3, &sem_3);
-                printf("s3 = %d\n", sem_3);
-                sem_getvalue(&s4, &sem_4);
-                printf("s4 = %d\n", sem_4);
-                sem_getvalue(&s5, &sem_5);
-                printf("s5 = %d\n", sem_5);
-                sem_getvalue(&s6, &sem_6);
-                printf("s6 = %d\n", sem_6);
-                sem_getvalue(&s7, &sem_7);
-                printf("s7 = %d\n", sem_7);
-                sem_getvalue(&s8, &sem_8);
-                printf("s8 = %d\n", sem_8);
-                sem_getvalue(&s9, &sem_9);
-                printf("s9 = %d\n", sem_9);
-                sem_getvalue(&s10, &sem_10);
-                printf("s10 = %d\n", sem_10);
-                sem_getvalue(&s11, &sem_11);
-                printf("s11 = %d\n", sem_11);
-                sem_getvalue(&s11, &sem_12);
-                printf("s12 = %d\n", sem_12);
-                sem_getvalue(&s13, &sem_13);
-                printf("s13 = %d\n", sem_13);
-                sem_getvalue(&s14, &sem_14);
-                printf("s14 = %d\n", sem_14);
-                sem_getvalue(&s15, &sem_15);
-                printf("s15 = %d\n", sem_15);
-                sem_getvalue(&s16, &sem_16);
-                printf("s16 = %d\n", sem_16);
-                sem_getvalue(&s17, &sem_17);
-                printf("s17 = %d\n", sem_17);
-                sem_getvalue(&s18, &sem_18);
-                printf("s18 = %d\n", sem_18);
-                sem_getvalue(&s19, &sem_19);
-                printf("s19 = %d\n", sem_19);
-                sem_getvalue(&s20, &sem_20);
-                printf("s20 = %d\n", sem_20);
-                sem_getvalue(&s21, &sem_21);
-                printf("s21 = %d\n", sem_21);
-                printf("-------------------------------------------------------\n"); */
+                if (new_ball) {
+                    init_ball();
+                    task_create(balltask, j, 40, 40, PRIO_BALL);
+                    new_ball = 0;
+                    j++;
+                }
             }
-    
+        
             for (i = 0; i<7; i++) wait_for_end(i);
             allegro_exit();
             return 0;

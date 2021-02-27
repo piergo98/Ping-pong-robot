@@ -8,15 +8,15 @@
 #include    "PTask.h"
 
 #define     TARGET_COLOR    0xfa6717    //colore pallina
-#define     THRESHOLD       10          //numero minimo di pixel per riconoscere la pallina
+#define     THRESHOLD       1          //numero minimo di pixel per riconoscere la pallina
 #define     DIM             3           //dimensioni buffer per memorizzare i valori passati del centro della pallina
 #define     BEFORE          0           //centro precedente
 #define     NOW             1           //centro attuale
 #define     NEXT            2           //centro successivo
 #define     DELTA_X         40          //incremento delle dimensioni della finestra di ricerca lungo x
 #define     DELTA_Z         30          //incremento delle dimensioni della finestra di ricerca lungo x
-#define     SIZE_X          200         //lunghezza finestra di ricerca
-#define     SIZE_Z          200         //altezza finestra di ricerca
+#define     SIZE_X          320         //lunghezza finestra di ricerca
+#define     SIZE_Z          360         //altezza finestra di ricerca
 
 
 struct win{        /* struttura che definisce la finestra di ricerca dell'oggetto */

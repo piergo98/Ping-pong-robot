@@ -149,13 +149,21 @@ void testo(BITMAP* buf){
     textout_ex(buf, font, string, 500, 260, WHITE, TRASP);
     
     pthread_mutex_lock(&s4);
-    sprintf(string, "Xc = %d", window.x0);
+    sprintf(string, "Xc = %d", window.x0+(window.xsize/2));
     pthread_mutex_unlock(&s4);
     textout_ex(buf, font, string, 500, 280, WHITE, TRASP);
     pthread_mutex_lock(&s4);
-    sprintf(string, "Zc = %d", window.z0);
+    sprintf(string, "Zc = %d", window.z0+(window.zsize/2));
     pthread_mutex_unlock(&s4);
-    textout_ex(buf, font, string, 500, 300, WHITE, TRASP); 
+    textout_ex(buf, font, string, 500, 300, WHITE, TRASP);
+    pthread_mutex_lock(&s4);
+    sprintf(string, "SIZE_X = %d", window.xsize);
+    pthread_mutex_unlock(&s4);
+    textout_ex(buf, font, string, 500, 320, WHITE, TRASP);
+    pthread_mutex_lock(&s4);
+    sprintf(string, "SIZE_Z = %d", window.zsize);
+    pthread_mutex_unlock(&s4);
+    textout_ex(buf, font, string, 500, 340, WHITE, TRASP);
 
 }
 
@@ -252,7 +260,6 @@ void racchetta_robot(BITMAP* bmp, int w, int h){
         }
         else 
         {
-            
             pthread_mutex_lock(&s6);
             x = robot_x.position;
             pthread_mutex_unlock(&s6);
@@ -310,7 +317,7 @@ void* display(void* arg){
             if (!pview_flag)
             
                 pthread_mutex_lock(&s4);
-                rect(screen, window.x0-(SIZE_X/2), window.z0+(SIZE_Z/2), window.x0+(SIZE_X/2), window.z0-(SIZE_Z/2), RED);
+                rect(screen, window.x0, window.z0+window.zsize, window.x0+window.xsize, window.z0, RED);
                 pthread_mutex_unlock(&s4);
 
             if (deadline_miss(i))

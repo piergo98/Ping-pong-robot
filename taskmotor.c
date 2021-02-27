@@ -15,8 +15,8 @@ void* motortask_x(void* arg)
             T = tp[i].deadline;           //la utilizzo per il rapp. inc.
             //sem_post(&s1);
 
-            x_min = C_X3 - OFFSET_X;
-            x_max = C_X2 + OFFSET_X;
+            x_min = C_X3 - OFFSET_X;    //70
+            x_max = C_X2 + OFFSET_X;    //570
 
             pthread_mutex_lock(&s5);
             prevtheta.in[NOW] = 0;        //sarebbe stato piu' bello un for?
@@ -38,11 +38,13 @@ void* motortask_x(void* arg)
                 pthread_mutex_lock(&s3);
                 xd = buffer[NEXT].x;
                 pthread_mutex_unlock(&s3);
+                /*pthread_mutex_lock(&s13);
+                xd = ball.x;
+                pthread_mutex_unlock(&s13);*/
 
                 get_state(&x, &v, &temp);
                 u = KP*(xd - x) + KD*(vd - v);
-                //z = delay(u);
-                y = motor(z);
+                y = motor(u);
                 update_state(y, T, x_min, x_max, &temp);
                 
                 pthread_mutex_lock(&s6);
@@ -97,11 +99,13 @@ void* motortask_z(void* arg)
                 pthread_mutex_lock(&s3);
                 xd = buffer[NEXT].z;
                 pthread_mutex_unlock(&s3);
+                /*pthread_mutex_lock(&s13);
+                xd = ball.z;
+                pthread_mutex_unlock(&s13);*/
 
                 get_state(&x, &v, &temp);
                 u = KP*(xd - x) + KD*(vd - v);
-                //z = delay(u);
-                y = motor(z);
+                y = motor(u);
                 update_state(y, T, z_min, z_max, &temp);
                 
                 pthread_mutex_lock(&s7);
@@ -117,7 +121,7 @@ void* motortask_z(void* arg)
             //sem_post(&s2);
 }
 
-float motor(float k)
+float motor(float k)    //angolo di cui deve ruotare il motore per arrivare alla posizione desiderata
 {
     float theta;
         
@@ -138,10 +142,8 @@ void update_state(float y, int T, int p_min, int p_max, struct state *robot_tmp)
 {
     y = robot_tmp->position + y * R;                              //converte rotazione del motore in movimento cinghia
     
-    robot_tmp->speed = ((int)y - robot_tmp->position)/ T;         //rapp. incrementale
-    
-    pthread_mutex_lock(&s11);
-    pthread_mutex_lock(&s12);
+    //pthread_mutex_lock(&s11);
+    //pthread_mutex_lock(&s12);
         if (y > p_max)
             robot_tmp->position = p_max;
 
@@ -154,10 +156,12 @@ void update_state(float y, int T, int p_min, int p_max, struct state *robot_tmp)
         else if (mouse_z_flag == 1)
             robot_tmp->position = mouse_y;
 
-        else
-            robot_tmp->position = (int)y; 
-    pthread_mutex_unlock(&s12);
-    pthread_mutex_unlock(&s11);  
+        else{
+            robot_tmp->speed = ((int)y - robot_tmp->position)/ T;         //rapp. incrementale
+            robot_tmp->position = (int)y;
+        }
+    //pthread_mutex_unlock(&s12);
+    //pthread_mutex_unlock(&s11);  
 }
 
 void get_state(int *xi, int *vi, struct state *robot_tmp)

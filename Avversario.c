@@ -43,8 +43,7 @@ void* adversarytask_x(void* arg)
 
             get_state(&x, &v, &temp);
             u = KP*(xd - x) + KD*(vd - v);
-            //z = delay(u);
-            y = motor(z);
+            y = motor(u);
             
             pthread_mutex_lock(&s10);
             if (player){
@@ -114,8 +113,7 @@ void* adversarytask_z(void* arg)
 
             get_state(&x, &v, &temp);
             u = KP*(zd - x) + KD*(vd - v);
-            //z = delay(u);
-            y = motor(z);
+            y = motor(u);
 
             pthread_mutex_lock(&s12);
             pthread_mutex_lock(&s10);

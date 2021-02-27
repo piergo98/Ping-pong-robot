@@ -32,7 +32,7 @@
 //float g;                    //acceleration of gravity
 
 /* guardando il PO vediamo solo le coordinate x e z */
-
+/*
 struct status {             // ball structure
     
     int     c;                  // color [1,15]
@@ -45,7 +45,7 @@ struct status {             // ball structure
     float   vy;
     //float v0;               // jumping velocity (m/s)
 
-};
+};*/
 
 struct cbuf {               // circular buffer structure
     
@@ -56,8 +56,10 @@ struct cbuf {               // circular buffer structure
     
 };
 
+int new_ball;
+
 struct cbuf trail;          
-struct status ball;
+//struct status ball;
 
 void store_trail( int i);
 
