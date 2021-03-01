@@ -19,7 +19,7 @@
 #define     TSCALE      10     // time scale factor
 #define     BETA        0.2    // adimensional braking coefficient
 #define     ERR_MIN     0
-#define     ERR_MAX     1 
+#define     ERR_MAX     0 
 #define     WIDTH       640
 #define     HEIGTH      480
 

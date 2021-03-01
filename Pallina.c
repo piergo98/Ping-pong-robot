@@ -107,7 +107,7 @@ float frand(float vxmin, float vxmax)
 void init_ball(void)
 {
    pthread_mutex_lock(&s13); 
-   ball.vx = -5;
+   ball.vx = 1;
    ball.vy = 0;
    ball.vz = 5;
    

@@ -69,61 +69,8 @@ void prediction(struct win* w, struct coord memory[DIM]){
     memory[NEXT].z = (2 * memory[NOW].z) - memory[BEFORE].z;
     
     /* sposto la finestra di ricerca */
-    w->x0 = memory[NEXT].x - (w->xsize / 2);
-    w->z0 = memory[NEXT].z - (w->zsize / 2);
-}
-
-void* camera(void* arg){
-
-    int             i;          //task index
-    struct coord    temp[DIM];  //struttura di appoggio
-    struct win      finestra;   //struttura di appoggio
-
-        i = get_task_index(arg);
-        set_activation(i);
-
-        pthread_mutex_lock(&s3);
-        temp[BEFORE].x = buffer[BEFORE].x;
-        temp[BEFORE].z = buffer[BEFORE].z;
-        temp[NOW].x = buffer[NOW].x;
-        temp[NOW].z = buffer[NOW].z;
-        temp[NEXT].x = buffer[NEXT].x;
-        temp[NEXT].z = buffer[NEXT].z;
-        pthread_mutex_unlock(&s3);
-
-        pthread_mutex_lock(&s4);
-        finestra.x0 = window.x0;
-        finestra.z0 = window.z0;
-        finestra.xsize = window.xsize;
-        finestra.zsize = window.zsize;
-        pthread_mutex_unlock(&s4);
-
-        centroid(finestra, &temp[NOW]);
-        centroid(finestra, &temp[NEXT]);
-
-        while(!end){
-            
-            prediction(&finestra, temp);
-
-            pthread_mutex_lock(&s3);
-            buffer[BEFORE].x = temp[BEFORE].x;
-            buffer[BEFORE].z = temp[BEFORE].z;
-            buffer[NOW].x = temp[NOW].x;
-            buffer[NOW].z = temp[NOW].z;
-            buffer[NEXT].x = temp[NEXT].x;
-            buffer[NEXT].z = temp[NEXT].z;
-            pthread_mutex_unlock(&s3);
-
-            pthread_mutex_lock(&s4);
-            window.x0 = finestra.x0;
-            window.z0 = finestra.z0;
-            window.xsize = finestra.xsize;
-            window.zsize = finestra.zsize;
-            pthread_mutex_unlock(&s4);
-
-            if (deadline_miss(i))
-                show_dmiss(i);
-                
-            wait_for_activation(i);
-        }
+    //w->x0 = memory[NEXT].x - (w->xsize / 2);
+    w->x0 = memory[NEXT].x;
+    //w->z0 = memory[NEXT].z - (w->zsize / 2);
+    w->z0 = memory[NEXT].z;
 }

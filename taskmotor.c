@@ -1,5 +1,61 @@
 #include "taskmotor.h" 
 
+void init_motor(){
+
+    /* Inizializza le posizioni e le velocità dei robot */
+    pthread_mutex_lock(&s6);
+    robot_x.position = C_X3;
+    robot_x.speed = 0;
+    pthread_mutex_unlock(&s6);
+    
+    pthread_mutex_lock(&s7);
+    robot_z.position = C_Z3;
+    robot_z.speed = 0;
+    pthread_mutex_unlock(&s7);
+   
+    pthread_mutex_lock(&s8);
+    adversary_x.position = C_X4;
+    adversary_x.speed = 0;
+    pthread_mutex_unlock(&s8);
+    
+    pthread_mutex_lock(&s9);
+    adversary_z.position = C_Z4;
+    adversary_z.speed = 0;
+    pthread_mutex_unlock(&s9);
+
+    pthread_mutex_lock(&s10);
+    player = 0;
+    pthread_mutex_unlock(&s10);
+   
+    pthread_mutex_lock(&s11);
+    mouse_x_flag = 0;
+    pthread_mutex_unlock(&s11);
+    
+    pthread_mutex_lock(&s12);
+    mouse_z_flag = 0;
+    pthread_mutex_unlock(&s12);
+
+    rob_x_angle.in[NOW] = 0;      
+    rob_x_angle.in[BEFORE] = 0;
+    rob_x_angle.out[NOW] = 0;
+    rob_x_angle.out[BEFORE] = 0;
+
+    rob_z_angle.in[NOW] = 0;        
+    rob_z_angle.in[BEFORE] = 0;
+    rob_z_angle.out[NOW] = 0;
+    rob_z_angle.out[BEFORE] = 0;
+
+    adv_x_angle.in[NOW] = 0;        
+    adv_x_angle.in[BEFORE] = 0;
+    adv_x_angle.out[NOW] = 0;
+    adv_x_angle.out[BEFORE] = 0;
+
+    adv_z_angle.in[NOW] = 0;        
+    adv_z_angle.in[BEFORE] = 0;
+    adv_z_angle.out[NOW] = 0;
+    adv_z_angle.out[BEFORE] = 0;
+}
+
 void* motortask_x(void* arg)
 {
     int     i,      T;                    // task index
@@ -18,12 +74,12 @@ void* motortask_x(void* arg)
             x_min = C_X3 - OFFSET_X;    //70
             x_max = C_X2 + OFFSET_X;    //570
 
-            pthread_mutex_lock(&s5);
-            prevtheta.in[NOW] = 0;        //sarebbe stato piu' bello un for?
+            /*pthread_mutex_lock(&s5);
+            prevtheta.in[NOW] = 0;        
             prevtheta.in[BEFORE] = 0;
             prevtheta.out[NOW] = 0;
             prevtheta.out[BEFORE] = 0;
-            pthread_mutex_unlock(&s5);
+            pthread_mutex_unlock(&s5);*/
 
             pthread_mutex_lock(&s6);
             temp.position = robot_x.position;
@@ -43,8 +99,8 @@ void* motortask_x(void* arg)
                 pthread_mutex_unlock(&s13);*/
 
                 get_state(&x, &v, &temp);
-                u = KP*(xd - x) + KD*(vd - v);
-                y = motor(u);
+                u = KP * (xd - x) + KD * (vd - v);
+                y = motor(u, &rob_x_angle);
                 update_state(y, T, x_min, x_max, &temp);
                 
                 pthread_mutex_lock(&s6);
@@ -79,13 +135,6 @@ void* motortask_z(void* arg)
             z_min = C_Z3 - OFFSET_Z / 3;
             z_max = C_Z3 + OFFSET_Z;
 
-            pthread_mutex_lock(&s5);
-            prevtheta.in[NOW] = 0;
-            prevtheta.in[BEFORE] = 0;
-            prevtheta.out[NOW] = 0;
-            prevtheta.out[BEFORE] = 0;
-            pthread_mutex_unlock(&s5);
-
             pthread_mutex_lock(&s7);
             temp.position = robot_z.position;
             temp.speed = robot_z.speed;
@@ -105,7 +154,7 @@ void* motortask_z(void* arg)
 
                 get_state(&x, &v, &temp);
                 u = KP*(xd - x) + KD*(vd - v);
-                y = motor(u);
+                y = motor(u, &rob_z_angle);
                 update_state(y, T, z_min, z_max, &temp);
                 
                 pthread_mutex_lock(&s7);
@@ -121,18 +170,18 @@ void* motortask_z(void* arg)
             //sem_post(&s2);
 }
 
-float motor(float k)    //angolo di cui deve ruotare il motore per arrivare alla posizione desiderata
+float motor(float k, struct m_tfunc *prevtheta)    //angolo di cui deve ruotare il motore per arrivare alla posizione desiderata
 {
     float theta;
         
         pthread_mutex_lock(&s5);
-        prevtheta.in[NOW] = k;
+        prevtheta->in[NOW] = k;
     
-        theta = A * prevtheta.in[NOW] + B * prevtheta.in[BEFORE] + (1 + P) * prevtheta.out[NOW] - P * prevtheta.out[BEFORE];       //transfer function
+        theta = A * prevtheta->in[NOW] + B * prevtheta->in[BEFORE] + (1 + P) * prevtheta->out[NOW] - P * prevtheta->out[BEFORE];       //transfer function
     
-        prevtheta.in[BEFORE] = prevtheta.in[NOW];
-        prevtheta.out[BEFORE] = prevtheta.out[NOW];
-        prevtheta.out[NOW] = theta;
+        prevtheta->in[BEFORE] = prevtheta->in[NOW];
+        prevtheta->out[BEFORE] = prevtheta->out[NOW];
+        prevtheta->out[NOW] = theta;
         pthread_mutex_unlock(&s5);
     
     return theta;
@@ -170,38 +219,60 @@ void get_state(int *xi, int *vi, struct state *robot_tmp)
     *vi = robot_tmp->speed;
 }
 
-void init_motor(){
+void* camera(void* arg){
 
-    /* Inizializza le posizioni e le velocità dei robot */
-    pthread_mutex_lock(&s6);
-    robot_x.position = C_X1;
-    robot_x.speed = 0;
-    pthread_mutex_unlock(&s6);
-    
-    pthread_mutex_lock(&s7);
-    robot_z.position = C_Z2;
-    robot_z.speed = 0;
-    pthread_mutex_unlock(&s7);
-   
-    pthread_mutex_lock(&s8);
-    adversary_x.position = C_X2;
-    adversary_x.speed = 0;
-    pthread_mutex_unlock(&s8);
-    
-    pthread_mutex_lock(&s9);
-    adversary_z.position = C_Z1;
-    adversary_z.speed = 0;
-    pthread_mutex_unlock(&s9);
+    int             i;          //task index
+    int             xd;         //posizione desiderata
+    struct coord    temp[DIM];  //struttura di appoggio
+    struct win      finestra;   //struttura di appoggio
 
-    pthread_mutex_lock(&s10);
-    player = 0;
-    pthread_mutex_unlock(&s10);
-   
-    pthread_mutex_lock(&s11);
-    mouse_x_flag = 0;
-    pthread_mutex_unlock(&s11);
-    
-    pthread_mutex_lock(&s12);
-    mouse_z_flag = 0;
-    pthread_mutex_unlock(&s12);
+        i = get_task_index(arg);
+        set_activation(i);
+
+        pthread_mutex_lock(&s3);
+        temp[BEFORE].x = buffer[BEFORE].x;
+        temp[BEFORE].z = buffer[BEFORE].z;
+        temp[NOW].x = buffer[NOW].x;
+        temp[NOW].z = buffer[NOW].z;
+        temp[NEXT].x = buffer[NEXT].x;
+        temp[NEXT].z = buffer[NEXT].z;
+        pthread_mutex_unlock(&s3);
+
+        pthread_mutex_lock(&s4);
+        finestra.x0 = window.x0;
+        finestra.z0 = window.z0;
+        finestra.xsize = window.xsize;
+        finestra.zsize = window.zsize;
+        pthread_mutex_unlock(&s4);
+
+        centroid(finestra, &temp[NOW]);
+        centroid(finestra, &temp[NEXT]);
+
+        while(!end){
+            
+            prediction(&finestra, temp);
+
+            xd = temp[NEXT].x;
+
+            pthread_mutex_lock(&s3);
+            buffer[BEFORE].x = temp[BEFORE].x;
+            buffer[BEFORE].z = temp[BEFORE].z;
+            buffer[NOW].x = temp[NOW].x;
+            buffer[NOW].z = temp[NOW].z;
+            buffer[NEXT].x = temp[NEXT].x;
+            buffer[NEXT].z = temp[NEXT].z;
+            pthread_mutex_unlock(&s3);
+
+            pthread_mutex_lock(&s4);
+            window.x0 = finestra.x0;
+            window.z0 = finestra.z0;
+            window.xsize = finestra.xsize;
+            window.zsize = finestra.zsize;
+            pthread_mutex_unlock(&s4);
+
+            if (deadline_miss(i))
+                show_dmiss(i);
+                
+            wait_for_activation(i);
+        }
 }

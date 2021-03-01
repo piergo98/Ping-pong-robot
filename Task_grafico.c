@@ -164,6 +164,30 @@ void testo(BITMAP* buf){
     sprintf(string, "SIZE_Z = %d", window.zsize);
     pthread_mutex_unlock(&s4);
     textout_ex(buf, font, string, 500, 340, WHITE, TRASP);
+    pthread_mutex_lock(&s13);
+    sprintf(string, "V_X = %f", ball.vx);
+    pthread_mutex_unlock(&s13);
+    textout_ex(buf, font, string, 500, 360, WHITE, TRASP);
+    pthread_mutex_lock(&s13);
+    sprintf(string, "V_Z = %f", ball.vz);
+    pthread_mutex_unlock(&s13);
+    textout_ex(buf, font, string, 500, 380, WHITE, TRASP);
+    pthread_mutex_lock(&s3);
+    sprintf(string, "R_X = %d", buffer[NOW].x);
+    pthread_mutex_unlock(&s3);
+    textout_ex(buf, font, string, 30, 400, WHITE, TRASP);
+    pthread_mutex_lock(&s3);
+    sprintf(string, "R_Z = %d", buffer[NOW].z);
+    pthread_mutex_unlock(&s3);
+    textout_ex(buf, font, string, 30, 420, WHITE, TRASP);
+    pthread_mutex_lock(&s3);
+    sprintf(string, "A_X = %d", buffer[NEXT].x);
+    pthread_mutex_unlock(&s3);
+    textout_ex(buf, font, string, 30, 440, WHITE, TRASP);
+    pthread_mutex_lock(&s3);
+    sprintf(string, "A_Z = %d", buffer[NEXT].z);
+    pthread_mutex_unlock(&s3);
+    textout_ex(buf, font, string, 30, 460, WHITE, TRASP);
 
 }
 

@@ -20,13 +20,6 @@ void* adversarytask_x(void* arg)
         x_min = C_X1 - OFFSET_X;
         x_max = C_X4 + OFFSET_X;
 
-        pthread_mutex_lock(&s5); 
-        prevtheta.in[NOW] = 0;      //sarebbe stato piu' bello un for?
-        prevtheta.in[BEFORE] = 0;
-        prevtheta.out[NOW] = 0;
-        prevtheta.out[BEFORE] = 0;
-        pthread_mutex_unlock(&s5);
-
         pthread_mutex_lock(&s8);
         temp.position = adversary_x.position;
         temp.speed = adversary_x.speed;
@@ -43,7 +36,7 @@ void* adversarytask_x(void* arg)
 
             get_state(&x, &v, &temp);
             u = KP*(xd - x) + KD*(vd - v);
-            y = motor(u);
+            y = motor(u, &adv_x_angle);
             
             pthread_mutex_lock(&s10);
             if (player){
@@ -90,13 +83,6 @@ void* adversarytask_z(void* arg)
         z_min = C_Z1 - OFFSET_Z;
         z_max = C_Z1 + OFFSET_Z / 3;
 
-        pthread_mutex_lock(&s5);
-        prevtheta.in[NOW] = 0;
-        prevtheta.in[BEFORE] = 0;
-        prevtheta.out[NOW] = 0;
-        prevtheta.out[BEFORE] = 0;
-        pthread_mutex_unlock(&s5);
-
         pthread_mutex_lock(&s9);
         temp.position = adversary_z.position;
         temp.speed = adversary_z.speed;
@@ -113,7 +99,7 @@ void* adversarytask_z(void* arg)
 
             get_state(&x, &v, &temp);
             u = KP*(zd - x) + KD*(vd - v);
-            y = motor(u);
+            y = motor(u, &adv_z_angle);
 
             pthread_mutex_lock(&s12);
             pthread_mutex_lock(&s10);
