@@ -117,44 +117,44 @@ void    show_dmiss(int i){
             switch(i){
 
                 case 0:
-                    sem_wait(&s14);
+                    //sem_wait(&s14);
                     ball_miss += 1;
-                    sem_post(&s14);
+                    //sem_post(&s14);
                     break;
                 case 1:
-                    sem_wait(&s15);
+                    //sem_wait(&s15);
                     camera_miss += 1;
-                    sem_post(&s15);
+                    //sem_post(&s15);
                     break;
                 case 2:
-                    sem_wait(&s16);
+                    //sem_wait(&s16);
                     motor_x_miss += 1;
-                    sem_post(&s16);
+                    //sem_post(&s16);
                     break;
                 case 3:
-                    sem_wait(&s17);
+                    //sem_wait(&s17);
                     motor_z_miss += 1;
-                    sem_post(&s17);
+                    //sem_post(&s17);
                     break;
                 case 4:
-                    sem_wait(&s18);
+                    //sem_wait(&s18);
                     adv_x_miss += 1;
-                    sem_post(&s18);
+                    //sem_post(&s18);
                     break;
                 case 5:
-                    sem_wait(&s19);
+                    //sem_wait(&s19);
                     adv_z_miss += 1;
-                    sem_post(&s19);
+                    //sem_post(&s19);
                     break;
                 case 6:
-                    sem_wait(&s20);
+                    //sem_wait(&s20);
                     display_miss += 1;
-                    sem_post(&s20);
+                    //sem_post(&s20);
                     break;
                 case 7:
-                    sem_wait(&s21);
+                    //sem_wait(&s21);
                     tastiera_miss += 1;
-                    sem_post(&s21);
+                    //sem_post(&s21);
                     break;
                 default: break;
             }

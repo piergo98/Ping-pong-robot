@@ -61,6 +61,8 @@ void prediction(struct win* w, struct coord memory[DIM]){
     {
         w->xsize = SIZE_X;
         w->zsize = SIZE_Z;
+        w->x0 = 160;
+        w->z0 = 60;
     }
     
     /* predizione lungo x */

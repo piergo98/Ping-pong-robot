@@ -189,28 +189,26 @@ float motor(float k, struct m_tfunc *prevtheta)    //angolo di cui deve ruotare 
 
 void update_state(float y, int T, int p_min, int p_max, struct state *robot_tmp)
 {
-    y = robot_tmp->position + y * R;                              //converte rotazione del motore in movimento cinghia
+    int pippo;
+
+    pippo = robot_tmp->position + y * R;                              //converte rotazione del motore in movimento cinghia
     
-    //pthread_mutex_lock(&s11);
-    //pthread_mutex_lock(&s12);
-        if (y > p_max)
+        if (pippo > p_max)
             robot_tmp->position = p_max;
 
-        else if (y < p_min)
+        else if (pippo < p_min)
             robot_tmp->position = p_min;
 
-        else if (mouse_x_flag == 1)
-            robot_tmp->position = mouse_x;
+       //else if (mouse_x_flag == 1)
+            //robot_tmp->position = mouse_x;
 
-        else if (mouse_z_flag == 1)
-            robot_tmp->position = mouse_y;
+       // else if (mouse_z_flag == 1)
+            //robot_tmp->position = mouse_y;
 
         else{
-            robot_tmp->speed = ((int)y - robot_tmp->position)/ T;         //rapp. incrementale
-            robot_tmp->position = (int)y;
-        }
-    //pthread_mutex_unlock(&s12);
-    //pthread_mutex_unlock(&s11);  
+            robot_tmp->speed = ((int)pippo - robot_tmp->position)/ T;         //rapp. incrementale
+            robot_tmp->position = (int)pippo;
+        } 
 }
 
 void get_state(int *xi, int *vi, struct state *robot_tmp)
@@ -251,8 +249,6 @@ void* camera(void* arg){
         while(!end){
             
             prediction(&finestra, temp);
-
-            xd = temp[NEXT].x;
 
             pthread_mutex_lock(&s3);
             buffer[BEFORE].x = temp[BEFORE].x;
