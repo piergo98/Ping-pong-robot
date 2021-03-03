@@ -148,6 +148,7 @@ void* motortask_z(void* arg)
                 pthread_mutex_lock(&s3);
                 xd = buffer[NEXT].z;
                 pthread_mutex_unlock(&s3);
+                
                 /*pthread_mutex_lock(&s13);
                 xd = ball.z;
                 pthread_mutex_unlock(&s13);*/

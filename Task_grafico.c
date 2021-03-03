@@ -25,47 +25,47 @@ void init_screen(void){
     rac_r = load_bitmap("racchetta_nosfondo32.bmp", NULL);
     white2pink(rac_r);
     rac_r = load_bitmap("racp.bmp", NULL);
-    rac_a = load_bitmap("racp.bmp", NULL);
+    rac_a = rac_r;
 
     pview_flag = 0;                  //valore di default
 
-    //sem_wait(&s14);
+    pthread_mutex_lock(&s14);
     ball_miss = 0; 
-    //sem_post(&s14);
+    pthread_mutex_unlock(&s14);
 
-    //sem_wait(&s15);
+    pthread_mutex_lock(&s15);
     camera_miss = 0;
-    //sem_post(&s15);
+    pthread_mutex_unlock(&s15);
                 
-    //sem_wait(&s16);
+    pthread_mutex_lock(&s16);
     motor_x_miss = 0;
-    //sem_post(&s16);
+    pthread_mutex_unlock(&s16);
                 
-    //sem_wait(&s17);
+    pthread_mutex_lock(&s17);
     motor_z_miss = 0;
-    //sem_post(&s17);
+    pthread_mutex_unlock(&s17);
             
-    //sem_wait(&s18);
+    pthread_mutex_lock(&s18);
     adv_x_miss = 0;
-    //sem_post(&s18);
+    pthread_mutex_unlock(&s18);
                 
-    //sem_wait(&s19);
+    pthread_mutex_lock(&s19);
     adv_z_miss = 0;
-    //sem_post(&s19);
+    pthread_mutex_unlock(&s19);
                 
-    //sem_wait(&s20);
+    pthread_mutex_lock(&s20);
     display_miss = 0;
-    //sem_post(&s20);
+    pthread_mutex_unlock(&s20);
                 
-    //sem_wait(&s21);
+    pthread_mutex_lock(&s21);
     tastiera_miss = 0;
-    //sem_post(&s21);
+    pthread_mutex_unlock(&s21);
 
     memory = create_bitmap(WIDTH, HEIGTH);
     clear_bitmap(memory);
 }
 
-void testo(BITMAP* buf){
+void testo(BITMAP* buf){ 
 
     /* Punteggio */
     textout_ex(buf, font, "PUNTEGGIO", P_X, P_Z, WHITE, TRASP);
@@ -81,37 +81,37 @@ void testo(BITMAP* buf){
     textout_ex(buf, font, "utente", X_LEG + 80, P_Z + 90, WHITE, TRASP);
 
     /* Deadline misses */
-    //sem_wait(&s14);
+    pthread_mutex_lock(&s14);
     sprintf(string, "ball = %d", ball_miss);
-    //sem_post(&s14);
+    pthread_mutex_unlock(&s14);
     textout_ex(buf, font, string, 160, 440, WHITE, TRASP);
-    //sem_wait(&s15);
+    pthread_mutex_lock(&s15);
     sprintf(string, "camera = %d", camera_miss);
-    //sem_post(&s15);
+    pthread_mutex_unlock(&s15);
     textout_ex(buf, font, string, 160, 460, WHITE, TRASP);            
-    //sem_wait(&s16);
+    pthread_mutex_lock(&s16);
     sprintf(string, "motor_x = %d", motor_x_miss);
-   // sem_post(&s16);
+    pthread_mutex_unlock(&s16);
     textout_ex(buf, font, string, 260, 440, WHITE, TRASP);            
-    //sem_wait(&s17);
+    pthread_mutex_lock(&s17);
     sprintf(string, "motor_z = %d", motor_z_miss);
-    //sem_post(&s17);
+    pthread_mutex_unlock(&s17);
     textout_ex(buf, font, string, 260, 460, WHITE, TRASP);        
-    //sem_wait(&s18);
+    pthread_mutex_lock(&s18);
     sprintf(string, "adv_x = %d", adv_x_miss);
-    //sem_post(&s18);
+    pthread_mutex_unlock(&s18);
     textout_ex(buf, font, string, 360, 440, WHITE, TRASP);            
-    //sem_wait(&s19);
+    pthread_mutex_lock(&s19);
     sprintf(string, "adv_z = %d", adv_z_miss);
-    //sem_post(&s19);
+    pthread_mutex_unlock(&s19);
     textout_ex(buf, font, string, 360, 460, WHITE, TRASP);            
-    //sem_wait(&s20);
+    pthread_mutex_lock(&s20);
     sprintf(string, "display = %d", display_miss);
-    //sem_post(&s20);
+    pthread_mutex_unlock(&s20);
     textout_ex(buf, font, string, 460, 440, WHITE, TRASP);            
-    //sem_wait(&s21);
+    pthread_mutex_lock(&s21);
     sprintf(string, "tastiera = %d", tastiera_miss);
-    //sem_post(&s21);
+    pthread_mutex_unlock(&s21);
     textout_ex(buf, font, string, 460, 460, WHITE, TRASP);   
     
     /* Coordinate pallina e racchette */
@@ -212,7 +212,7 @@ void draw_screen(BITMAP* buf){
         for (i = 0;i < 31;i += 5)
             line(buf, 130, 210 + i, 510, 210 + i, WHITE);
     
-        testo(buf);
+        //testo(buf);
         textout_ex(buf, font, "V -> Vista verticale", X_LEG, P_Z + 60, WHITE, TRASP);
 }
 
@@ -358,7 +358,7 @@ void display_camera_view(BITMAP* buf){
     rect(buf, window.x0, window.z0+window.zsize, window.x0+window.xsize, window.z0, RED);
     pthread_mutex_unlock(&s4);
 
-    testo(buf);
+    //testo(buf);
     textout_ex(buf, font, "P -> Indietro", X_LEG + 40, P_Z + 60, WHITE, TRASP);
 }
 
@@ -382,6 +382,7 @@ void* command(void* arg){
     char    scan;
 
             i = get_task_index(arg);
+            set_activation(i);
 
             do {
                 scan = 0;
@@ -404,7 +405,13 @@ void* command(void* arg){
                         pthread_mutex_unlock(&s10);
                         break;
                     default: break; //da aggiungere altre opzioni
+
                 }
+               
+                if (deadline_miss(i))
+                    show_dmiss(i);
+
+                wait_for_activation(i);
             } while(scan != KEY_ESC);
             //sem_wait(&s2);
             end = 1;

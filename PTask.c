@@ -117,44 +117,44 @@ void    show_dmiss(int i){
             switch(i){
 
                 case 0:
-                    //sem_wait(&s14);
+                    pthread_mutex_lock(&s14);
                     ball_miss += 1;
-                    //sem_post(&s14);
+                    pthread_mutex_unlock(&s14);
                     break;
                 case 1:
-                    //sem_wait(&s15);
+                    pthread_mutex_lock(&s15);
                     camera_miss += 1;
-                    //sem_post(&s15);
+                    pthread_mutex_unlock(&s15);
                     break;
                 case 2:
-                    //sem_wait(&s16);
+                    pthread_mutex_lock(&s16);
                     motor_x_miss += 1;
-                    //sem_post(&s16);
+                    pthread_mutex_unlock(&s16);
                     break;
                 case 3:
-                    //sem_wait(&s17);
+                    pthread_mutex_lock(&s17);
                     motor_z_miss += 1;
-                    //sem_post(&s17);
+                    pthread_mutex_unlock(&s17);
                     break;
                 case 4:
-                    //sem_wait(&s18);
+                    pthread_mutex_lock(&s18);
                     adv_x_miss += 1;
-                    //sem_post(&s18);
+                    pthread_mutex_unlock(&s18);
                     break;
                 case 5:
-                    //sem_wait(&s19);
+                    pthread_mutex_lock(&s19);
                     adv_z_miss += 1;
-                    //sem_post(&s19);
+                    pthread_mutex_unlock(&s19);
                     break;
                 case 6:
-                    //sem_wait(&s20);
+                    pthread_mutex_lock(&s20);
                     display_miss += 1;
-                    //sem_post(&s20);
+                    pthread_mutex_unlock(&s20);
                     break;
                 case 7:
-                    //sem_wait(&s21);
+                    pthread_mutex_lock(&s21);
                     tastiera_miss += 1;
-                    //sem_post(&s21);
+                    pthread_mutex_unlock(&s21);
                     break;
                 default: break;
             }
@@ -164,3 +164,4 @@ void    autokill(int i){
 
     pthread_exit(NULL);
 }
+

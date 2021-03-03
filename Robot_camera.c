@@ -76,3 +76,51 @@ void prediction(struct win* w, struct coord memory[DIM]){
     //w->z0 = memory[NEXT].z - (w->zsize / 2);
     w->z0 = memory[NEXT].z;
 }
+
+void *miss_stamp(void *arg) {
+
+    int i;
+
+    i = get_task_index(arg);
+    set_activation(i);
+
+    while (!end)
+    {   
+
+        pthread_mutex_lock(&s14);
+        printf("ball = %d \n", ball_miss);
+        pthread_mutex_unlock(&s14);
+        
+        pthread_mutex_lock(&s15);
+        printf("camera = %d \n", camera_miss);
+        pthread_mutex_unlock(&s15);
+        
+        pthread_mutex_lock(&s16);
+        printf("motor_x = %d \n", motor_x_miss);
+        pthread_mutex_unlock(&s16);
+        
+        pthread_mutex_lock(&s17);
+        printf("motor_z = %d \n", motor_z_miss);
+        pthread_mutex_unlock(&s17);
+                
+        pthread_mutex_lock(&s18);
+        printf("adv_x = %d \n", adv_x_miss);
+        pthread_mutex_unlock(&s18);
+        
+        pthread_mutex_lock(&s19);
+        printf("adv_z = %d \n", adv_z_miss);
+        pthread_mutex_unlock(&s19);
+        
+        pthread_mutex_lock(&s20);
+        printf("display = %d \n", display_miss);
+        pthread_mutex_unlock(&s20);
+        
+        pthread_mutex_lock(&s21);
+        printf("tastiera = %d \n", tastiera_miss);
+        pthread_mutex_unlock(&s21);
+
+        wait_for_activation(i);
+
+    }
+
+}

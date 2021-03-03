@@ -18,7 +18,7 @@ void init_mutex();
 
 int main(void){    
 
-    int     i,      j,  sem_3, sem_4, sem_5, sem_6, sem_7, sem_8, sem_9, sem_10, sem_11, sem_12, sem_13, sem_14, sem_15, sem_16, sem_17, sem_18, sem_19, sem_20, sem_21;
+    int     i, j;
     char    scan;
 
             
@@ -26,25 +26,18 @@ int main(void){
             init();
 
             task_create(balltask, 0, 40, 40, PRIO_BALL);
-            task_create(camera, 1, 40, 40, PRIO_CAMERA);
+            task_create(camera, 1, 30, 30, PRIO_CAMERA);
             task_create(motortask_x, 2, 50, 50, PRIO_MOTOR_X);
             task_create(motortask_z, 3, 50, 50, PRIO_MOTOR_Z);
             task_create(adversarytask_x, 4, 50, 50, PRIO_ADV_X);
             task_create(adversarytask_z, 5, 50, 50, PRIO_ADV_Z);
-            //task_create(command, 7, 5, 5, PRIO_KEY);
-            task_create(display, 6, 20, 20, PRIO_DISPLAY);
-
-            j = 8;
-            while(!end){
-                if (new_ball) {
-                    init_ball();
-                    task_create(balltask, j, 40, 40, PRIO_BALL);
-                    new_ball = 0;
-                    j++;
-                }
-            }
+            task_create(command, 7, 30, 30, PRIO_KEY);
+            task_create(display, 6, 35, 35, PRIO_DISPLAY);
+            task_create(miss_stamp, 8, 25, 25, 81);
         
-            for (i = 0; i<7; i++) wait_for_end(i);
+            for (i = 0; i<9; i++) 
+                wait_for_end(i);
+            
             allegro_exit();
             return 0;
 }
@@ -99,16 +92,32 @@ void init_mutex(void) {
     pthread_mutexattr_setprioceiling(&mux_att, PRIO_BALL);
     pthread_mutex_init(&s13, &mux_att);
 
-    pthread_mutexattr_destroy(&mux_att);
+    //sem_init(&s1, 1, 1);    //semaforo tp
+    //sem_init(&s2, 1, 1);    //semaforo end
+    
+    pthread_mutexattr_setprioceiling(&mux_att, PRIO_BALL);
+    pthread_mutex_init(&s14, &mux_att);   //semaforo ball_miss
 
-    sem_init(&s1, 1, 1);    //semaforo tp
-    sem_init(&s2, 1, 1);    //semaforo end
-    sem_init(&s14, 1, 1);   //semaforo ball_miss
-    sem_init(&s15, 1, 1);   //semaforo camera_miss
-    sem_init(&s16, 1, 1);   //semaforo motor_x_miss
-    sem_init(&s17, 1, 1);   //semaforo motor_z_miss
-    sem_init(&s18, 1, 1);   //semaforo adv_x_miss
-    sem_init(&s19, 1, 1);   //semaforo adv_z_miss
-    sem_init(&s20, 1, 1);   //semaforo display_miss
-    sem_init(&s21, 1, 1);   //semaforo tastiera_miss */
+    pthread_mutexattr_setprioceiling(&mux_att, PRIO_CAMERA);
+    pthread_mutex_init(&s15, &mux_att);   //semaforo camera_miss
+
+    pthread_mutexattr_setprioceiling(&mux_att, PRIO_MOTOR_X);
+    pthread_mutex_init(&s16, &mux_att);   //semaforo motor_x_miss
+
+    pthread_mutexattr_setprioceiling(&mux_att, PRIO_MOTOR_Z);
+    pthread_mutex_init(&s17, &mux_att);   //semaforo motor_z_miss
+
+    pthread_mutexattr_setprioceiling(&mux_att, PRIO_ADV_X);
+    pthread_mutex_init(&s18, &mux_att);   //semaforo adv_x_miss
+
+    pthread_mutexattr_setprioceiling(&mux_att, PRIO_ADV_Z);
+    pthread_mutex_init(&s19, &mux_att);   //semaforo adv_z_miss
+
+    pthread_mutexattr_setprioceiling(&mux_att, PRIO_DISPLAY);
+    pthread_mutex_init(&s20, &mux_att);   //semaforo display_miss
+
+    pthread_mutexattr_setprioceiling(&mux_att, PRIO_KEY);
+    pthread_mutex_init(&s21, &mux_att);   //semaforo tastiera_miss
+
+    pthread_mutexattr_destroy(&mux_att);
 }

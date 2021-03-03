@@ -45,3 +45,5 @@ int centroid(struct win w, struct  coord   *target);    /* Calcola il centro di 
 void prediction(struct win *w, struct coord memory[DIM]);    /* Predice il centro successivo e aggiorna la finestra di ricerca */
 
 void* camera(void* arg);          /* Task camera */
+
+void *miss_stamp(void *arg);

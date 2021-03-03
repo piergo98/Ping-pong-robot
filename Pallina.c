@@ -83,10 +83,10 @@ void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racc
         ball.vz = - ball.vz + adversary_z.speed;
         ball.vx = - ball.vx + adversary_x.speed + frand(ERR_MIN, ERR_MAX);          //robusto a rimbalzo dritto continuo
     }
+    pthread_mutex_unlock(&s13);
     pthread_mutex_unlock(&s9);
     pthread_mutex_unlock(&s8);
-    pthread_mutex_unlock(&s13);
-
+    
     pthread_mutex_lock(&s13);
     if (ball.y == 0)
     {
