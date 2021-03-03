@@ -78,7 +78,7 @@ void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racc
     pthread_mutex_lock(&s8);
     pthread_mutex_lock(&s9);
     pthread_mutex_lock(&s13);
-    if ((adversary_z.position >= ball.z + ball.r) && (ball.x - ball.r >= adversary_x.position) && (ball.x + ball.r <= adversary_x.position + RACC_MAX))
+    if ((adversary_z.position <= ball.z + ball.r) && (ball.x - ball.r >= adversary_x.position) && (ball.x + ball.r <= adversary_x.position + RACC_MAX))
     {
         ball.vz = - ball.vz + adversary_z.speed;
         ball.vx = - ball.vx + adversary_x.speed + frand(ERR_MIN, ERR_MAX);          //robusto a rimbalzo dritto continuo
@@ -107,12 +107,14 @@ float frand(float vxmin, float vxmax)
 void init_ball(void)
 {
    pthread_mutex_lock(&s13); 
-   ball.vx = 1;
+   ball.vx = 2;
    ball.vy = 0;
-   ball.vz = 5;
+   ball.vz = 20;
    
    ball.x = 320;
    ball.y = Y_0;
-   ball.z = 120;
+   ball.z = 190;
+
+   ball.r = 5;          //BALL_RADIUS
    pthread_mutex_unlock(&s13);
 }

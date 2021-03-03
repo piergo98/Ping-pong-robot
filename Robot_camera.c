@@ -12,11 +12,11 @@ void init_camera(){
 
     pthread_mutex_lock(&s3);
     buffer[BEFORE].x = 320;
-    buffer[BEFORE].z = 240;
+    buffer[BEFORE].z = 120;
     buffer[NOW].x = 320;
-    buffer[NOW].z = 240;
+    buffer[NOW].z = 120;
     buffer[NEXT].x = 320;
-    buffer[NEXT].z = 240;
+    buffer[NEXT].z = 120;
     pthread_mutex_unlock(&s3);
 }
 
@@ -32,8 +32,8 @@ int centroid(struct win w, struct coord *target){
             c = getpixel(screen, i + w.x0, j + w.z0);
             if (c == TARGET_COLOR){
                 sample++;
-                xc += (i - xc) / sample;    /* calcolo la media incrementale sia per x che per y */
-                zc += (j - zc) / sample;
+                xc += (i + w.x0 - xc) / sample;    /* calcolo la media incrementale sia per x che per y */
+                zc += (j + w.z0 - zc) / sample;
             }
         }
     }
@@ -50,12 +50,26 @@ void prediction(struct win* w, struct coord memory[DIM]){
     int i, r, trovato;
 
     memory[BEFORE].x = memory[NOW].x;
-    memory[BEFORE].z = memory[NOW].z;
+    memory[BEFORE].z = memory[NOW].z;    
 
     trovato = centroid(*w, &memory[NOW]);
+   
+    /* predizione lungo x */
+    memory[NEXT].x = (2 * memory[NOW].x) - memory[BEFORE].x;   //0.7
+    /* predizione lungo z */
+    memory[NEXT].z = (2 * memory[NOW].z) - memory[BEFORE].z;   //0.9
+    
+    
+
     if (trovato){
-        w->xsize /= 3;
-        w->zsize /= 3;
+        
+        w->xsize = 50;
+        w->zsize = 50;
+        /* sposto la finestra di ricerca */
+        w->x0 = memory[NEXT].x - (w->xsize / 2);
+        //w->x0 = memory[NOW].x;
+        w->z0 = memory[NEXT].z - (w->zsize / 2);
+        //w->z0 = memory[NEXT].z;
     }
     else
     {
@@ -64,17 +78,62 @@ void prediction(struct win* w, struct coord memory[DIM]){
         w->x0 = 160;
         w->z0 = 60;
     }
-    
-    /* predizione lungo x */
-    memory[NEXT].x = (2 * memory[NOW].x) - memory[BEFORE].x;
-    /* predizione lungo z */
-    memory[NEXT].z = (2 * memory[NOW].z) - memory[BEFORE].z;
-    
-    /* sposto la finestra di ricerca */
-    //w->x0 = memory[NEXT].x - (w->xsize / 2);
-    w->x0 = memory[NEXT].x;
-    //w->z0 = memory[NEXT].z - (w->zsize / 2);
-    w->z0 = memory[NEXT].z;
+}
+
+void* camera(void* arg){
+
+    int             i;          //task index
+    int             xd;         //posizione desiderata
+    struct coord    temp[DIM];  //struttura di appoggio
+    struct win      finestra;   //struttura di appoggio
+
+        i = get_task_index(arg);
+        set_activation(i);
+
+        //centroid(finestra, &temp[NOW]);
+        //centroid(finestra, &temp[NEXT]);
+
+        while(!end){
+
+            pthread_mutex_lock(&s3);
+            temp[BEFORE].x = buffer[BEFORE].x;
+            temp[BEFORE].z = buffer[BEFORE].z;
+            temp[NOW].x = buffer[NOW].x;
+            temp[NOW].z = buffer[NOW].z;
+            temp[NEXT].x = buffer[NEXT].x;
+            temp[NEXT].z = buffer[NEXT].z;
+            pthread_mutex_unlock(&s3);
+
+            pthread_mutex_lock(&s4);
+            finestra.x0 = window.x0;
+            finestra.z0 = window.z0;
+            finestra.xsize = window.xsize;
+            finestra.zsize = window.zsize;
+            pthread_mutex_unlock(&s4);
+            
+            prediction(&finestra, temp);
+
+            pthread_mutex_lock(&s3);
+            buffer[BEFORE].x = temp[BEFORE].x;
+            buffer[BEFORE].z = temp[BEFORE].z;
+            buffer[NOW].x = temp[NOW].x;
+            buffer[NOW].z = temp[NOW].z;
+            buffer[NEXT].x = temp[NEXT].x;
+            buffer[NEXT].z = temp[NEXT].z;
+            pthread_mutex_unlock(&s3);
+
+            pthread_mutex_lock(&s4);
+            window.x0 = finestra.x0;
+            window.z0 = finestra.z0;
+            window.xsize = finestra.xsize;
+            window.zsize = finestra.zsize;
+            pthread_mutex_unlock(&s4);
+
+            if (deadline_miss(i))
+                show_dmiss(i);
+                
+            wait_for_activation(i);
+        }
 }
 
 void *miss_stamp(void *arg) {

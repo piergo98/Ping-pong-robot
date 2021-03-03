@@ -4,13 +4,13 @@
 #define _GNU_SOURCE
 
 #define     PRIO_BALL 80
-#define     PRIO_CAMERA 70
+#define     PRIO_CAMERA 50
 #define     PRIO_MOTOR_X 60
 #define     PRIO_MOTOR_Z 60
 #define     PRIO_ADV_X 60
 #define     PRIO_ADV_Z 60
 #define     PRIO_KEY 40
-#define     PRIO_DISPLAY 50
+#define     PRIO_DISPLAY 70
 
 void init();
 void init_mutex();
@@ -26,7 +26,7 @@ int main(void){
             init();
 
             task_create(balltask, 0, 40, 40, PRIO_BALL);
-            task_create(camera, 1, 30, 30, PRIO_CAMERA);
+            task_create(camera, 1, 50, 50, PRIO_CAMERA);
             task_create(motortask_x, 2, 50, 50, PRIO_MOTOR_X);
             task_create(motortask_z, 3, 50, 50, PRIO_MOTOR_Z);
             task_create(adversarytask_x, 4, 50, 50, PRIO_ADV_X);

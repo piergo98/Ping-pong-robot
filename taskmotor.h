@@ -18,8 +18,8 @@
 #define A 0.019    // tau = 0.19s, T = 20 ms, K = 19.23 
 #define B 0.019
 
-#define KP 0.01     //costanti proporzionali e derivative del PID 
-#define KD 0.01
+#define KP 0.5    //costanti proporzionali e derivative del PID 
+#define KD 0.5
 
 #define R 0.5       //raggio puleggia in mm
 //------------------------------------------------------------------------------

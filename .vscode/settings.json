@@ -25,6 +25,7 @@
         "streambuf": "cpp",
         "system_error": "cpp",
         "optional": "c",
-        "stdexcept": "c"
+        "stdexcept": "c",
+        "bit": "cpp"
     }
 }
