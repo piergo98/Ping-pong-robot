@@ -95,11 +95,6 @@ void* camera(void* arg){
 
         while(!end){
 
-<<<<<<< HEAD
-            //sem_wait(&s4);                      //Se decommento questo semaforo da' schermo nero
-            prediction(&window);
-            //sem_post(&s4);
-=======
             pthread_mutex_lock(&s3);
             temp[BEFORE].x = buffer[BEFORE].x;
             temp[BEFORE].z = buffer[BEFORE].z;
@@ -133,7 +128,6 @@ void* camera(void* arg){
             window.xsize = finestra.xsize;
             window.zsize = finestra.zsize;
             pthread_mutex_unlock(&s4);
->>>>>>> Semafori
 
             if (deadline_miss(i))
                 show_dmiss(i);

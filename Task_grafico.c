@@ -387,10 +387,6 @@ void* command(void* arg){
             do {
                 scan = 0;
                 if (keypressed()) scan = readkey() >> 8;
-<<<<<<< HEAD
-                //sem_wait(&s10);
-=======
->>>>>>> Semafori
                 switch(scan){
                     case KEY_V:
                         pview_flag = 0;
@@ -411,15 +407,11 @@ void* command(void* arg){
                     default: break; //da aggiungere altre opzioni
 
                 }
-<<<<<<< HEAD
-                //sem_post(&s10);
-=======
                
                 if (deadline_miss(i))
                     show_dmiss(i);
 
                 wait_for_activation(i);
->>>>>>> Semafori
             } while(scan != KEY_ESC);
             //sem_wait(&s2);
             end = 1;

@@ -50,18 +50,6 @@ void init(void){
     init_ball();
     init_camera();
     init_motor();
-<<<<<<< HEAD
-    init_screen();
-
-    task_create(balltask, 0, 40, 40, 80);
-    task_create(camera, 1, 20, 20, 70);                //crea problemi il semaforo su prediction()
-    task_create(motortask_x, 2, 50, 50, 60);
-    task_create(motortask_z, 3, 50, 50, 60);
-    task_create(adversarytask_x, 4, 50, 50, 60);
-    task_create(adversarytask_z, 5, 50, 50, 60);
-    task_create(display, 6, 20, 20, 60);
-    //task_create(command, 7, 5, 5, 50);
-=======
     init_screen();    
 }
 
@@ -132,5 +120,4 @@ void init_mutex(void) {
     pthread_mutex_init(&s21, &mux_att);   //semaforo tastiera_miss
 
     pthread_mutexattr_destroy(&mux_att);
->>>>>>> Semafori
 }
