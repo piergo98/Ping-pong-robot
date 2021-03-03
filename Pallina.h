@@ -19,7 +19,7 @@
 #define     TSCALE      10     // time scale factor
 #define     BETA        0.2    // adimensional braking coefficient
 #define     ERR_MIN     0
-#define     ERR_MAX     1 
+#define     ERR_MAX     0 
 #define     WIDTH       640
 #define     HEIGTH      480
 
@@ -32,7 +32,7 @@
 //float g;                    //acceleration of gravity
 
 /* guardando il PO vediamo solo le coordinate x e z */
-
+/*
 struct status {             // ball structure
     
     int     c;                  // color [1,15]
@@ -45,7 +45,7 @@ struct status {             // ball structure
     float   vy;
     //float v0;               // jumping velocity (m/s)
 
-};
+};*/
 
 struct cbuf {               // circular buffer structure
     
@@ -56,10 +56,10 @@ struct cbuf {               // circular buffer structure
     
 };
 
-struct cbuf trail;          
-struct status ball;
+int new_ball;
 
-sem_t s13;
+struct cbuf trail;          
+//struct status ball;
 
 void store_trail( int i);
 

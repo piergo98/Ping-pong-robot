@@ -9,99 +9,153 @@ void* adversarytask_x(void* arg)
     int   xd, vd;                   // desired position and speed
     int   x,  v;                    // actual  position and speed
     float   u, z, y;                // temporary variables
+    struct  state   temp;           //temporary structure
         
         i = get_task_index(arg);
         set_activation(i);
+        //sem_wait(&s1);
         T = tp[i].deadline;         //la utilizzo per il rapp. inc.
+        //sem_post(&s1);
 
         x_min = C_X1 - OFFSET_X;
         x_max = C_X4 + OFFSET_X;
 
-        sem_wait(&s5); 
-        prevtheta.in[NOW] = 0;      //sarebbe stato piu' bello un for?
-        prevtheta.in[BEFORE] = 0;
-        prevtheta.out[NOW] = 0;
-        prevtheta.out[BEFORE] = 0;
-        sem_post(&s5);
+        pthread_mutex_lock(&s8);
+        temp.position = adversary_x.position;
+        temp.speed = adversary_x.speed;
+        pthread_mutex_unlock(&s8);
 
+        //sem_wait(&s2);
         while(!end) {
 
             vd = 0;
 
-            sem_wait(&s3);
-            xd = buffer[NOW].x;
-            sem_post(&s3);
+            pthread_mutex_lock(&s3);
+            xd = 480 - buffer[NEXT].x;
+            pthread_mutex_unlock(&s3);
 
-            sem_wait(&s8);
-            get_state(&x, &v, &adversary_x);
+            get_state(&x, &v, &temp);
             u = KP*(xd - x) + KD*(vd - v);
-            //z = delay(u);
-            y = motor(z);
-            sem_wait(&s11);
-            sem_wait(&s10);
-            if (player)
-                mouse_x_flag = 1;
-            sem_post(&s10);
-            update_state(y, T, x_min, x_max, &adversary_x);
-            mouse_x_flag = 0;
-            sem_post(&s11);
-            sem_post(&s8);
+            y = motor(u, &adv_x_angle);
+            
+            pthread_mutex_lock(&s10);
+            update_adversary_state_x(y, T, x_min, x_max, &temp);
+            pthread_mutex_unlock(&s10);
+
+            pthread_mutex_lock(&s8);
+            adversary_x.position = temp.position;
+            adversary_x.speed = temp.speed;
+            pthread_mutex_unlock(&s8);
+            
 
             if (deadline_miss(i))
                 show_dmiss(i);
 
             wait_for_activation(i);
         }
+        //sem_post(&s2);
 }
 
 void* adversarytask_z(void* arg)
 {
-    int   i, T;         // task index
-    int   z_min, z_max;             // limiti di movimento
-    int   zd, vd;       // desired position and speed
-    int   x,  v;        // actual  position and speed
-    float   u, z, y;    // temporary variables
+    int   i, T;                 // task index
+    int   z_min, z_max;         // limiti di movimento
+    int   zd, vd;               // desired position and speed
+    int   x,  v;                // actual  position and speed
+    float   u, z, y;            // temporary variables
+    struct  state   temp;       //temporary structure
         
         i = get_task_index(arg);
         set_activation(i);
-        T = tp[i].deadline;       //la utilizzo per il rapp. inc.
+        //sem_wait(&s1);
+        T = tp[i].period / 10;       //la utilizzo per il rapp. inc.
+        //sem_post(&s1);
 
         z_min = C_Z1 - OFFSET_Z;
         z_max = C_Z1 + OFFSET_Z / 3;
 
-        sem_wait(&s5);
-        prevtheta.in[NOW] = 0;
-        prevtheta.in[BEFORE] = 0;
-        prevtheta.out[NOW] = 0;
-        prevtheta.out[BEFORE] = 0;
-        sem_post(&s5);
+        pthread_mutex_lock(&s9);
+        temp.position = adversary_z.position;
+        temp.speed = adversary_z.speed;
+        pthread_mutex_unlock(&s9);
 
         while(!end) {
 
             vd = 0;
 
-            sem_wait(&s3);
+            pthread_mutex_lock(&s3);
             zd = buffer[NEXT].z;
-            sem_post(&s3);
+            pthread_mutex_unlock(&s3);
 
-            sem_wait(&s9);
-            get_state(&x, &v, &adversary_z);
+            //pthread_mutex_lock(&s13);
+            //zd =ball.z;
+            //pthread_mutex_unlock(&s13);
+
+            get_state(&x, &v, &temp);
             u = KP*(zd - x) + KD*(vd - v);
-            //z = delay(u);
-            y = motor(z);
-            sem_wait(&s12);
-            sem_wait(&s10);
-            if (player)
-                mouse_z_flag = 1;
-            sem_post(&s10);
-            update_state(y, T, z_min, z_max, &adversary_z);
-            mouse_z_flag = 0;
-            sem_post(&s12);
-            sem_post(&s9);
+            y = motor(u, &adv_z_angle);
+
+            
+            pthread_mutex_lock(&s10);
+            update_adversary_state_z(y, T, z_min, z_max, &temp);
+            pthread_mutex_unlock(&s10);
+
+            pthread_mutex_lock(&s9);
+            adversary_z.position = temp.position;
+            adversary_z.speed = temp.speed;
+            pthread_mutex_unlock(&s9);
 
             if (deadline_miss(i))
                 show_dmiss(i);
                 
             wait_for_activation(i);
         }
+        
 }
+
+void update_adversary_state_x(float y, int T, int p_min, int p_max, struct state *robot_tmp)
+{
+  
+    int pippo;
+
+    pippo = robot_tmp->position + y * R;                              //converte rotazione del motore in movimento cinghia
+    
+        if (pippo > p_max )
+            robot_tmp->position = p_max;
+
+        else if (pippo < p_min)
+            robot_tmp->position = p_min;
+
+        else if (player)
+            robot_tmp->position = mouse_x;
+
+        else{
+            robot_tmp->speed = ((int)pippo - robot_tmp->position)/ T;         //rapp. incrementale
+            robot_tmp->position = (int)pippo;
+        } 
+}
+
+void update_adversary_state_z(float y, int T, int p_min, int p_max, struct state *robot_tmp)
+{
+  
+    int pippo;
+
+    pippo = robot_tmp->position + y * R;                              //converte rotazione del motore in movimento cinghia
+    
+        if (pippo > p_max )
+            robot_tmp->position = p_max;
+
+        else if (pippo < p_min)
+            robot_tmp->position = p_min;
+
+        else if (player)
+            robot_tmp->position = mouse_y;
+
+        else{
+            robot_tmp->speed = ((int)pippo - robot_tmp->position)/ T;         //rapp. incrementale
+            robot_tmp->position = (int)pippo;
+        } 
+}
+
+
+

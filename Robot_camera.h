@@ -15,8 +15,8 @@
 #define     NEXT            2           //centro successivo
 #define     DELTA_X         40          //incremento delle dimensioni della finestra di ricerca lungo x
 #define     DELTA_Z         30          //incremento delle dimensioni della finestra di ricerca lungo x
-#define     SIZE_X          200         //lunghezza finestra di ricerca
-#define     SIZE_Z          200         //altezza finestra di ricerca
+#define     SIZE_X          320         //lunghezza finestra di ricerca
+#define     SIZE_Z          360         //altezza finestra di ricerca
 
 
 struct win{        /* struttura che definisce la finestra di ricerca dell'oggetto */
@@ -38,12 +38,12 @@ struct coord buffer[DIM];
 
 struct win   window;       //finestra di ricerca
 
-sem_t s3, s4;
-
 void init_camera(void);
 
 int centroid(struct win w, struct  coord   *target);    /* Calcola il centro di un certo target, specificato dal colore */
 
-void prediction(struct win *w);    /* Predice il centro successivo e aggiorna la finestra di ricerca */
+void prediction(struct win *w, struct coord memory[DIM]);    /* Predice il centro successivo e aggiorna la finestra di ricerca */
 
 void* camera(void* arg);          /* Task camera */
+
+void *miss_stamp(void *arg);

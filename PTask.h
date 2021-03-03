@@ -5,12 +5,15 @@
 #include <time.h>
 #include <semaphore.h>
 
-#define     NT  7            //numero massimo di task
+#define     NT  100            //numero massimo di task
 #define     DIM_S   30       //dimensioni stringa
 
 int     ball_miss, camera_miss, motor_x_miss, motor_z_miss, adv_x_miss, adv_z_miss, display_miss, tastiera_miss;
 
-sem_t   s1, s2, s14, s15, s16, s17, s18, s19, s20, s21;
+sem_t   s1, s2;
+
+pthread_mutex_t   s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19, s20, s21; 
+pthread_mutexattr_t    mux_att;
 
 struct  task_par{	    //struttura che memorizza tutti i parametri del thread
 
@@ -22,7 +25,6 @@ struct  task_par{	    //struttura che memorizza tutti i parametri del thread
     int     dmiss;          //numero di deadline misses
     struct  timespec at;    //attivazione successiva
     struct  timespec dl;    //deadline assoluta
-
 };
 
 struct	    task_par	tp[NT];

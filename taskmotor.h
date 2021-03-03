@@ -18,10 +18,10 @@
 #define A 0.019    // tau = 0.19s, T = 20 ms, K = 19.23 
 #define B 0.019
 
-#define KP 1     //costanti proporzionali e derivative del PID 
-#define KD 1
+#define KP 0.5    //costanti proporzionali e derivative del PID 
+#define KD 0.5
 
-#define R 5        //raggio puleggia in mm
+#define R 0.5       //raggio puleggia in mm
 //------------------------------------------------------------------------------
 // PUNTI TAVOLO VISTO DALL'ALTO
 //------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ struct m_tfunc     //va inizializzata nel motortask (?)
 {
    float in[2];    //ingressi instanti k-1, k-2
    float out[2];   //uscite instanti k-1, k-2
-} prevtheta;
+};
 
 struct state       // va messa a zero quando accendo il sistema 
 {
@@ -46,17 +46,33 @@ struct state       // va messa a zero quando accendo il sistema
     int speed;
 };
 
+struct status {             // ball structure
+    
+    int     c;                // color [1,15]
+    float   r;                // radius (m)
+    float   x;                // x coordinate (m)
+    float   y;
+    float   z;                // z coordinate (m)
+    float   vx;               // x velocity (m/s)
+    float   vz;               // z velocity (m/s)
+    float   vy;
+    //float v0;               // jumping velocity (m/s)
+
+};
+
+struct m_tfunc rob_x_angle, rob_z_angle, adv_x_angle, adv_z_angle; //angoli di rotazione dei motori
+
 struct state robot_x;           //gestiti dal taskmotor
 struct state robot_z;
 struct state adversary_x;       //gestiti dal task adversary 
 struct state adversary_z;
 
+struct status ball;
+
 int player;                     //flag per la scelta dell'avversario
 int mouse_x_flag, mouse_z_flag;
 
-sem_t s5, s6, s7, s8, s9, s10, s11, s12;
-
-float motor(float k);
+float motor(float k, struct m_tfunc *prevtheta);
 
 void update_state(float y, int T, int p_min, int p_max, struct state *robot_tmp);
 
