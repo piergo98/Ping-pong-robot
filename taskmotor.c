@@ -62,6 +62,7 @@ void* motortask_x(void* arg)
     int     x_min,  x_max;                // limiti di movimento      
     int     xd,     vd;                   // desired position and speed
     int     x,      v;                    // actual  position and speed
+    int     err;                          // errore di posizione
     float   u,      z,      y;            // temporary variables
     struct  state   temp;                 // temporary structure
         
@@ -91,13 +92,17 @@ void* motortask_x(void* arg)
 
                 vd = 0;
 
+                //get_state(&x, &v, &temp);
+                //err += (xd - x)*T;
+
                 pthread_mutex_lock(&s3);
                 xd = buffer[NEXT].x;
                 pthread_mutex_unlock(&s3);
                 /*pthread_mutex_lock(&s13);
                 xd = ball.x;
                 pthread_mutex_unlock(&s13);*/
-
+                
+                //err += (xd - x)*T;
                 get_state(&x, &v, &temp);
                 u = KP * (xd - x) + KD * (vd - v);
                 y = motor(u, &rob_x_angle);
@@ -122,7 +127,9 @@ void* motortask_z(void* arg)
     int     z_min,  z_max;          // limiti di movimento
     int     xd,     vd;             // desired position and speed
     int     x,      v;              // actual  position and speed
-    float   u,      z,      y;      // temporary variables
+    int     err = 0;                    // errore di posizione
+    int     antiwindup = 0;
+    float   u,      y;      // temporary variables
     struct  state   temp;           //temporary structure
 
         
@@ -144,6 +151,9 @@ void* motortask_z(void* arg)
             while(!end) {
 
                 vd = 0;
+                
+                //get_state(&x, &v, &temp);
+                //err += (xd - x)*T;
 
                 pthread_mutex_lock(&s3);
                 xd = buffer[NEXT].z;
@@ -152,9 +162,12 @@ void* motortask_z(void* arg)
                 /*pthread_mutex_lock(&s13);
                 xd = ball.z;
                 pthread_mutex_unlock(&s13);*/
-
+                
+                
                 get_state(&x, &v, &temp);
+                //err += (xd - x)*T - antiwindup;                 //antiwindup evita la saturazione di u
                 u = KP*(xd - x) + KD*(vd - v);
+                //antiwindup = u;
                 y = motor(u, &rob_z_angle);
                 update_state(y, T, z_min, z_max, &temp);
                 

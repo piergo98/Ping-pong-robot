@@ -290,7 +290,7 @@ void racchetta_robot(BITMAP* bmp, int w, int h){
             pthread_mutex_lock(&s7);
             z = robot_z.position;
             pthread_mutex_unlock(&s7);
-            rectfill(screen, x - 20, z - 5, x + 20, z + 5, RED);
+            rectfill(screen, x - 20, z - 5, x + 20, z + 5, BLUE);
         } 
 } 
 

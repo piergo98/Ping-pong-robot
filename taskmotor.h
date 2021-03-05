@@ -14,12 +14,13 @@
 #define OFFSET_Z 180
 
 
-#define P 0.19     // parametri funzione di trasferimento:
-#define A 0.019    // tau = 0.19s, T = 20 ms, K = 19.23 
-#define B 0.019
+#define P 0.769     // parametri funzione di trasferimento:
+#define A 0.116     // tau = 0.19s, T = 50 ms, K = 19.23 
+#define B 0.106
 
-#define KP 0.5    //costanti proporzionali e derivative del PID 
-#define KD 0.5
+#define KP 0.005   //costanti proporzionali, derivative e integrative del PID 
+#define KD 0.001
+#define KI 0.0001
 
 #define R 0.5       //raggio puleggia in mm
 //------------------------------------------------------------------------------
@@ -56,7 +57,6 @@ struct status {             // ball structure
     float   vx;               // x velocity (m/s)
     float   vz;               // z velocity (m/s)
     float   vy;
-    //float v0;               // jumping velocity (m/s)
 
 };
 

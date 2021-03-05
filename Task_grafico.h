@@ -10,6 +10,7 @@
 #define     WHITE   0xffffff        //bianco in esadecimale
 #define     BLACK   0x000000        //nero in esadecimale
 #define     RED     0xff0000        //rosso in esadecimale
+#define     BLUE    0x0000ff        //blu in esadecimale
 #define     TRASP   -1
 #define     DIM_RAC 70              //dimensioni racchetta
 //------------------------------------------------------------------------------
