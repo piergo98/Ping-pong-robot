@@ -107,13 +107,13 @@ float frand(float vxmin, float vxmax)
 void init_ball(void)
 {
    pthread_mutex_lock(&s13); 
-   ball.vx = 2;
+   ball.vx = 0;
    ball.vy = 0;
-   ball.vz = 10;
+   ball.vz = 0;
    
    ball.x = 320;
    ball.y = Y_0;
-   ball.z = 200;
+   ball.z = 120;
 
    ball.r = 5;          //BALL_RADIUS
    pthread_mutex_unlock(&s13);

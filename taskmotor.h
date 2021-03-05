@@ -14,12 +14,12 @@
 #define OFFSET_Z 180
 
 
-#define P 0.974027     // parametri funzione di trasferimento:
-#define A 0.001254     // tau = 0.19s, T = 50 ms, K = 19.23 
-#define B 0.001243
+#define P 0.769     // parametri funzione di trasferimento:
+#define A 0.116     // tau = 0.19s, T = 50 ms, K = 19.23 
+#define B 0.106
 #define Ts 0.005           //tempo campionamento motore
 
-#define KP 0.2         //costanti proporzionali, derivative e integrative del PID 
+#define KP 0.3         //costanti proporzionali, derivative e integrative del PID 
 #define KD 0.001
 #define KI 0.01
 
