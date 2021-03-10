@@ -19,8 +19,8 @@
 #define B 0.106
 #define Ts 0.005           //tempo campionamento motore
 
-#define KP 0.3         //costanti proporzionali, derivative e integrative del PID 
-#define KD 0.001
+#define KP 0.5        //costanti proporzionali, derivative e integrative del PID 
+#define KD 0.008
 #define KI 0.01
 
 #define R 0.5       //raggio puleggia in mm
