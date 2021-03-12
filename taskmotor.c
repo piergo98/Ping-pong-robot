@@ -77,8 +77,12 @@ void* motortask_x(void* arg)
             err[NOW] = err[BEFORE] = 0;
             u1[NOW] = u1[BEFORE]  = 0;
 
+            via =0;
+
             
             while(!end) {
+
+                if (!via) {
 
                 vd = 0;
 
@@ -113,6 +117,10 @@ void* motortask_x(void* arg)
                 robot_x.speed = temp.speed;
                 pthread_mutex_unlock(&s6);
 
+                if (err[NOW]<=4 && err[NOW]>= -4) via = 1;
+                //if((int)err[NOW]%2) via = 1;
+                }
+
                 if (deadline_miss(i))
                     show_dmiss(i);
 
@@ -144,38 +152,44 @@ void* motortask_z(void* arg)
             
             while(!end) {
 
-                vd = 0;
+                if (via) {
 
-                pthread_mutex_lock(&s6);
-                temp.position = robot_z.position;
-                temp.speed = robot_z.speed;
-                pthread_mutex_unlock(&s6);
+                    vd = 0;
 
-                pthread_mutex_lock(&s3);
-                xd = buffer[NEXT].z;
-                pthread_mutex_unlock(&s3);
-            
-                get_state(&x, &v, &temp);
-                //errore di posizione
-                err[NOW] = xd-x;
-                //controllo di posizione
-                u1[NOW] = (KP + Ts * KI) * err[NOW] - KP * err[BEFORE] + u1[BEFORE];
-                //controllo di velocita' 
-                u = u1[NOW] + KD * (vd - v);
+                    pthread_mutex_lock(&s6);
+                    temp.position = robot_z.position;
+                    temp.speed = robot_z.speed;
+                    pthread_mutex_unlock(&s6);
 
-                printf("u_z = %f\t", u);
-                printf("e_z = %f\n", err[NOW]);
-
-                y = motor(u, &rob_x_angle);
-                update_state(y, T, z_min, z_max, &temp);
-
-                u1[BEFORE] = u1[NOW];
-                err[BEFORE] = err[NOW];
+                    pthread_mutex_lock(&s3);
+                    xd = buffer[NEXT].z - 2 ;
+                    pthread_mutex_unlock(&s3);
                 
-                pthread_mutex_lock(&s7);
-                robot_z.position = temp.position;
-                robot_z.speed = temp.speed;
-                pthread_mutex_unlock(&s7);
+                    get_state(&x, &v, &temp);
+                    //errore di posizione
+                    err[NOW] = xd-x;
+                    //controllo di posizione
+                    u1[NOW] = (KP + Ts * KI) * err[NOW] - KP * err[BEFORE] + u1[BEFORE];
+                    //controllo di velocita' 
+                    u = u1[NOW] + KD * (vd - v);
+
+                    printf("u_z = %f\t", u);
+                    printf("e_z = %f\n", err[NOW]);
+
+                    y = motor(u, &rob_x_angle);
+                    update_state(y, T, z_min, z_max, &temp);
+
+                    u1[BEFORE] = u1[NOW];
+                    err[BEFORE] = err[NOW];
+                    
+                    pthread_mutex_lock(&s7);
+                    robot_z.position = temp.position;
+                    robot_z.speed = temp.speed;
+                    pthread_mutex_unlock(&s7);
+
+                    if (err[NOW]<=4 && err[NOW]>= -4) via =0;
+                    //if ((int)err[NOW]%2) via =0;
+                }
 
                 if (deadline_miss(i))
                     show_dmiss(i);
@@ -207,22 +221,22 @@ void update_state(float y, int T, int p_min, int p_max, struct state *robot_tmp)
 
     delta = (int)y * R;                              //converte rotazione del motore in movimento cinghia
     
-        //if (delta > p_max)
-            //robot_tmp->position = p_max;
+        if (delta > p_max)
+            robot_tmp->position = p_max;
 
-        //else if (delta < p_min)
-            //robot_tmp->position = p_min;
+        else if (delta < p_min)
+            robot_tmp->position = p_min;
 
-       //else if (mouse_x_flag == 1)
-            //robot_tmp->position = mouse_x;
+        else if (mouse_x_flag == 1)
+            robot_tmp->position = mouse_x;
 
-       // else if (mouse_z_flag == 1)
-            //robot_tmp->position = mouse_y;
+        else if (mouse_z_flag == 1)
+            robot_tmp->position = mouse_y;
 
-        //else{
+        else{
             robot_tmp->speed = ((delta - robot_tmp->position)/ Ts);         //rapp. incrementale
             robot_tmp->position = delta;
-        //} 
+        } 
 }
 
 void get_state(int *xi, int *vi, struct state *robot_tmp)

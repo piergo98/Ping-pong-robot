@@ -113,7 +113,7 @@ void init_ball(void)
    
    ball.x = 320;
    ball.y = Y_0;
-   ball.z = 120;
+   ball.z = 380;
 
    ball.r = 5;          //BALL_RADIUS
    pthread_mutex_unlock(&s13);

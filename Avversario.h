@@ -19,6 +19,8 @@
 #define     C_X4    480
 #define     C_Z4    420
 
+int via_adv;
+
 
 void* adversarytask_x(void* arg);
 

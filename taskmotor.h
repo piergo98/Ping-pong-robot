@@ -72,6 +72,7 @@ struct status ball;
 
 int player;                     //flag per la scelta dell'avversario
 int mouse_x_flag, mouse_z_flag;
+int via;
 
 float motor(float k, struct m_tfunc *prevtheta);
 

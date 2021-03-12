@@ -8,53 +8,65 @@ void* adversarytask_x(void* arg)
     int   x_min, x_max;             // limiti di movimento      
     int   xd, vd;                   // desired position and speed
     int   x,  v;                    // actual  position and speed
-    float   u[2],      y,   err[2]; // temporary variables
+    float   u1[2],      y,   err[2],    u; // temporary variables
     struct  state   temp;           //temporary structure
         
         i = get_task_index(arg);
         set_activation(i);
         //sem_wait(&s1);
-        T = tp[i].deadline;         //la utilizzo per il rapp. inc.
+        T = tp[i].deadline/ 10;         //la utilizzo per il rapp. inc.
         //sem_post(&s1);
 
         x_min = C_X1 - OFFSET_X;
         x_max = C_X4 + OFFSET_X;
 
         err[NOW] = err[BEFORE] = 0;
-        u[NOW] = u[BEFORE]  = 0;
+        u1[NOW] = u1[BEFORE]  = 0;
 
-        pthread_mutex_lock(&s8);
-        temp.position = adversary_x.position;
-        temp.speed = adversary_x.speed;
-        pthread_mutex_unlock(&s8);
+        via_adv = 0;
 
-        //sem_wait(&s2);
         while(!end) {
 
-            vd = 0;
+            if (!via_adv) {
 
-            pthread_mutex_lock(&s3);
-            xd = 480 - buffer[NEXT].x;
-            pthread_mutex_unlock(&s3);
+                vd = 0;
 
-            get_state(&x, &v, &temp);
-            err[NOW] = xd-x;
-            u[NOW] = (KP + Ts * KI) * err[NOW] - KP * err[BEFORE] + u[BEFORE];
-            //u = KP*(xd - x) + KD*(vd - v);
-            y = motor(u[NOW], &adv_x_angle);
-            
-            pthread_mutex_lock(&s10);
-            update_adversary_state_x(y, T, x_min, x_max, &temp);
-            pthread_mutex_unlock(&s10);
+                pthread_mutex_lock(&s8);
+                temp.position = adversary_x.position;
+                temp.speed = adversary_x.speed;
+                pthread_mutex_unlock(&s8);
 
-            u[BEFORE] = u[NOW];
-            err[BEFORE] = err[NOW];
+                pthread_mutex_lock(&s3);
+                xd = buffer[NEXT].x;
+                pthread_mutex_unlock(&s3);
 
-            pthread_mutex_lock(&s8);
-            adversary_x.position = temp.position;
-            adversary_x.speed = temp.speed;
-            pthread_mutex_unlock(&s8);
-            
+                get_state(&x, &v, &temp);
+                //errore di posizione
+                err[NOW] = xd-x;
+                //controllo di posizione
+                u1[NOW] = (KP + Ts * KI) * err[NOW] - KP * err[BEFORE] + u1[BEFORE];
+                //controllo di velocita'
+                u = u1[NOW] + KD * (vd - v);
+                
+                printf("u_adv_x = %f\t", u);
+                printf("e_adv_x = %f\n", err[NOW]);
+
+                y = motor(u, &adv_x_angle);
+                
+                //pthread_mutex_lock(&s10);
+                update_adversary_state_x(y, T, x_min, x_max, &temp);
+                //pthread_mutex_unlock(&s10);
+
+                u1[BEFORE] = u1[NOW];
+                err[BEFORE] = err[NOW];
+
+                pthread_mutex_lock(&s8);
+                adversary_x.position = temp.position;
+                adversary_x.speed = temp.speed;
+                pthread_mutex_unlock(&s8);
+
+                if (err[NOW]<=4 && err[NOW]>= -4) via_adv = 1;
+            }
 
             if (deadline_miss(i))
                 show_dmiss(i);
@@ -70,7 +82,7 @@ void* adversarytask_z(void* arg)
     int   z_min, z_max;                 // limiti di movimento
     int   zd, vd;                       // desired position and speed
     int   x,  v;                        // actual  position and speed
-    float   u[2],      y,   err[2];     // temporary variables
+    float   u1[2],      y,   err[2],    u;     // temporary variables
     struct  state   temp;               //temporary structure
         
         i = get_task_index(arg);
@@ -83,43 +95,56 @@ void* adversarytask_z(void* arg)
         z_max = C_Z1 + OFFSET_Z / 3;
 
         err[NOW] = err[BEFORE] = 0;
-        u[NOW] = u[BEFORE]  = 0;
-
-        pthread_mutex_lock(&s9);
-        temp.position = adversary_z.position;
-        temp.speed = adversary_z.speed;
-        pthread_mutex_unlock(&s9);
+        u1[NOW] = u1[BEFORE]  = 0;
 
         while(!end) {
 
-            vd = 0;
+            if (via_adv) {
 
-            pthread_mutex_lock(&s3);
-            zd = buffer[NEXT].z;
-            pthread_mutex_unlock(&s3);
+                vd = 0;
 
-            //pthread_mutex_lock(&s13);
-            //zd =ball.z;
-            //pthread_mutex_unlock(&s13);
+                pthread_mutex_lock(&s9);
+                temp.position = adversary_z.position;
+                temp.speed = adversary_z.speed;
+                pthread_mutex_unlock(&s9);
 
-            get_state(&x, &v, &temp);
-            err[NOW] = zd-x;
-            u[NOW] = (KP + Ts * KI) * err[NOW] - KP * err[BEFORE] + u[BEFORE];
-            //u = KP*(zd - x) + KD*(vd - v);
-            y = motor(u[NOW], &adv_z_angle);
+                pthread_mutex_lock(&s3);
+                zd =buffer[NEXT].z + 2;
+                pthread_mutex_unlock(&s3);
 
-            
-            pthread_mutex_lock(&s10);
-            update_adversary_state_z(y, T, z_min, z_max, &temp);
-            pthread_mutex_unlock(&s10);
+                //pthread_mutex_lock(&s13);
+                //zd =ball.z;
+                //pthread_mutex_unlock(&s13);
 
-            u[BEFORE] = u[NOW];
-            err[BEFORE] = err[NOW];
+                get_state(&x, &v, &temp);
+                //errore di posizione
+                err[NOW] = zd-x;
+                //controllo di posizione
+                u1[NOW] = (KP + Ts * KI) * err[NOW] - KP * err[BEFORE] + u1[BEFORE];
+                //controllo di velocita'
+                u = u1[NOW] + KD * (vd - v);
 
-            pthread_mutex_lock(&s9);
-            adversary_z.position = temp.position;
-            adversary_z.speed = temp.speed;
-            pthread_mutex_unlock(&s9);
+                printf("u_adv_z = %f\t", u);
+                printf("e_adv_z = %f\n", err[NOW]);
+
+                y = motor(u, &adv_z_angle);
+
+                
+                //pthread_mutex_lock(&s10);
+                update_adversary_state_z(y, T, z_min, z_max, &temp);
+                //pthread_mutex_unlock(&s10);
+
+                u1[BEFORE] = u1[NOW];
+                err[BEFORE] = err[NOW];
+
+                pthread_mutex_lock(&s9);
+                adversary_z.position = temp.position;
+                adversary_z.speed = temp.speed;
+                pthread_mutex_unlock(&s9);
+
+                if (err[NOW]<=4 && err[NOW]>= -4) via_adv =0;
+
+            }
 
             if (deadline_miss(i))
                 show_dmiss(i);
@@ -134,7 +159,7 @@ void update_adversary_state_x(float y, int T, int p_min, int p_max, struct state
   
     int pippo;
 
-    pippo = robot_tmp->position + y * R;                              //converte rotazione del motore in movimento cinghia
+    pippo = y * R;                              //converte rotazione del motore in movimento cinghia
     
         if (pippo > p_max )
             robot_tmp->position = p_max;
@@ -156,7 +181,7 @@ void update_adversary_state_z(float y, int T, int p_min, int p_max, struct state
   
     int pippo;
 
-    pippo = robot_tmp->position + y * R;                              //converte rotazione del motore in movimento cinghia
+    pippo = y * R;                              //converte rotazione del motore in movimento cinghia
     
         if (pippo > p_max )
             robot_tmp->position = p_max;
