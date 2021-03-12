@@ -13,12 +13,8 @@ void* balltask(void* arg)
         i = get_task_index(arg);
         set_activation(i);
         
-        //init_ball();
-        //sem_wait(&s1);
         dt = TSCALE* (float)tp[i].period /1000;
-        //sem_post(&s1);
         
-        //sem_wait(&s2);
         while (!end) {
             
             pthread_mutex_lock(&s13);
@@ -27,12 +23,10 @@ void* balltask(void* arg)
             ball.z  += 1*(ball.vz * dt - BETA * ball.vz * dt);
             pthread_mutex_unlock(&s13);
 
-            handle_bounce(i);
+            //handle_bounce(i);
             store_trail(i);
 
             if (ball.x > 640 || ball.x < 0 || ball.z > 480 || ball.z < 0){
-                //new_ball++;
-                //autokill(i);
                 init_ball();
             }
 
@@ -41,7 +35,6 @@ void* balltask(void* arg)
                 
             wait_for_activation(i);
         }
-        //sem_post(&s2);
 }
 
 void store_trail( int i)
@@ -67,7 +60,7 @@ void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racc
     if ((robot_z.position - 5 <= ball.z - ball.r) && (robot_z.position + 5 >= ball.z - ball.r) && (ball.x - ball.r >= robot_x.position) && (ball.x + ball.r <= robot_x.position + RACC_MAX))
     {
         ball.vz = - ball.vz + robot_z.speed;
-        ball.vx = - ball.vx + robot_x.speed + frand(ERR_MIN, ERR_MAX);              //robusto a rimbalzo dritto continuo
+        ball.vx = - ball.vx + robot_x.speed + frand(ERR_MIN, ERR_MAX);     //robusto a rimbalzo dritto continuo
     }
     pthread_mutex_unlock(&s13);
     pthread_mutex_unlock(&s7);
@@ -107,13 +100,13 @@ float frand(float vxmin, float vxmax)
 void init_ball(void)
 {
    pthread_mutex_lock(&s13); 
-   ball.vx = 0;
+   ball.vx = -1;
    ball.vy = 0;
-   ball.vz = 0;
+   ball.vz = 1;
    
    ball.x = 320;
    ball.y = Y_0;
-   ball.z = 380;
+   ball.z = 120;
 
    ball.r = 5;          //BALL_RADIUS
    pthread_mutex_unlock(&s13);

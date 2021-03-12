@@ -66,11 +66,11 @@ void draw_screen(BITMAP* buf);          /* Disegna l'interfaccia su una bitmap *
 
 void white2pink(BITMAP* b);      /* Converte lo sfondo della sprite in rosa */
 
-void racchetta_avversario(BITMAP* bmp, int w, int h);       /* Disegna una racchetta sullo schermo */
+void racchetta_avversario(BITMAP* bmp, BITMAP* finestra, int w, int h);       /* Disegna una racchetta sullo schermo */
 
-void racchetta_robot(BITMAP* bmp, int w, int h);
+void racchetta_robot(BITMAP* bmp, BITMAP* finestra, int w, int h);
 
-void draw_ball(void);           /* Disegna la pallina */
+void draw_ball(BITMAP* finestra);           /* Disegna la pallina */
 
 void *display(void* arg);       /* Task grafico */
 

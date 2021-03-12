@@ -45,26 +45,31 @@ void init_screen(void){
     pthread_mutex_unlock(&s21);
 
     tempo = 0;
-    pos_old = 240;
+    pos_old = 160;
     vel_old = 0;
 
     memory = create_bitmap(WIDTH, HEIGTH);
-    clear_bitmap(memory);
-    line(memory, 0, 480 - TARGET, 640, 480 - TARGET, RED);
+    clear_bitmap(memory);    
 }
 
 void draw_graph(BITMAP* buf){
 
+        pthread_mutex_lock(&s11);
+        line(memory, 0, target, 640, target, RED);
+        pthread_mutex_unlock(&s11);
+
         pthread_mutex_lock(&s6);
-        line(buf, tempo, 480 - pos_old, tempo+1, 480 - robot_x.position, WHITE);
+        line(buf, tempo, pos_old, tempo+1, robot_x.position, WHITE);
         pos_old = robot_x.position;
-        line(buf, tempo, 480 - vel_old, tempo+1, 480 - robot_x.speed, BLUE);
+        line(buf, tempo, vel_old, tempo+1, robot_x.speed, BLUE);
         vel_old = robot_x.speed;
         pthread_mutex_unlock(&s6);
         tempo++;
         if (tempo > 639){
             clear_bitmap(buf);
-            line(buf, 0, 480 - TARGET, 640, 480 - TARGET, RED);
+            pthread_mutex_lock(&s11);
+            line(buf, 0, target, 640, target, RED);
+            pthread_mutex_unlock(&s11);
             tempo = 0;
         }             
 }
@@ -98,11 +103,15 @@ void* command(void* arg){
                 scan = 0;
                 if (keypressed()) scan = readkey() >> 8;
                 switch(scan){
-                    case KEY_V:
-                        //pview_flag = 0;
+                    case KEY_UP:
+                        pthread_mutex_lock(&s11);
+                        target += 50;
+                        pthread_mutex_unlock(&s11);
                         break;
-                    case KEY_P:
-                        //pview_flag = 1;
+                    case KEY_DOWN:
+                        pthread_mutex_lock(&s11);
+                        target -= 50;
+                        pthread_mutex_unlock(&s11);
                         break;
                     case KEY_U:
                         pthread_mutex_lock(&s10);

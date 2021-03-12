@@ -4,7 +4,7 @@ void init_motor(){
 
     /* Inizializza le posizioni e le velocità dei robot */
     pthread_mutex_lock(&s6);
-    robot_x.position = 240;
+    robot_x.position = 160;
     robot_x.speed = 0;
     pthread_mutex_unlock(&s6);
     
@@ -28,12 +28,8 @@ void init_motor(){
     pthread_mutex_unlock(&s10);
    
     pthread_mutex_lock(&s11);
-    mouse_x_flag = 0;
+    target = TARGET;
     pthread_mutex_unlock(&s11);
-    
-    pthread_mutex_lock(&s12);
-    mouse_z_flag = 0;
-    pthread_mutex_unlock(&s12);
 
     rob_x_angle.in[NOW] = 0;      
     rob_x_angle.in[BEFORE] = 0;
@@ -68,8 +64,6 @@ void* motortask(void* arg)
             i = get_task_index(arg);
             set_activation(i);
 
-            T = tp[i].deadline / 10;           //la utilizzo per il rapp. inc.
-
             x_min = C_X3 - OFFSET_X;    //70
             x_max = C_X2 + OFFSET_X;    //570
 
@@ -87,7 +81,7 @@ void* motortask(void* arg)
 
                 pthread_mutex_lock(&s3);
                 //riferimento di posizione
-                xd = TARGET;
+                xd = target;
                 pthread_mutex_unlock(&s3);
                 
                 get_state(&x, &v, &temp);
@@ -99,10 +93,12 @@ void* motortask(void* arg)
                 u = u1[NOW] + KD * (vd - v);  
 
                 printf("u = %f\t", u);
-                printf("e = %f\n", err[NOW]);
+                printf("e = %f\t", err[NOW]);
+                printf("x = %d\t", x);
+                printf("v = %d\n", v);
                 
                 y = motor(u, &rob_x_angle);
-                update_state(y, T, x_min, x_max, &temp);
+                update_state(y, err[NOW], x_min, x_max, &temp);
 
                 u1[BEFORE] = u1[NOW];
                 err[BEFORE] = err[NOW];
@@ -136,13 +132,14 @@ float motor(float k, struct m_tfunc *prevtheta)    //angolo di cui deve ruotare 
     return theta;
 }
 
-void update_state(float y, int T, int p_min, int p_max, struct state *robot_tmp)
+void update_state(float y, float e, int p_min, int p_max, struct state *robot_tmp)
 {
     int delta;
 
     delta = (int)y * R;           //converte rotazione del motore in movimento cinghia
     
-    robot_tmp->speed = (delta - robot_tmp->position)/ Ts;         //rapp. incrementale
+    if (e <= 1 && e >= -1) robot_tmp->speed = 0;
+    else robot_tmp->speed = (delta - robot_tmp->position)/ Ts;         //rapp. incrementale
     robot_tmp->position = delta; 
 }
 

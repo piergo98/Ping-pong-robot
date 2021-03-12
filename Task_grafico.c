@@ -237,7 +237,7 @@ void white2pink(BITMAP* b){
             save_bitmap("racp.bmp", racp, pal);
 }
 
-void racchetta_avversario(BITMAP* bmp, int w, int h){
+void racchetta_avversario(BITMAP* bmp, BITMAP* finestra, int w, int h){
 
     int x, z;
 
@@ -251,7 +251,7 @@ void racchetta_avversario(BITMAP* bmp, int w, int h){
 
             x = gcord.x;
             z = gcord.z;
-            stretch_sprite(screen, bmp, x, z, w, h);
+            stretch_sprite(finestra, bmp, x, z, w, h);
         }
         else 
         {
@@ -262,11 +262,11 @@ void racchetta_avversario(BITMAP* bmp, int w, int h){
             z = adversary_z.position;
             pthread_mutex_unlock(&s9);            
 
-            rectfill(screen, x - 20, z - 5, x + 20, z + 5, RED);
+            rectfill(finestra, x - 20, z - 5, x + 20, z + 5, RED);
         } 
 }
 
-void racchetta_robot(BITMAP* bmp, int w, int h){
+void racchetta_robot(BITMAP* bmp, BITMAP* finestra, int w, int h){
 
     int x, z, x_old, z_old;
 
@@ -280,7 +280,7 @@ void racchetta_robot(BITMAP* bmp, int w, int h){
 
             x = gcord.x;
             z = gcord.z;
-            stretch_sprite(screen, bmp, x, z, w, h);
+            stretch_sprite(finestra, bmp, x, z, w, h);
         }
         else 
         {
@@ -290,11 +290,11 @@ void racchetta_robot(BITMAP* bmp, int w, int h){
             pthread_mutex_lock(&s7);
             z = robot_z.position;
             pthread_mutex_unlock(&s7);
-            rectfill(screen, x - 20, z - 5, x + 20, z + 5, BLUE);
+            rectfill(finestra, x - 20, z - 5, x + 20, z + 5, BLUE);
         } 
 } 
 
-void draw_ball(void)
+void draw_ball(BITMAP* finestra)
 {
     int x, z;
         pthread_mutex_lock(&s13);
@@ -312,7 +312,7 @@ void draw_ball(void)
         }
         pthread_mutex_unlock(&s13);
     
-        circlefill(screen, x, z, BALL_RADIUS, BALL_COLOR);
+        circlefill(finestra, x, z, BALL_RADIUS, BALL_COLOR);
 }
 
 void* display(void* arg){
@@ -324,24 +324,22 @@ void* display(void* arg){
         i = get_task_index(arg);
         set_activation(i);
 
-        //sem_wait(&s2);
         while(!end){
             if (pview_flag)
                 draw_screen(memory);
             else
                 display_camera_view(memory);
-            blit(memory, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
 
-            draw_ball();
-        
-            racchetta_avversario(rac_a, we , he);
-            racchetta_robot(rac_r, we, he);
+            draw_ball(memory);            
+            racchetta_avversario(rac_a, memory, we , he);
+            racchetta_robot(rac_r, memory, we, he);
+
+            blit(memory, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
 
             if (deadline_miss(i))
                 show_dmiss(i);
             wait_for_activation(i);
         }
-        //sem_post(&s2);
 }
 
 void display_camera_view(BITMAP* buf){
@@ -413,9 +411,8 @@ void* command(void* arg){
 
                 wait_for_activation(i);
             } while(scan != KEY_ESC);
-            //sem_wait(&s2);
+            
             end = 1;
-            //sem_post(&s2);
 
             if (deadline_miss(i))
                 show_dmiss(i);

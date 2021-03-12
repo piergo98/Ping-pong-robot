@@ -8,7 +8,7 @@
 #include    "PTask.h"
 
 #define     TARGET_COLOR    0xfa6717    //colore pallina
-#define     THRESHOLD       10          //numero minimo di pixel per riconoscere la pallina
+#define     THRESHOLD       1          //numero minimo di pixel per riconoscere la pallina
 #define     DIM             3           //dimensioni buffer per memorizzare i valori passati del centro della pallina
 #define     BEFORE          0           //centro precedente
 #define     NOW             1           //centro attuale
