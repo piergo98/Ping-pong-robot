@@ -7,7 +7,7 @@
 #define     PRIO_CAMERA 50
 #define     PRIO_MOTOR_X 60
 #define     PRIO_MOTOR_Z 60
-#define     PRIO_ADV_X 60
+#define     PRIO_ADV_X 61
 #define     PRIO_ADV_Z 60
 #define     PRIO_KEY 40
 #define     PRIO_DISPLAY 70
@@ -27,13 +27,13 @@ int main(void){
 
             task_create(balltask, 0, 40, 40, PRIO_BALL);
             task_create(camera, 1, 50, 50, PRIO_CAMERA);
-            //task_create(motortask_x, 2, 50, 50, PRIO_MOTOR_X);
-            //task_create(motortask_z, 3, 50, 50, PRIO_MOTOR_Z);
-            task_create(adversarytask_x, 4, 50, 50, PRIO_ADV_X);
-            task_create(adversarytask_z, 5, 50, 50, PRIO_ADV_Z);
+            task_create(motortask_x, 2, 50, 50, PRIO_MOTOR_X);
+            task_create(motortask_z, 3, 50, 50, PRIO_MOTOR_Z);
+            //task_create(adversarytask_x, 4, 50, 50, PRIO_ADV_X);
+            //task_create(adversarytask_z, 5, 50, 50, PRIO_ADV_Z);
             task_create(command, 7, 30, 30, PRIO_KEY);
             task_create(display, 6, 35, 35, PRIO_DISPLAY);
-            task_create(miss_stamp, 8, 25, 25, 81);
+            //task_create(miss_stamp, 8, 25, 25, 81);
         
             for (i = 0; i<9; i++) 
                 wait_for_end(i);
