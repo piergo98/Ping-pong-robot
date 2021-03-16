@@ -150,7 +150,7 @@ void* motortask_z(void* arg)
                     pthread_mutex_unlock(&s6);
 
                     pthread_mutex_lock(&s3);
-                    xd = buffer[NEXT].z;
+                    xd = buffer[NEXT].z - 5;
                     pthread_mutex_unlock(&s3);
                 
                     get_state(&x, &v, &temp);
@@ -178,7 +178,7 @@ void* motortask_z(void* arg)
                     robot_z.speed = temp.speed;
                     pthread_mutex_unlock(&s7);
 
-                    if (err[NOW]<=4 && err[NOW]>= -4) via =0;
+                    if (err[NOW]<=4 && err[NOW]>= -4) via = 0;
                 }
 
                 if (deadline_miss(i))

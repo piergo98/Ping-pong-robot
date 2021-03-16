@@ -24,7 +24,7 @@
 #define     HEIGTH      480
 
 
-#define     RACC_MAX    70     // max racchetta
+#define     RACC_MAX    20     // max racchetta
 #define     RACC_MIN    20     // min racchetta
 
 //int tflag;                  //trail flag

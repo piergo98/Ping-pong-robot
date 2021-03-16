@@ -130,24 +130,33 @@ void update_adversary_state_x(float y, int T, int p_min, int p_max, struct state
   
     int delta;
 
-    if(!player){
+    //if (ball.z <= 240) return;
 
-        delta = (int)y * R;                              //converte rotazione del motore in movimento lineare
-    
-        if (delta > p_max ){
-            robot_tmp->position = p_max;
-            robot_tmp->speed = 0;
+    //else {
+
+        if(!player){
+
+            delta = (int)y * R;                              //converte rotazione del motore in movimento lineare
+        
+            if (delta > p_max ){
+                robot_tmp->position = p_max;
+                robot_tmp->speed = 0;
+            }
+            else if (delta < p_min){
+                robot_tmp->position = p_min;
+                robot_tmp->speed = 0;
+            }
+            else{
+                robot_tmp->speed = (delta - robot_tmp->position)/ Ts;         //rapp. incrementale
+                robot_tmp->position = delta;
+            }
         }
-        else if (delta < p_min){
-            robot_tmp->position = p_min;
-            robot_tmp->speed = 0;
+        else { 
+            
+            robot_tmp->speed = (mouse_x - robot_tmp->position)/ Ts;
+            robot_tmp->position = mouse_x;
         }
-        else{
-            robot_tmp->speed = (delta - robot_tmp->position)/ Ts;         //rapp. incrementale
-            robot_tmp->position = delta;
-        }
-    }
-    else robot_tmp->position = mouse_x;
+    //}
 }
 
 void update_adversary_state_z(float y, int T, int p_min, int p_max, struct state *robot_tmp)
@@ -155,25 +164,33 @@ void update_adversary_state_z(float y, int T, int p_min, int p_max, struct state
   
     int delta;
 
-    if (!player){
+    //if (ball.z <= 240) return;
 
-        delta = (int)y * R;                              //converte rotazione del motore in movimento cinghia
-    
-        if (delta > p_max ){
-            robot_tmp->position = p_max;
-            robot_tmp->speed = 0;
-        }
-        else if (delta < p_min){
-            robot_tmp->position = p_min;
-            robot_tmp->speed = 0;
-        }
-        else{
-            robot_tmp->speed = (delta - robot_tmp->position)/ Ts;         //rapp. incrementale
-            robot_tmp->position = delta;
-        } 
-    }
-    else robot_tmp->position = mouse_y;
+    //else { 
 
+        if (!player){
+
+            delta = (int)y * R;                              //converte rotazione del motore in movimento cinghia
+        
+            if (delta > p_max ){
+                robot_tmp->position = p_max;
+                robot_tmp->speed = 0;
+            }
+            else if (delta < p_min){
+                robot_tmp->position = p_min;
+                robot_tmp->speed = 0;
+            }
+            else{
+                robot_tmp->speed = (delta - robot_tmp->position)/ Ts;         //rapp. incrementale
+                robot_tmp->position = delta;
+            } 
+        }
+        else { 
+            
+            robot_tmp->speed = (mouse_y - robot_tmp->position)/ Ts;
+            robot_tmp->position = mouse_y;
+        }
+    //}
         
 }
 
