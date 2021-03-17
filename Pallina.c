@@ -13,21 +13,27 @@ void* balltask(void* arg)
         i = get_task_index(arg);
         set_activation(i);
         
-        dt = TSCALE* (float)tp[i].period /1000;
+        dt = (float)tp[i].period /100;
         
         while (!end) {
             
             pthread_mutex_lock(&s13);
             ball.x  += ball.vx * dt - BETA * ball.vx * dt;
             ball.y  += 0.01*(Y_0 + ball.vy * dt - g * dt * dt / 2);
-            ball.z  += 1*(ball.vz * dt - BETA * ball.vz * dt);
+            ball.z  += ball.vz * dt - BETA * ball.vz * dt;
             pthread_mutex_unlock(&s13);
 
             handle_bounce(i);
             store_trail(i);
+            chi_gioca();
 
             if (ball.x > 640 || ball.x < 0 || ball.z > 480 || ball.z < 0){
+                
                 init_ball();
+                init_motor();
+                pthread_mutex_lock(&s11);
+                start = 0;
+                pthread_mutex_unlock(&s11);
             }
 
             if (deadline_miss(i))
@@ -57,10 +63,10 @@ void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racc
     pthread_mutex_lock(&s6);
     pthread_mutex_lock(&s7);
     pthread_mutex_lock(&s13);
-    if ((robot_z.position - 5 <= ball.z - ball.r) && (robot_z.position + 5 >= ball.z - ball.r) && (ball.x - ball.r >= robot_x.position - RACC_MIN) && (ball.x + ball.r <= robot_x.position + RACC_MAX))
+    if ((robot_z.position - 5 <= ball.z - ball.r) && (robot_z.position + 5 >= ball.z - ball.r) && (ball.x + ball.r >= robot_x.position - RACC_MIN) && (ball.x - ball.r <= robot_x.position + RACC_MAX))
     {
         ball.vz = -ball.vz + 0.1 * robot_z.speed;
-        //ball.vx = - ball.vx + 0.1 * robot_x.speed;  //frand(ERR_MIN, ERR_MAX);     //robusto a rimbalzo dritto continuo
+        ball.vx = - ball.vx + 0.01 * robot_x.speed + frand(ERR_MIN, ERR_MAX);     //robusto a rimbalzo dritto continuo
     }
     pthread_mutex_unlock(&s13);
     pthread_mutex_unlock(&s7);
@@ -71,12 +77,12 @@ void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racc
     pthread_mutex_lock(&s8);
     pthread_mutex_lock(&s9);
     pthread_mutex_lock(&s13);
-    if ((adversary_z.position - 5 <= ball.z + ball.r) && (adversary_z.position + 5 >= ball.z + ball.r) && (ball.x - ball.r >= adversary_x.position - RACC_MIN) && (ball.x + ball.r <= adversary_x.position + RACC_MAX))
+    if ((adversary_z.position - 5 <= ball.z + ball.r) && (adversary_z.position + 5 >= ball.z + ball.r) && (ball.x + ball.r >= adversary_x.position - RACC_MIN) && (ball.x - ball.r <= adversary_x.position + RACC_MAX))
     {
         ball.vz = -ball.vz + 0.1 * adversary_z.speed;
-        //ball.vx = - ball.vx + 0.1* adversary_x.speed; //frand(ERR_MIN, ERR_MAX);          //robusto a rimbalzo dritto continuo
+        ball.vx = - ball.vx + 0.01* adversary_x.speed + frand(ERR_MIN, ERR_MAX);          //robusto a rimbalzo dritto continuo
     
-        printf("adv_vz = %d\n", adversary_z.speed);
+        //printf("adv_vz = %d\n", adversary_z.speed);
     }
     pthread_mutex_unlock(&s13);
     pthread_mutex_unlock(&s9);
@@ -112,4 +118,22 @@ void init_ball(void)
 
    ball.r = 5;          //BALL_RADIUS
    pthread_mutex_unlock(&s13);
+}
+
+void chi_gioca() {
+
+        if (ball.z > 240) {
+            
+            pthread_mutex_lock(&s12);
+            gioca = 1;
+            pthread_mutex_unlock(&s12);
+        }
+        else {
+            
+            pthread_mutex_lock(&s12);
+            gioca = 0;
+            pthread_mutex_unlock(&s12);
+
+        }
+
 }

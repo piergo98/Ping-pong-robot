@@ -5,10 +5,10 @@
 
 #define     PRIO_BALL 80
 #define     PRIO_CAMERA 50
-#define     PRIO_MOTOR_X 60
-#define     PRIO_MOTOR_Z 60
-#define     PRIO_ADV_X 61
-#define     PRIO_ADV_Z 60
+#define     PRIO_MOTOR_X 62
+#define     PRIO_MOTOR_Z 61
+#define     PRIO_ADV_X 60
+#define     PRIO_ADV_Z 59
 #define     PRIO_KEY 40
 #define     PRIO_DISPLAY 70
 
@@ -45,6 +45,10 @@ int main(void){
 void init(void){
 
     end = 0;
+    
+    pthread_mutex_lock(&s10);
+    player = 0;
+    pthread_mutex_unlock(&s10);
 
     init_mutex();
     init_ball();

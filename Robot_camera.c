@@ -11,12 +11,12 @@ void init_camera(){
     pthread_mutex_unlock(&s4);
 
     pthread_mutex_lock(&s3);
-    buffer[BEFORE].x = 320;
-    buffer[BEFORE].z = 120;
-    buffer[NOW].x = 320;
-    buffer[NOW].z = 120;
-    buffer[NEXT].x = 320;
-    buffer[NEXT].z = 120;
+    buffer[BEFORE].x = 0;
+    buffer[BEFORE].z = 0;
+    buffer[NOW].x = 0;
+    buffer[NOW].z = 0;
+    buffer[NEXT].x = 0;
+    buffer[NEXT].z = 0;
     pthread_mutex_unlock(&s3);
 }
 

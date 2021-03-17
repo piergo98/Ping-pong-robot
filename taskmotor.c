@@ -23,9 +23,9 @@ void init_motor(){
     adversary_z.speed = 0;
     pthread_mutex_unlock(&s9);
 
-    pthread_mutex_lock(&s10);
-    player = 0;
-    pthread_mutex_unlock(&s10);
+    pthread_mutex_lock(&s11);
+    start = 0;
+    pthread_mutex_unlock(&s11);
 
     rob_x_angle.in[NOW] = 0;      
     rob_x_angle.in[BEFORE] = 0;
@@ -66,12 +66,10 @@ void* motortask_x(void* arg)
             err[NOW] = err[BEFORE] = 0;
             u1[NOW] = u1[BEFORE]  = 0;
 
-            via =0;
 
             while(!end) {
 
-                if (!via) {
-
+                if (start && !gioca) {
                     vd = 0;
 
                     pthread_mutex_lock(&s6);
@@ -96,9 +94,7 @@ void* motortask_x(void* arg)
 
                     y = motor(u, &rob_x_angle);
 
-                    //pthread_mutex_lock(&s11);
-                    update_state(y, err[NOW], x_min, x_max, &temp);
-                    //pthread_mutex_unlock(&s11);
+                    update_state_x(y, err[NOW], x_min, x_max, &temp);
                     
                     u1[BEFORE] = u1[NOW];
                     err[BEFORE] = err[NOW];
@@ -107,10 +103,8 @@ void* motortask_x(void* arg)
                     robot_x.position = temp.position;
                     robot_x.speed = temp.speed;
                     pthread_mutex_unlock(&s6);
-
-                    if (err[NOW]<=4 && err[NOW]>= -4) via = 1;
                 }
-
+                
                 if (deadline_miss(i))
                     show_dmiss(i);
 
@@ -122,40 +116,37 @@ void* motortask_z(void* arg)
 {
     int     i,      T;                      // task index
     int     z_min,  z_max;                  // limiti di movimento      
-    int     xd,     vd;                     // desired position and speed
+    int     zd,     vd;                     // desired position and speed
     int     x,      v;                      // actual  position and speed
     float   u1[2],      y,   err[2],    u;  // temporary variables
     struct  state   temp;                   // temporary structure
         
             i = get_task_index(arg);
             set_activation(i);
-            
-            T = tp[i].deadline / 10;           //la utilizzo per il rapp. inc.
 
             z_min = C_Z3 - OFFSET_Z / 3;    //0
-            z_max = C_Z3 + OFFSET_Z;        //240
+            z_max = C_Z3 + OFFSET_Z - 20;        //240
 
             err[NOW] = err[BEFORE] = 0;
             u1[NOW] = u1[BEFORE]  = 0;
 
             while(!end) {
 
-                if (via) {
-
+                if (start && !gioca) {
                     vd = 0;
 
-                    pthread_mutex_lock(&s6);
+                    pthread_mutex_lock(&s7);
                     temp.position = robot_z.position;
                     temp.speed = robot_z.speed;
-                    pthread_mutex_unlock(&s6);
+                    pthread_mutex_unlock(&s7);
 
                     pthread_mutex_lock(&s3);
-                    xd = buffer[NEXT].z - 5;
+                    zd = buffer[NEXT].z - 5;
                     pthread_mutex_unlock(&s3);
                 
                     get_state(&x, &v, &temp);
                     //errore di posizione
-                    err[NOW] = xd-x;
+                    err[NOW] = zd-x;
                     //controllo di posizione
                     u1[NOW] = (KP + Ts * KI) * err[NOW] - KP * err[BEFORE] + u1[BEFORE];
                     //controllo di velocita' 
@@ -164,11 +155,9 @@ void* motortask_z(void* arg)
                     printf("z = %d\t", x);
                     printf("v_z = %d\n", v);
 
-                    y = motor(u, &rob_x_angle);
+                    y = motor(u, &rob_z_angle);
 
-                    //pthread_mutex_lock(&s11);
-                    update_state(y, err[NOW], z_min, z_max, &temp);
-                    //pthread_mutex_unlock(&s11);
+                    update_state_z(y, err[NOW], z_min, z_max, &temp);
 
                     u1[BEFORE] = u1[NOW];
                     err[BEFORE] = err[NOW];
@@ -177,10 +166,8 @@ void* motortask_z(void* arg)
                     robot_z.position = temp.position;
                     robot_z.speed = temp.speed;
                     pthread_mutex_unlock(&s7);
-
-                    if (err[NOW]<=4 && err[NOW]>= -4) via = 0;
                 }
-
+                
                 if (deadline_miss(i))
                     show_dmiss(i);
 
@@ -192,7 +179,6 @@ float motor(float k, struct m_tfunc *prevtheta)    //angolo di cui deve ruotare 
 {
     float theta;
         
-        pthread_mutex_lock(&s5);
         prevtheta->in[NOW] = k;
     
         theta = A * prevtheta->in[NOW] + B * prevtheta->in[BEFORE] + (1 + P) * prevtheta->out[NOW] - P * prevtheta->out[BEFORE];       //transfer function
@@ -200,12 +186,29 @@ float motor(float k, struct m_tfunc *prevtheta)    //angolo di cui deve ruotare 
         prevtheta->in[BEFORE] = prevtheta->in[NOW];
         prevtheta->out[BEFORE] = prevtheta->out[NOW];
         prevtheta->out[NOW] = theta;
-        pthread_mutex_unlock(&s5);
     
     return theta;
 }
 
-void update_state(float y, float e, int p_min, int p_max, struct state *robot_tmp)
+void update_state_x(float y, float e, int p_min, int p_max, struct state *robot_tmp)
+{
+    int delta;
+
+    delta = (int)y * R;                              //converte rotazione del motore in movimento cinghia
+    
+        if (delta > p_max)
+            robot_tmp->position = p_max;
+
+        else if (delta < p_min)
+            robot_tmp->position = p_min;
+
+        else{
+            robot_tmp->speed = ((delta - robot_tmp->position)/ Ts);         //rapp. incrementale
+            robot_tmp->position = delta;
+        } 
+}
+
+void update_state_z(float y, float e, int p_min, int p_max, struct state *robot_tmp)
 {
     int delta;
 

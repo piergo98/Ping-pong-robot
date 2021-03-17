@@ -71,11 +71,14 @@ struct state adversary_z;
 struct status ball;
 
 int player;                     //flag per la scelta dell'avversario
-int via;
+int start;
+int gioca;
 
 float motor(float k, struct m_tfunc *prevtheta);
 
-void update_state(float y, float e, int p_min, int p_max, struct state *robot_tmp);
+void update_state_x(float y, float e, int p_min, int p_max, struct state *robot_tmp);
+
+void update_state_z(float y, float e, int p_min, int p_max, struct state *robot_tmp);
 
 void get_state(int *xi, int *vi, struct state *robot_tmp);
 

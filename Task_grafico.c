@@ -402,6 +402,11 @@ void* command(void* arg){
                         player = 0;
                         pthread_mutex_unlock(&s10);
                         break;
+                    case KEY_SPACE:
+                        pthread_mutex_lock(&s11);
+                        start = 1;
+                        pthread_mutex_unlock(&s11);
+                        break;
                     default: break; //da aggiungere altre opzioni
 
                 }

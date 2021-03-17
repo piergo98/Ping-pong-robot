@@ -70,3 +70,5 @@ float frand(float vxmin, float vxmax);
 void init_ball(void);
 
 void* balltask(void* arg);
+
+void chi_gioca();
