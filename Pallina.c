@@ -25,7 +25,7 @@ void* balltask(void* arg)
 
             handle_bounce(i);
             store_trail(i);
-            chi_gioca();
+            //chi_gioca();
 
             if (ball.x > 640 || ball.x < 0 || ball.z > 480 || ball.z < 0){
                 
@@ -63,11 +63,14 @@ void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racc
     pthread_mutex_lock(&s6);
     pthread_mutex_lock(&s7);
     pthread_mutex_lock(&s13);
+    pthread_mutex_lock(&s12);
     if ((robot_z.position - 5 <= ball.z - ball.r) && (robot_z.position + 5 >= ball.z - ball.r) && (ball.x + ball.r >= robot_x.position - RACC_MIN) && (ball.x - ball.r <= robot_x.position + RACC_MAX))
     {
-        ball.vz = -ball.vz + 0.1 * robot_z.speed;
-        ball.vx = - ball.vx + 0.01 * robot_x.speed + frand(ERR_MIN, ERR_MAX);     //robusto a rimbalzo dritto continuo
+        ball.vz = -ball.vz + 0.05 * robot_z.speed;
+        ball.vx = - ball.vx + 0.001 * robot_x.speed + frand(ERR_MIN, ERR_MAX);     //robusto a rimbalzo dritto continuo
+        home = 0;
     }
+    pthread_mutex_unlock(&s12);
     pthread_mutex_unlock(&s13);
     pthread_mutex_unlock(&s7);
     pthread_mutex_unlock(&s6);
@@ -77,13 +80,16 @@ void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racc
     pthread_mutex_lock(&s8);
     pthread_mutex_lock(&s9);
     pthread_mutex_lock(&s13);
+    pthread_mutex_lock(&s12);
     if ((adversary_z.position - 5 <= ball.z + ball.r) && (adversary_z.position + 5 >= ball.z + ball.r) && (ball.x + ball.r >= adversary_x.position - RACC_MIN) && (ball.x - ball.r <= adversary_x.position + RACC_MAX))
     {
-        ball.vz = -ball.vz + 0.1 * adversary_z.speed;
-        ball.vx = - ball.vx + 0.01* adversary_x.speed + frand(ERR_MIN, ERR_MAX);          //robusto a rimbalzo dritto continuo
+        ball.vz = -ball.vz + 0.05 * adversary_z.speed;
+        ball.vx = - ball.vx + 0.001* adversary_x.speed + frand(ERR_MIN, ERR_MAX);          //robusto a rimbalzo dritto continuo
+        home = 1;
     
         //printf("adv_vz = %d\n", adversary_z.speed);
     }
+    pthread_mutex_unlock(&s12);
     pthread_mutex_unlock(&s13);
     pthread_mutex_unlock(&s9);
     pthread_mutex_unlock(&s8);
@@ -120,7 +126,7 @@ void init_ball(void)
    pthread_mutex_unlock(&s13);
 }
 
-void chi_gioca() {
+/*void chi_gioca() {
 
         if (ball.z > 240) {
             
@@ -136,4 +142,4 @@ void chi_gioca() {
 
         }
 
-}
+}*/

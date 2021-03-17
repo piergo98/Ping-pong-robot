@@ -80,7 +80,7 @@ void testo(BITMAP* buf){
     textout_ex(buf, font, "SPACE -> Battuta", X_LEG, P_Z + 80, WHITE, TRASP);
     textout_ex(buf, font, "utente", X_LEG + 80, P_Z + 90, WHITE, TRASP);
 
-    /* Deadline misses */
+    /* Deadline misses 
     pthread_mutex_lock(&s14);
     sprintf(string, "ball = %d", ball_miss);
     pthread_mutex_unlock(&s14);
@@ -112,9 +112,9 @@ void testo(BITMAP* buf){
     pthread_mutex_lock(&s21);
     sprintf(string, "tastiera = %d", tastiera_miss);
     pthread_mutex_unlock(&s21);
-    textout_ex(buf, font, string, 460, 460, WHITE, TRASP);   
+    textout_ex(buf, font, string, 460, 460, WHITE, TRASP); */  
     
-    /* Coordinate pallina e racchette */
+    /* Coordinate pallina e racchette 
     pthread_mutex_lock(&s13);
     sprintf(string, "Xp = %f", ball.x);
     pthread_mutex_unlock(&s13);
@@ -126,9 +126,9 @@ void testo(BITMAP* buf){
     pthread_mutex_lock(&s13);
     sprintf(string, "Zp = %f", ball.z);
     pthread_mutex_unlock(&s13);
-    textout_ex(buf, font, string, 500, 180, WHITE, TRASP);    
+    textout_ex(buf, font, string, 500, 180, WHITE, TRASP);*/    
 
-    pthread_mutex_lock(&s8);
+    /*pthread_mutex_lock(&s8);
     sprintf(string, "Xa = %d", adversary_x.position);
     pthread_mutex_unlock(&s8);
     textout_ex(buf, font, string, 500, 200, WHITE, TRASP);    
@@ -147,23 +147,7 @@ void testo(BITMAP* buf){
     sprintf(string, "Zr = %d", robot_z.position);
     pthread_mutex_unlock(&s7);
     textout_ex(buf, font, string, 500, 260, WHITE, TRASP);
-    
-    pthread_mutex_lock(&s4);
-    sprintf(string, "Xc = %d", window.x0+(window.xsize/2));
-    pthread_mutex_unlock(&s4);
-    textout_ex(buf, font, string, 500, 280, WHITE, TRASP);
-    pthread_mutex_lock(&s4);
-    sprintf(string, "Zc = %d", window.z0+(window.zsize/2));
-    pthread_mutex_unlock(&s4);
-    textout_ex(buf, font, string, 500, 300, WHITE, TRASP);
-    pthread_mutex_lock(&s4);
-    sprintf(string, "SIZE_X = %d", window.xsize);
-    pthread_mutex_unlock(&s4);
-    textout_ex(buf, font, string, 500, 320, WHITE, TRASP);
-    pthread_mutex_lock(&s4);
-    sprintf(string, "SIZE_Z = %d", window.zsize);
-    pthread_mutex_unlock(&s4);
-    textout_ex(buf, font, string, 500, 340, WHITE, TRASP);
+
     pthread_mutex_lock(&s13);
     sprintf(string, "V_X = %f", ball.vx);
     pthread_mutex_unlock(&s13);
@@ -187,7 +171,7 @@ void testo(BITMAP* buf){
     pthread_mutex_lock(&s3);
     sprintf(string, "A_Z = %d", buffer[NEXT].z);
     pthread_mutex_unlock(&s3);
-    textout_ex(buf, font, string, 30, 460, WHITE, TRASP);
+    textout_ex(buf, font, string, 30, 460, WHITE, TRASP);*/
 
 }
 
@@ -356,7 +340,7 @@ void display_camera_view(BITMAP* buf){
     rect(buf, window.x0, window.z0+window.zsize, window.x0+window.xsize, window.z0, RED);
     pthread_mutex_unlock(&s4);
 
-    //testo(buf);
+    testo(buf);
     textout_ex(buf, font, "P -> Indietro", X_LEG + 40, P_Z + 60, WHITE, TRASP);
 }
 

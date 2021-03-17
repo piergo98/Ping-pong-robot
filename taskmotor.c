@@ -27,25 +27,29 @@ void init_motor(){
     start = 0;
     pthread_mutex_unlock(&s11);
 
+    pthread_mutex_lock(&s12);
+    home = 1;
+    pthread_mutex_unlock(&s12);
+
     rob_x_angle.in[NOW] = 0;      
     rob_x_angle.in[BEFORE] = 0;
-    rob_x_angle.out[NOW] = 0;
-    rob_x_angle.out[BEFORE] = 0;
+    rob_x_angle.out[NOW] = C_X3 / R;
+    rob_x_angle.out[BEFORE] =  C_X3 / R;
 
     rob_z_angle.in[NOW] = 0;        
     rob_z_angle.in[BEFORE] = 0;
-    rob_z_angle.out[NOW] = 0;
-    rob_z_angle.out[BEFORE] = 0;
+    rob_z_angle.out[NOW] = C_Z3 / R;
+    rob_z_angle.out[BEFORE] = C_Z3 / R;
 
     adv_x_angle.in[NOW] = 0;        
     adv_x_angle.in[BEFORE] = 0;
-    adv_x_angle.out[NOW] = 0;
-    adv_x_angle.out[BEFORE] = 0;
+    adv_x_angle.out[NOW] = C_X4 / R;
+    adv_x_angle.out[BEFORE] = C_X4 / R;
 
     adv_z_angle.in[NOW] = 0;        
     adv_z_angle.in[BEFORE] = 0;
-    adv_z_angle.out[NOW] = 0;
-    adv_z_angle.out[BEFORE] = 0;
+    adv_z_angle.out[NOW] = C_Z4 / R;
+    adv_z_angle.out[BEFORE] = C_Z4 / R;
 }
 
 void* motortask_x(void* arg)
@@ -69,7 +73,8 @@ void* motortask_x(void* arg)
 
             while(!end) {
 
-                if (start && !gioca) {
+                pthread_mutex_lock(&s11);
+                if (start) {
                     vd = 0;
 
                     pthread_mutex_lock(&s6);
@@ -77,9 +82,18 @@ void* motortask_x(void* arg)
                     temp.speed = robot_x.speed;
                     pthread_mutex_unlock(&s6);
 
-                    pthread_mutex_lock(&s3);
-                    xd = buffer[NEXT].x;
-                    pthread_mutex_unlock(&s3);
+                    pthread_mutex_lock(&s12);
+                    if (!home)
+                    {
+                        xd = 320;                    
+                    
+                    }
+                    else {
+                        pthread_mutex_lock(&s3);
+                        xd = buffer[NEXT].x;
+                        pthread_mutex_unlock(&s3);
+                    }
+                    pthread_mutex_unlock(&s12);
                 
                     get_state(&x, &v, &temp);
                     //errore di posizione
@@ -89,8 +103,8 @@ void* motortask_x(void* arg)
                     //controllo di velocita' 
                     u = u1[NOW] + KD * (vd - v);
 
-                    printf("x = %d\t", x);
-                    printf("v_x = %d\n", v);
+                    //printf("x = %d\t", x);
+                    //printf("v_x = %d\n", v);
 
                     y = motor(u, &rob_x_angle);
 
@@ -104,6 +118,7 @@ void* motortask_x(void* arg)
                     robot_x.speed = temp.speed;
                     pthread_mutex_unlock(&s6);
                 }
+                pthread_mutex_unlock(&s11);
                 
                 if (deadline_miss(i))
                     show_dmiss(i);
@@ -125,14 +140,15 @@ void* motortask_z(void* arg)
             set_activation(i);
 
             z_min = C_Z3 - OFFSET_Z / 3;    //0
-            z_max = C_Z3 + OFFSET_Z - 20;        //240
+            z_max = 140; //C_Z3 + OFFSET_Z - 20;        //240
 
             err[NOW] = err[BEFORE] = 0;
             u1[NOW] = u1[BEFORE]  = 0;
 
             while(!end) {
 
-                if (start && !gioca) {
+                pthread_mutex_lock(&s11);
+                if (start) {
                     vd = 0;
 
                     pthread_mutex_lock(&s7);
@@ -140,9 +156,17 @@ void* motortask_z(void* arg)
                     temp.speed = robot_z.speed;
                     pthread_mutex_unlock(&s7);
 
-                    pthread_mutex_lock(&s3);
-                    zd = buffer[NEXT].z - 5;
-                    pthread_mutex_unlock(&s3);
+                    pthread_mutex_lock(&s12);
+                    if (!home) {
+
+                        zd = C_Z3;
+                    }
+                    else {
+                        pthread_mutex_lock(&s3);
+                        zd = buffer[NEXT].z - 5;
+                        pthread_mutex_unlock(&s3);
+                    }
+                    pthread_mutex_unlock(&s12);
                 
                     get_state(&x, &v, &temp);
                     //errore di posizione
@@ -152,8 +176,8 @@ void* motortask_z(void* arg)
                     //controllo di velocita' 
                     u = u1[NOW] + KD * (vd - v);
 
-                    printf("z = %d\t", x);
-                    printf("v_z = %d\n", v);
+                    //printf("z = %d\t", x);
+                    //printf("v_z = %d\n", v);
 
                     y = motor(u, &rob_z_angle);
 
@@ -167,7 +191,8 @@ void* motortask_z(void* arg)
                     robot_z.speed = temp.speed;
                     pthread_mutex_unlock(&s7);
                 }
-                
+                pthread_mutex_unlock(&s11);
+
                 if (deadline_miss(i))
                     show_dmiss(i);
 

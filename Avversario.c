@@ -22,7 +22,8 @@ void* adversarytask_x(void* arg)
 
         while(!end) {
             
-            if (start && gioca) {
+            pthread_mutex_lock(&s11);
+            if (start  || player) {
                 vd = 0;
 
                 pthread_mutex_lock(&s8);
@@ -30,9 +31,18 @@ void* adversarytask_x(void* arg)
                 temp.speed = adversary_x.speed;
                 pthread_mutex_unlock(&s8);
 
-                pthread_mutex_lock(&s3);
-                xd = buffer[NEXT].x;
-                pthread_mutex_unlock(&s3);
+                pthread_mutex_lock(&s12);
+                if (home){
+
+                    xd  = 320;
+
+                }
+                else {
+                    pthread_mutex_lock(&s3);
+                    xd = buffer[NEXT].x;
+                    pthread_mutex_unlock(&s3);
+                }
+                pthread_mutex_unlock(&s12);
 
                 get_state(&x, &v, &temp);
                 //errore di posizione
@@ -42,8 +52,8 @@ void* adversarytask_x(void* arg)
                 //controllo di velocita'
                 u = u1[NOW] + KD * (vd - v);
 
-                printf("Adv_x = %d\t", x);
-                printf("Adv_v_x = %d\n", v);
+                //printf("Adv_x = %d\t", x);
+                //printf("Adv_v_x = %d\n", v);
 
                 y = motor(u, &adv_x_angle);
                 
@@ -59,6 +69,7 @@ void* adversarytask_x(void* arg)
                 adversary_x.speed = temp.speed;
                 pthread_mutex_unlock(&s8);
             }
+            pthread_mutex_unlock(&s11);
 
             if (deadline_miss(i))
                 show_dmiss(i);
@@ -79,7 +90,7 @@ void* adversarytask_z(void* arg)
         i = get_task_index(arg);
         set_activation(i);
 
-        z_min = C_Z1 - OFFSET_Z + 20;        //240
+        z_min = 320; //C_Z1 - OFFSET_Z + 20;        //240
         z_max = C_Z1 + OFFSET_Z / 3;    //480
 
         err[NOW] = err[BEFORE] = 0;
@@ -87,7 +98,8 @@ void* adversarytask_z(void* arg)
 
         while(!end) {
 
-            if (start && gioca) {
+            pthread_mutex_lock(&s11);
+            if (start || player) {
                 
                 vd = 0;
 
@@ -96,9 +108,19 @@ void* adversarytask_z(void* arg)
                 temp.speed = adversary_z.speed;
                 pthread_mutex_unlock(&s9);
 
-                pthread_mutex_lock(&s3);
-                zd = buffer[NEXT].z + 2;
-                pthread_mutex_unlock(&s3);
+                pthread_mutex_lock(&s12);
+                if (home){
+
+                    zd  = 420;
+
+                }
+                else {
+
+                    pthread_mutex_lock(&s3);
+                    zd = buffer[NEXT].z + 2;
+                    pthread_mutex_unlock(&s3);
+                }
+                pthread_mutex_unlock(&s12);
 
                 get_state(&x, &v, &temp);
                 //errore di posizione
@@ -108,8 +130,8 @@ void* adversarytask_z(void* arg)
                 //controllo di velocita'
                 u = u1[NOW] + KD * (vd - v);
 
-                printf("Adv_z = %d\t", x);
-                printf("Adv_v_z = %d\n", v);
+                //printf("Adv_z = %d\t", x);
+                //printf("Adv_v_z = %d\n", v);
 
 
                 y = motor(u, &adv_z_angle);
@@ -126,6 +148,7 @@ void* adversarytask_z(void* arg)
                 adversary_z.speed = temp.speed;
                 pthread_mutex_unlock(&s9);
             }
+            pthread_mutex_unlock(&s11);
 
             if (deadline_miss(i))
                 show_dmiss(i);
@@ -174,34 +197,28 @@ void update_adversary_state_z(float y, int T, int p_min, int p_max, struct state
   
     int delta;
 
-    //if (ball.z <= 240) return;
+    if (!player){
 
-    //else { 
-
-        if (!player){
-
-            delta = y * R;                              //converte rotazione del motore in movimento cinghia
-        
-            //if (delta > p_max ){
-                //robot_tmp->position = p_max;
-                //robot_tmp->speed = 0;
-            //}
-            //else if (delta < p_min){
-              //  robot_tmp->position = p_min;
-                //robot_tmp->speed = 0;
-            //}
-            //else{
-                robot_tmp->speed = (delta - robot_tmp->position)/ Ts;         //rapp. incrementale
-                robot_tmp->position = delta;
-           // } 
+        delta = y * R;                              //converte rotazione del motore in movimento cinghia
+    
+        if (delta > p_max ){
+            robot_tmp->position = p_max;
+            robot_tmp->speed = 0;
         }
-        else { 
-            
-            robot_tmp->speed = (mouse_y - robot_tmp->position)/ Ts;
-            robot_tmp->position = mouse_y;
+        else if (delta < p_min){
+            robot_tmp->position = p_min;
+            robot_tmp->speed = 0;
         }
-    //}
+        else{
+            robot_tmp->speed = (delta - robot_tmp->position)/ Ts;         //rapp. incrementale
+            robot_tmp->position = delta;
+        } 
+    }
+    else { 
         
+        robot_tmp->speed = (mouse_y - robot_tmp->position)/ Ts;
+        robot_tmp->position = mouse_y;
+    }        
 }
 
 

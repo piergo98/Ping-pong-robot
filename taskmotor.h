@@ -72,7 +72,7 @@ struct status ball;
 
 int player;                     //flag per la scelta dell'avversario
 int start;
-int gioca;
+int home;
 
 float motor(float k, struct m_tfunc *prevtheta);
 
