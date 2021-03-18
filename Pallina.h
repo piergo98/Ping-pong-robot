@@ -14,14 +14,14 @@
 #define     HMAX        390    // max initial height
 #define     VXMIN       20     // min initial hor. speed
 #define     VXMAX       10     // max initial hor. speed
-#define     Y_0         100    // initial heigth
+#define     Y_0         20    // initial heigth
 #define     DUMP        0.9    // dumping coefficient
 #define     TSCALE      10     // time scale factor
 #define     BETA        0.2    // adimensional braking coefficient
 #define     ERR_MIN     -5
 #define     ERR_MAX     5
-#define     WIDTH       640
-#define     HEIGTH      480
+#define     WIDTH       1200 //640
+#define     HEIGTH      800  //480
 
 
 #define     RACC_MAX    20     // max racchetta

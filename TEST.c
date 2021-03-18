@@ -33,7 +33,7 @@ int main(void){
             task_create(adversarytask_z, 5, 20, 20, PRIO_ADV_Z);
             task_create(command, 7, 20, 20, PRIO_KEY);
             task_create(display, 6, 20, 20, PRIO_DISPLAY);
-            task_create(miss_stamp, 8, 20, 20, 81);
+            //task_create(miss_stamp, 8, 20, 20, 81);
         
             for (i = 0; i<9; i++) 
                 wait_for_end(i);

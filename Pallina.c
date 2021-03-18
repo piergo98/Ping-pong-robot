@@ -19,7 +19,8 @@ void* balltask(void* arg)
             
             pthread_mutex_lock(&s13);
             ball.x  += ball.vx * dt - BETA * ball.vx * dt;
-            ball.y  += 0.01*(Y_0 + ball.vy * dt - g * dt * dt / 2);
+            //ball.y  += 0.01*(Y_0 + ball.vy * dt - g * dt * dt / 2);
+            ball.y = Y_0;
             ball.z  += ball.vz * dt - BETA * ball.vz * dt;
             pthread_mutex_unlock(&s13);
 
@@ -29,16 +30,18 @@ void* balltask(void* arg)
 
             if (ball.x > 640 || ball.x < 0 || ball.z > 480 || ball.z < 0){
 
-                if (!home) {
+                if (home) {
                     
-                    pthread_mutex_lock(&s1);
-                    p_rob++;
-                    pthread_mutex_unlock(&s1);
-                }
-                else {
                     pthread_mutex_lock(&s2);
                     p_avv++;   
                     pthread_mutex_unlock(&s2);
+                    
+                }
+                else {
+                   
+                    pthread_mutex_lock(&s1);
+                    p_rob++;
+                    pthread_mutex_unlock(&s1);
                 }             
                 
                 init_ball();
@@ -78,6 +81,7 @@ void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racc
     pthread_mutex_lock(&s12);
     if ((robot_z.position - 30 <= ball.z - ball.r) && (robot_z.position + 5 >= ball.z - ball.r) && (ball.x + ball.r >= robot_x.position - RACC_MIN) && (ball.x - ball.r <= robot_x.position + RACC_MAX))
     {
+        ball.z = robot_z.position + 2 * ball.r;
         ball.vz = -ball.vz + 0.001 * robot_z.speed;
         ball.vx = - ball.vx + 0.001 * robot_x.speed + frand(ERR_MIN, ERR_MAX);     //robusto a rimbalzo dritto continuo
         home = 0;
@@ -95,6 +99,7 @@ void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racc
     pthread_mutex_lock(&s12);
     if ((adversary_z.position - 5 <= ball.z + ball.r) && (adversary_z.position + 30 >= ball.z + ball.r) && (ball.x + ball.r >= adversary_x.position - RACC_MIN) && (ball.x - ball.r <= adversary_x.position + RACC_MAX))
     {
+        ball.z = adversary_z.position -  2 * ball.r;
         ball.vz = -ball.vz + 0.001 * adversary_z.speed;
         ball.vx = - ball.vx + 0.001* adversary_x.speed + frand(ERR_MIN, ERR_MAX);          //robusto a rimbalzo dritto continuo
         home = 1;
@@ -126,7 +131,7 @@ float frand(float vxmin, float vxmax)
 void init_ball(void)
 {
    pthread_mutex_lock(&s13); 
-   ball.vx = 0;
+   ball.vx = 1;
    ball.vy = 0;
    ball.vz = 20;
    

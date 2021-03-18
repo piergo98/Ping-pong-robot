@@ -27,6 +27,9 @@ void init_screen(void){
 
     pview_flag = 0;                  //valore di default
 
+    gcord.x = 0;
+    gcord.z = 0;
+
     pthread_mutex_lock(&s14);
     ball_miss = 0; 
     pthread_mutex_unlock(&s14);
@@ -237,7 +240,10 @@ void racchetta_avversario(BITMAP* bmp, BITMAP* finestra, int w, int h){
 
             x = gcord.x;
             z = gcord.z;
+            printf("racchetta_adv_Z = %d \t", z);
+            printf("racchetta_adv_X = %d \n", x);
             stretch_sprite(finestra, bmp, x, z, w, h);
+            
         }
         else 
         {
@@ -266,6 +272,8 @@ void racchetta_robot(BITMAP* bmp, BITMAP* finestra, int w, int h){
 
             x = gcord.x;
             z = gcord.z;
+            printf("racchetta_rob_Z = %d \t", z);
+            printf("racchetta_rob_X = %d \n", x);
             stretch_sprite(finestra, bmp, x, z, w, h);
         }
         else 
@@ -283,20 +291,29 @@ void racchetta_robot(BITMAP* bmp, BITMAP* finestra, int w, int h){
 void draw_ball(BITMAP* finestra)
 {
     int x, z;
+    struct status ball_local;
+
         pthread_mutex_lock(&s13);
+        ball_local.x = ball.x;
+        ball_local.y = ball.y;
+        ball_local.z = ball.z;
+        pthread_mutex_unlock(&s13);
+
         if (pview_flag)
         {
-            prospective_view(ball.x, ball.y, ball.z);
+            prospective_view(ball_local.x, ball_local.y, ball_local.z);
 
             x = gcord.x;
             z = gcord.z;
+            printf("ball_local_Z = %f \t", ball_local.z);
+            printf("ball_local_X = %f \n", ball_local.x);
+            //circlefill(finestra, x, z, BALL_RADIUS, BALL_COLOR);
         }
         else 
         {
-            x = ball.x;
-            z = ball.z;
+            x = ball_local.x;
+            z = ball_local.z;
         }
-        pthread_mutex_unlock(&s13);
     
         circlefill(finestra, x, z, BALL_RADIUS, BALL_COLOR);
 }
@@ -311,14 +328,16 @@ void* display(void* arg){
         set_activation(i);
 
         while(!end){
+           
             if (pview_flag)
                 draw_screen(memory);
+                //blit(memory, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
             else
                 display_camera_view(memory);
 
             draw_ball(memory);            
             racchetta_avversario(rac_a, memory, we , he);
-            racchetta_robot(rac_r, memory, we, he);
+            //racchetta_robot(rac_r, memory, we, he);
 
             blit(memory, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
 
@@ -351,13 +370,33 @@ void prospective_view(int x, int y, int z)
     int x1, y1, z1;
 
         /* Rotazione su x di un angolo theta */
-        x1 = x;
+        x1 = x;                                         
         y1 = COS_THETA * y - SIN_THETA * z;
         z1 = SIN_THETA * y + COS_THETA * z;
 
+        printf("x1 = %d \t", x1);
+        printf("y1 = %d \t", y1);
+        printf("z1 = %d \n", z1);
+
+
         /* Determinazione coordinate su piano prospettico */
-        gcord.x = -x1 * (POV_DIST / (POV_DIST - z1));
-        gcord.z = y1 * (POV_DIST / (POV_DIST - z1));
+        //gcord.x = (660 + x1 * (POV_DIST / (- POV_DIST + z1)));
+        //gcord.z = (100 - y1 * (POV_DIST / (-POV_DIST + z1)));
+
+        if (z1 == 20) z1 = 21;              //evita che si annulli il denominatore
+
+        x =  - x1 * POV_DIST / (POV_DIST - z1);        //non so perche' se assegno direttamente a gcord non funge 
+        z =  + y1 * POV_DIST / (POV_DIST - z1);        //stesso problema di su
+
+        printf("x = %d \t", x);
+        printf("z = %d \n", z);
+
+        gcord.x = x;
+        gcord.z = z;
+
+        printf("gcord.x = %d \t", gcord.x);
+        printf("gcord.z = %d \n", gcord.z);
+
 }
 
 void* command(void* arg){

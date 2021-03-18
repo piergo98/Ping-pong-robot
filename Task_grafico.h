@@ -16,14 +16,14 @@
 //------------------------------------------------------------------------------
 // PUNTI TAVOLO IN PROSPETTIVA
 //------------------------------------------------------------------------------
-#define     P1_X    100 
-#define     P1_Z    420
-#define     P2_X    180
-#define     P2_Z    100
-#define     P3_X    460
-#define     P3_Z    100
-#define     P4_X    540 
-#define     P4_Z    420 
+#define     P1_X   346 //146 
+#define     P1_Z   243 //43
+#define     P2_X   537 //437       I valori corretti sono quelli commentati
+#define     P2_Z   243 //43        che sono stati calcolati con matlab, 
+#define     P3_X   229 //29         quelli attivi hanno un offset pari a 200
+#define     P3_Z   214 //14
+#define     P4_X   210 //10         RIVEDERE LA FUNZIONE!!! 
+#define     P4_Z   214 //14 
 //------------------------------------------------------------------------------
 // PUNTI TAVOLO VISTO DALL'ALTO
 //------------------------------------------------------------------------------
@@ -46,9 +46,9 @@
 //------------------------------------------------------------------------------
 // VISTA PROSPETTICA: theta = 30 gradi
 //------------------------------------------------------------------------------
-#define POV_DIST  300
-#define COS_THETA 0.866
-#define SIN_THETA -0.5
+#define POV_DIST  20
+#define COS_THETA 0.707  //0.866
+#define SIN_THETA -0.707  //-0.5
 
 struct gpos{
 
