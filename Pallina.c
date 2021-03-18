@@ -28,6 +28,18 @@ void* balltask(void* arg)
             //chi_gioca();
 
             if (ball.x > 640 || ball.x < 0 || ball.z > 480 || ball.z < 0){
+
+                if (!home) {
+                    
+                    pthread_mutex_lock(&s1);
+                    p_rob++;
+                    pthread_mutex_unlock(&s1);
+                }
+                else {
+                    pthread_mutex_lock(&s2);
+                    p_avv++;   
+                    pthread_mutex_unlock(&s2);
+                }             
                 
                 init_ball();
                 init_motor();

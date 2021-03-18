@@ -62,6 +62,11 @@ void init_mutex(void) {
     pthread_mutexattr_init(&mux_att);
     pthread_mutexattr_setprotocol(&mux_att, PTHREAD_PRIO_PROTECT);
 
+    pthread_mutexattr_setprioceiling(&mux_att, PRIO_BALL);
+    pthread_mutex_init(&s1, &mux_att);
+
+    pthread_mutexattr_setprioceiling(&mux_att, PRIO_BALL);
+    pthread_mutex_init(&s2, &mux_att);
     
     pthread_mutexattr_setprioceiling(&mux_att, PRIO_CAMERA);
     pthread_mutex_init(&s3, &mux_att);

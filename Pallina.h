@@ -58,6 +58,9 @@ struct cbuf {               // circular buffer structure
 
 int new_ball;
 
+int     p_rob;          //punteggio robot
+int     p_avv;          //punteggio avversario
+
 struct cbuf trail;          
 //struct status ball;
 

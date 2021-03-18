@@ -8,8 +8,6 @@
 char    punti_rob[DIM_S];
 char    punti_avv[DIM_S];
 char    string[DIM_S];
-int     p_rob;          //punteggio robot
-int     p_avv;          //punteggio avversario
 
 BITMAP* rac_r, *rac_a;  //buffer per copiare lo schermo
 BITMAP* memory;         //bitmap provvisoria in cui ho una replica dell'interfaccia da disegnare
@@ -69,9 +67,13 @@ void testo(BITMAP* buf){
 
     /* Punteggio */
     textout_ex(buf, font, "PUNTEGGIO", P_X, P_Z, WHITE, TRASP);
+    pthread_mutex_lock(&s1);
     sprintf(punti_rob, "ROB = %d", p_rob);
-    textout_ex(buf, font, punti_rob, P_X, P_Z + 20, WHITE, TRASP);  
+    pthread_mutex_unlock(&s1);
+    textout_ex(buf, font, punti_rob, P_X, P_Z + 20, WHITE, TRASP);
+    pthread_mutex_lock(&s2);  
     sprintf(punti_avv, "AVV = %d", p_avv);
+    pthread_mutex_unlock(&s2);
     textout_ex(buf, font, punti_avv, P_X, P_Z + 40, WHITE, TRASP);
      /* Legenda */
     textout_ex(buf, font, "LEGENDA:", X_LEG, P_Z, WHITE, TRASP);
