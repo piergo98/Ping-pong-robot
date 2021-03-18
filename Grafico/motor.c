@@ -4,7 +4,7 @@ void init_motor(){
 
     /* Inizializza le posizioni e le velocità dei robot */
     pthread_mutex_lock(&s6);
-    robot_x.position = 160;
+    robot_x.position = 0;
     robot_x.speed = 0;
     pthread_mutex_unlock(&s6);
     

@@ -73,7 +73,7 @@ void* motortask_x(void* arg)
 
             while(!end) {
 
-                pthread_mutex_lock(&s11);
+                //pthread_mutex_lock(&s11);
                 if (start) {
                     vd = 0;
 
@@ -120,7 +120,7 @@ void* motortask_x(void* arg)
                     robot_x.speed = temp.speed;
                     pthread_mutex_unlock(&s6);
                 }
-                pthread_mutex_unlock(&s11);
+                //pthread_mutex_unlock(&s11);
                 
                 if (deadline_miss(i))
                     show_dmiss(i);
@@ -149,7 +149,7 @@ void* motortask_z(void* arg)
 
             while(!end) {
 
-                pthread_mutex_lock(&s11);
+                //pthread_mutex_lock(&s11);
                 if (start) {
                     vd = 0;
 
@@ -195,7 +195,7 @@ void* motortask_z(void* arg)
                     robot_z.speed = temp.speed;
                     pthread_mutex_unlock(&s7);
                 }
-                pthread_mutex_unlock(&s11);
+                //pthread_mutex_unlock(&s11);
 
                 if (deadline_miss(i))
                     show_dmiss(i);

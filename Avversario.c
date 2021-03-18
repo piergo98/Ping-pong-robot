@@ -22,7 +22,7 @@ void* adversarytask_x(void* arg)
 
         while(!end) {
             
-            pthread_mutex_lock(&s11);
+            //pthread_mutex_lock(&s11);
             if (start  || player) {
                 vd = 0;
 
@@ -69,7 +69,7 @@ void* adversarytask_x(void* arg)
                 adversary_x.speed = temp.speed;
                 pthread_mutex_unlock(&s8);
             }
-            pthread_mutex_unlock(&s11);
+            //pthread_mutex_unlock(&s11);
 
             if (deadline_miss(i))
                 show_dmiss(i);
@@ -80,7 +80,7 @@ void* adversarytask_x(void* arg)
 
 void* adversarytask_z(void* arg)
 {
-    int   i, T;                         // task index
+    int   i, T, home_tmp;                         // task index
     int   z_min, z_max;                 // limiti di movimento
     int   zd, vd;                       // desired position and speed
     int   x,  v;                        // actual  position and speed
@@ -98,7 +98,7 @@ void* adversarytask_z(void* arg)
 
         while(!end) {
 
-            pthread_mutex_lock(&s11);
+            //pthread_mutex_lock(&s11);
             if (start || player) {
                 
                 vd = 0;
@@ -109,7 +109,10 @@ void* adversarytask_z(void* arg)
                 pthread_mutex_unlock(&s9);
 
                 pthread_mutex_lock(&s12);
-                if (home){
+                home_tmp = home;
+                pthread_mutex_unlock(&s12);
+
+                if (home_tmp){
 
                     zd  = 420;
 
@@ -120,7 +123,7 @@ void* adversarytask_z(void* arg)
                     zd = buffer[NEXT].z + 2;
                     pthread_mutex_unlock(&s3);
                 }
-                pthread_mutex_unlock(&s12);
+                
 
                 get_state(&x, &v, &temp);
                 //errore di posizione
@@ -148,7 +151,7 @@ void* adversarytask_z(void* arg)
                 adversary_z.speed = temp.speed;
                 pthread_mutex_unlock(&s9);
             }
-            pthread_mutex_unlock(&s11);
+            //pthread_mutex_unlock(&s11);
 
             if (deadline_miss(i))
                 show_dmiss(i);

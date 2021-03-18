@@ -25,15 +25,15 @@ int main(void){
     
             init();
 
-            task_create(balltask, 0, 40, 40, PRIO_BALL);
-            task_create(camera, 1, 50, 50, PRIO_CAMERA);
-            task_create(motortask_x, 2, 50, 50, PRIO_MOTOR_X);
-            task_create(motortask_z, 3, 50, 50, PRIO_MOTOR_Z);
-            task_create(adversarytask_x, 4, 50, 50, PRIO_ADV_X);
-            task_create(adversarytask_z, 5, 50, 50, PRIO_ADV_Z);
-            task_create(command, 7, 30, 30, PRIO_KEY);
-            task_create(display, 6, 35, 35, PRIO_DISPLAY);
-            task_create(miss_stamp, 8, 25, 25, 81);
+            task_create(balltask, 0, 20, 20, PRIO_BALL);
+            task_create(camera, 1, 20, 20, PRIO_CAMERA);
+            task_create(motortask_x, 2, 20, 20, PRIO_MOTOR_X);
+            task_create(motortask_z, 3, 20, 20, PRIO_MOTOR_Z);
+            task_create(adversarytask_x, 4, 20, 20, PRIO_ADV_X);
+            task_create(adversarytask_z, 5, 20, 20, PRIO_ADV_Z);
+            task_create(command, 7, 20, 20, PRIO_KEY);
+            task_create(display, 6, 20, 20, PRIO_DISPLAY);
+            task_create(miss_stamp, 8, 20, 20, 81);
         
             for (i = 0; i<9; i++) 
                 wait_for_end(i);
