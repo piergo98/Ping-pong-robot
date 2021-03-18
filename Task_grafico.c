@@ -356,8 +356,8 @@ void prospective_view(int x, int y, int z)
         z1 = SIN_THETA * y + COS_THETA * z;
 
         /* Determinazione coordinate su piano prospettico */
-        gcord.x = -x1 * POV_DIST / (POV_DIST - z1);
-        gcord.z = y1 * POV_DIST / (POV_DIST - z1);
+        gcord.x = -x1 * (POV_DIST / (POV_DIST - z1));
+        gcord.z = y1 * (POV_DIST / (POV_DIST - z1));
 }
 
 void* command(void* arg){

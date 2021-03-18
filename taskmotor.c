@@ -108,7 +108,7 @@ void* motortask_x(void* arg)
 
                     y = motor(u, &rob_x_angle);
 
-                    printf("motor_x = %f\n", y);
+                    //printf("motor_x = %f\n", y);
 
                     update_state_x(y, err[NOW], x_min, x_max, &temp);
                     
@@ -183,7 +183,7 @@ void* motortask_z(void* arg)
 
                     y = motor(u, &rob_z_angle);
 
-                    printf("motor_z = %f\n", y);
+                    //printf("motor_z = %f\n", y);
 
                     update_state_z(y, err[NOW], z_min, z_max, &temp);
 

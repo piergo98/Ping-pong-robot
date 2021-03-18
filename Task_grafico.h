@@ -44,11 +44,11 @@
 #define     BALL_RADIUS  5
 #define     BALL_COLOR   0xfa6717      //arancione 
 //------------------------------------------------------------------------------
-// VISTA PROSPETTICA: theta = 45gradi
+// VISTA PROSPETTICA: theta = 30 gradi
 //------------------------------------------------------------------------------
 #define POV_DIST  300
-#define COS_THETA 0.707 
-#define SIN_THETA 0.707
+#define COS_THETA 0.866
+#define SIN_THETA -0.5
 
 struct gpos{
 
