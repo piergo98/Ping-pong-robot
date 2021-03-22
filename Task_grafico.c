@@ -62,6 +62,9 @@ void init_screen(void){
     tastiera_miss = 0;
     pthread_mutex_unlock(&s21);
 
+    pov = 600;
+    angle = 0;
+
     memory = create_bitmap(WIDTH, HEIGTH);
     clear_bitmap(memory);
 }
@@ -150,21 +153,22 @@ void draw_screen(BITMAP* buf){
 
     int i;
     int vertici[VERTEX];
+    int x_l1, z_l1, x_l2, z_l2;
 
         p_avv = 0;
         p_rob = 0;
 
         //Converto le coordinate del campo in prospettiva
-        prospective_view(P1_X, Y_0, P1_Z);
+        prospective_view(P1_X, 0, P1_Z);       //in basso a sinistra
         vertici[0] = gcord.x;
         vertici[1] = gcord.z;
-        prospective_view(P2_X, Y_0, P2_Z);
+        prospective_view(P2_X, 0, P2_Z);      //in alto a sinistra
         vertici[2] = gcord.x;
         vertici[3] = gcord.z;
-        prospective_view(P3_X, Y_0, P3_Z);
+        prospective_view(P3_X, 0, P3_Z);      //in alto a destra
         vertici[4] = gcord.x;
         vertici[5] = gcord.z;
-        prospective_view(P4_X, Y_0, P4_Z);
+        prospective_view(P4_X, 0, P4_Z);      //in basso a destra
         vertici[6] = gcord.x;
         vertici[7] = gcord.z;
 
@@ -183,6 +187,15 @@ void draw_screen(BITMAP* buf){
 
         // Disegna il tavolo
         polygon(buf, 4, vertici, FIELD);
+
+        prospective_view(140, 0, 240);
+        x_l1 = gcord.x;
+        z_l1 = gcord.z;
+        prospective_view(500, 0, 240);
+        x_l2 = gcord.x;
+        z_l2 = gcord.z; 
+
+        line(buf, x_l1, z_l1, x_l2, z_l2, WHITE);
     
         //testo(buf);
         textout_ex(buf, font, "V -> Vista verticale", X_LEG, P_Z + 60, WHITE, TRASP);
@@ -288,8 +301,8 @@ void draw_ball(BITMAP* finestra)
 
             x = gcord.x;
             z = gcord.z;
-            //printf("ball_local_Z = %f \t", ball_local.z);
-            //printf("ball_local_X = %f \n", ball_local.x);
+            printf("ball_local_Z = %d \t", z);
+            printf("ball_local_X = %d \n", x);
             circlefill(finestra, x, z, BALL_RADIUS, BALL_COLOR);
         }
         else 
@@ -318,8 +331,8 @@ void* display(void* arg){
                 display_camera_view(memory);
 
             draw_ball(memory);            
-            //racchetta_avversario(rac_a, memory, we , he);
-            //racchetta_robot(rac_r, memory, we, he);
+            racchetta_avversario(rac_a, memory, we , he);
+            racchetta_robot(rac_r, memory, we, he);
 
             blit(memory, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
 
@@ -331,10 +344,11 @@ void* display(void* arg){
 
 void display_camera_view(BITMAP* buf){
 
+    int vertici[VERTEX] = {P1_X, P1_Z, P2_X, P2_Z, P3_X, P3_Z, P4_X, P4_Z};
+
     // Disegna il tavolo visto dall'alto
     clear_bitmap(buf);
-    rectfill(buf, C_X1, C_Z1, C_X2, C_Z2, FIELD);
-    rect(buf, C_X1, C_Z1, C_X2, C_Z2, WHITE);
+    polygon(buf, 4, vertici, FIELD);
     line(buf, 320, 420, 320, 60, WHITE);     // linea che divide il campo in due meta verticalmente
     line(buf, 140, 240, 500, 240, WHITE);    // linea della rete
     
@@ -352,18 +366,20 @@ void prospective_view(int x, int y, int z)
     int x1, y1, z1, a, b, k;
 
         /* Rotazione su x di un angolo theta e su y di phi */
-        x1 = COS_PHI * x + SIN_PHI * z;                                         
-        y1 = SIN_PHI * SIN_THETA * x + COS_THETA * y - SIN_THETA * COS_PHI * z;
-        z1 = - COS_THETA * SIN_PHI * x + SIN_THETA * y + COS_THETA * COS_PHI * z;
+        x1 = x;                                         
+        y1 = cos(angle) * y - sin(angle) * z;
+        z1 = sin(angle) * y + cos(angle) * z;
 
         /* Determinazione coordinate su piano prospettico */
         //gcord.x = (660 + x1 * (POV_DIST / (- POV_DIST + z1)));
         //gcord.z = (100 - y1 * (POV_DIST / (-POV_DIST + z1)));
 
-        k = POV_DIST / (POV_DIST - z1);
+        if (z1 == pov) z1 = pov - 1;
 
-        a = 160 + x1 * k;      //non so perche' se assegno direttamente a gcord non funge 
-        b = 60 - y1 * k;      //stesso problema di su
+        k = pov / (pov - z1);
+
+        a = 400 + x1 * k;      //non so perche' se assegno direttamente a gcord non funge 
+        b = 100 - y1 * k;      //stesso problema di su
 
         gcord.x = a;
         gcord.z = b;
@@ -401,6 +417,18 @@ void* command(void* arg){
                         pthread_mutex_lock(&s11);
                         start = 1;
                         pthread_mutex_unlock(&s11);
+                        break;
+                    case KEY_UP:
+                        pov += 5;
+                        break;
+                    case KEY_DOWN:
+                        pov -= 5;
+                        break;
+                    case KEY_RIGHT:
+                        angle += 1;
+                        break;
+                    case KEY_LEFT:
+                        angle -= 1;
                         break;
                     default: break; //da aggiungere altre opzioni
 

@@ -1,4 +1,5 @@
 #include    <allegro.h>
+#include    <math.h>
 
 
 #define     COLOR   32              //profondita di colori: 16 bit
@@ -16,14 +17,14 @@
 //------------------------------------------------------------------------------
 // PUNTI TAVOLO IN PROSPETTIVA
 //------------------------------------------------------------------------------
-#define     P1_X   160 //146 
-#define     P1_Z   420 //43
-#define     P2_X   160 //437       I valori corretti sono quelli commentati
-#define     P2_Z   60 //43        che sono stati calcolati con matlab, 
-#define     P3_X   480 //29         quelli attivi hanno un offset pari a 200
-#define     P3_Z   60 //14
-#define     P4_X   480 //10         RIVEDERE LA FUNZIONE!!! 
-#define     P4_Z   420 //14 
+#define     P1_X   160  
+#define     P1_Z   420 
+#define     P2_X   160        
+#define     P2_Z   60          
+#define     P3_X   480         
+#define     P3_Z   60 
+#define     P4_X   480           
+#define     P4_Z   420 
 //------------------------------------------------------------------------------
 // PUNTI TAVOLO VISTO DALL'ALTO
 //------------------------------------------------------------------------------
@@ -47,8 +48,8 @@
 // VISTA PROSPETTICA: theta = 30 gradi
 //------------------------------------------------------------------------------
 #define POV_DIST  600
-#define COS_THETA 0.866  //0.866
-#define SIN_THETA 0.5  //-0.5
+#define COS_THETA 0.866 //0.866  //0.866
+#define SIN_THETA  0.5 //0.5  //-0.5
 #define COS_PHI  0.866
 #define SIN_PHI  0.5
 
@@ -62,6 +63,8 @@ struct gpos{
 struct gpos gcord;
 
 int     pview_flag;     //indicatore per rappresentazione prospettica
+int pov;
+float angle;
 
 void init_screen(void);  /* Inizializza lo schermo e crea il task grafico */
 
