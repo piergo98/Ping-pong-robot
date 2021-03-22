@@ -78,46 +78,12 @@ void testo(BITMAP* buf){
     sprintf(punti_avv, "AVV = %d", p_avv);
     pthread_mutex_unlock(&s2);
     textout_ex(buf, font, punti_avv, P_X, P_Z + 40, WHITE, TRASP);
-     /* Legenda */
+    /* Legenda */
     textout_ex(buf, font, "LEGENDA:", X_LEG, P_Z, WHITE, TRASP);
     textout_ex(buf, font, "R -> Gioca robot", X_LEG, P_Z + 20, WHITE, TRASP);
     textout_ex(buf, font, "U -> Gioca utente", X_LEG, P_Z + 40, WHITE, TRASP);
     textout_ex(buf, font, "SPACE -> Battuta", X_LEG, P_Z + 80, WHITE, TRASP);
-    textout_ex(buf, font, "utente", X_LEG + 80, P_Z + 90, WHITE, TRASP);
-
-    /* Deadline misses 
-    pthread_mutex_lock(&s14);
-    sprintf(string, "ball = %d", ball_miss);
-    pthread_mutex_unlock(&s14);
-    textout_ex(buf, font, string, 160, 440, WHITE, TRASP);
-    pthread_mutex_lock(&s15);
-    sprintf(string, "camera = %d", camera_miss);
-    pthread_mutex_unlock(&s15);
-    textout_ex(buf, font, string, 160, 460, WHITE, TRASP);            
-    pthread_mutex_lock(&s16);
-    sprintf(string, "motor_x = %d", motor_x_miss);
-    pthread_mutex_unlock(&s16);
-    textout_ex(buf, font, string, 260, 440, WHITE, TRASP);            
-    pthread_mutex_lock(&s17);
-    sprintf(string, "motor_z = %d", motor_z_miss);
-    pthread_mutex_unlock(&s17);
-    textout_ex(buf, font, string, 260, 460, WHITE, TRASP);        
-    pthread_mutex_lock(&s18);
-    sprintf(string, "adv_x = %d", adv_x_miss);
-    pthread_mutex_unlock(&s18);
-    textout_ex(buf, font, string, 360, 440, WHITE, TRASP);            
-    pthread_mutex_lock(&s19);
-    sprintf(string, "adv_z = %d", adv_z_miss);
-    pthread_mutex_unlock(&s19);
-    textout_ex(buf, font, string, 360, 460, WHITE, TRASP);            
-    pthread_mutex_lock(&s20);
-    sprintf(string, "display = %d", display_miss);
-    pthread_mutex_unlock(&s20);
-    textout_ex(buf, font, string, 460, 440, WHITE, TRASP);            
-    pthread_mutex_lock(&s21);
-    sprintf(string, "tastiera = %d", tastiera_miss);
-    pthread_mutex_unlock(&s21);
-    textout_ex(buf, font, string, 460, 460, WHITE, TRASP); */  
+    textout_ex(buf, font, "utente", X_LEG + 80, P_Z + 90, WHITE, TRASP); 
     
     /* Coordinate pallina e racchette 
     pthread_mutex_lock(&s13);
@@ -183,23 +149,40 @@ void testo(BITMAP* buf){
 void draw_screen(BITMAP* buf){
 
     int i;
-    int vertici[VERTEX] = {P1_X, P1_Z, P2_X, P2_Z, P3_X, P3_Z, P4_X, P4_Z};
+    int vertici[VERTEX];
+
         p_avv = 0;
         p_rob = 0;
+
+        //Converto le coordinate del campo in prospettiva
+        prospective_view(P1_X, Y_0, P1_Z);
+        vertici[0] = gcord.x;
+        vertici[1] = gcord.z;
+        prospective_view(P2_X, Y_0, P2_Z);
+        vertici[2] = gcord.x;
+        vertici[3] = gcord.z;
+        prospective_view(P3_X, Y_0, P3_Z);
+        vertici[4] = gcord.x;
+        vertici[5] = gcord.z;
+        prospective_view(P4_X, Y_0, P4_Z);
+        vertici[6] = gcord.x;
+        vertici[7] = gcord.z;
+
+        printf("x1 = %d\n", vertici[0]);
+        printf("z1 = %d\n", vertici[1]);
+        printf("x2 = %d\n", vertici[2]);
+        printf("z2 = %d\n", vertici[3]);
+        printf("x3 = %d\n", vertici[4]);
+        printf("z3 = %d\n", vertici[5]);
+        printf("x4 = %d\n", vertici[6]);
+        printf("z4 = %d\n", vertici[7]);
+        
 
         //crea un buffer per realizzare lo sfondo
         clear_bitmap(buf);
 
         // Disegna il tavolo
         polygon(buf, 4, vertici, FIELD);
-        line(buf, 320, 420, 320, 100, WHITE);
-
-        // Disegna la rete
-        for (i = 0;i < 381;i += 5)
-        line(buf, 130 + i, 240, 130 + i, 210, WHITE);
-
-        for (i = 0;i < 31;i += 5)
-            line(buf, 130, 210 + i, 510, 210 + i, WHITE);
     
         //testo(buf);
         textout_ex(buf, font, "V -> Vista verticale", X_LEG, P_Z + 60, WHITE, TRASP);
@@ -240,8 +223,8 @@ void racchetta_avversario(BITMAP* bmp, BITMAP* finestra, int w, int h){
 
             x = gcord.x;
             z = gcord.z;
-            printf("racchetta_adv_Z = %d \t", z);
-            printf("racchetta_adv_X = %d \n", x);
+            //printf("racchetta_adv_Z = %d \t", z);
+            //printf("racchetta_adv_X = %d \n", x);
             stretch_sprite(finestra, bmp, x, z, w, h);
             
         }
@@ -272,8 +255,8 @@ void racchetta_robot(BITMAP* bmp, BITMAP* finestra, int w, int h){
 
             x = gcord.x;
             z = gcord.z;
-            printf("racchetta_rob_Z = %d \t", z);
-            printf("racchetta_rob_X = %d \n", x);
+            //printf("racchetta_rob_Z = %d \t", z);
+            //printf("racchetta_rob_X = %d \n", x);
             stretch_sprite(finestra, bmp, x, z, w, h);
         }
         else 
@@ -305,9 +288,9 @@ void draw_ball(BITMAP* finestra)
 
             x = gcord.x;
             z = gcord.z;
-            printf("ball_local_Z = %f \t", ball_local.z);
-            printf("ball_local_X = %f \n", ball_local.x);
-            //circlefill(finestra, x, z, BALL_RADIUS, BALL_COLOR);
+            //printf("ball_local_Z = %f \t", ball_local.z);
+            //printf("ball_local_X = %f \n", ball_local.x);
+            circlefill(finestra, x, z, BALL_RADIUS, BALL_COLOR);
         }
         else 
         {
@@ -331,12 +314,11 @@ void* display(void* arg){
            
             if (pview_flag)
                 draw_screen(memory);
-                //blit(memory, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
             else
                 display_camera_view(memory);
 
             draw_ball(memory);            
-            racchetta_avversario(rac_a, memory, we , he);
+            //racchetta_avversario(rac_a, memory, we , he);
             //racchetta_robot(rac_r, memory, we, he);
 
             blit(memory, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
@@ -367,36 +349,24 @@ void display_camera_view(BITMAP* buf){
 
 void prospective_view(int x, int y, int z)
 {
-    int x1, y1, z1;
+    int x1, y1, z1, a, b, k;
 
-        /* Rotazione su x di un angolo theta */
-        x1 = x;                                         
-        y1 = COS_THETA * y - SIN_THETA * z;
-        z1 = SIN_THETA * y + COS_THETA * z;
-
-        printf("x1 = %d \t", x1);
-        printf("y1 = %d \t", y1);
-        printf("z1 = %d \n", z1);
-
+        /* Rotazione su x di un angolo theta e su y di phi */
+        x1 = COS_PHI * x + SIN_PHI * z;                                         
+        y1 = SIN_PHI * SIN_THETA * x + COS_THETA * y - SIN_THETA * COS_PHI * z;
+        z1 = - COS_THETA * SIN_PHI * x + SIN_THETA * y + COS_THETA * COS_PHI * z;
 
         /* Determinazione coordinate su piano prospettico */
         //gcord.x = (660 + x1 * (POV_DIST / (- POV_DIST + z1)));
         //gcord.z = (100 - y1 * (POV_DIST / (-POV_DIST + z1)));
 
-        if (z1 == 20) z1 = 21;              //evita che si annulli il denominatore
+        k = POV_DIST / (POV_DIST - z1);
 
-        x =  - x1 * POV_DIST / (POV_DIST - z1);        //non so perche' se assegno direttamente a gcord non funge 
-        z =  + y1 * POV_DIST / (POV_DIST - z1);        //stesso problema di su
+        a = 160 + x1 * k;      //non so perche' se assegno direttamente a gcord non funge 
+        b = 60 - y1 * k;      //stesso problema di su
 
-        printf("x = %d \t", x);
-        printf("z = %d \n", z);
-
-        gcord.x = x;
-        gcord.z = z;
-
-        printf("gcord.x = %d \t", gcord.x);
-        printf("gcord.z = %d \n", gcord.z);
-
+        gcord.x = a;
+        gcord.z = b;
 }
 
 void* command(void* arg){
