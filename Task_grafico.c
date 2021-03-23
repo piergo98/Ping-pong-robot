@@ -62,7 +62,7 @@ void init_screen(void){
     tastiera_miss = 0;
     pthread_mutex_unlock(&s21);
 
-    pov = 600;
+    pov = 1000;
     angle = 0;
 
     memory = create_bitmap(WIDTH, HEIGTH);
@@ -364,11 +364,17 @@ void display_camera_view(BITMAP* buf){
 void prospective_view(int x, int y, int z)
 {
     int x1, y1, z1, a, b, k;
+    float angle_rad;
+
+        angle_rad  = angle * 3.14;
+
+        printf("Angle = %f * pi \t", angle);
+        printf("PoV = %d \n", pov);
 
         /* Rotazione su x di un angolo theta e su y di phi */
         x1 = x;                                         
-        y1 = cos(angle) * y - sin(angle) * z;
-        z1 = sin(angle) * y + cos(angle) * z;
+        y1 = cos(angle_rad) * y - sin(angle_rad) * z;
+        z1 = sin(angle_rad) * y + cos(angle_rad) * z;
 
         /* Determinazione coordinate su piano prospettico */
         //gcord.x = (660 + x1 * (POV_DIST / (- POV_DIST + z1)));
@@ -378,8 +384,8 @@ void prospective_view(int x, int y, int z)
 
         k = pov / (pov - z1);
 
-        a = 160 + x1 * k;      //non so perche' se assegno direttamente a gcord non funge 
-        b = 60 - y1 * k;      //stesso problema di su
+        a = P1_X + x1 * k;      //non so perche' se assegno direttamente a gcord non funge 
+        b = P1_Z - y1 * k;      //stesso problema di su
 
         gcord.x = a;
         gcord.z = b;
@@ -425,10 +431,10 @@ void* command(void* arg){
                         pov -= 5;
                         break;
                     case KEY_RIGHT:
-                        angle += 1;
+                        angle += 0.01;
                         break;
                     case KEY_LEFT:
-                        angle -= 1;
+                        angle -= 0.01;
                         break;
                     default: break; //da aggiungere altre opzioni
 

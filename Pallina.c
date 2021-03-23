@@ -28,7 +28,7 @@ void* balltask(void* arg)
             store_trail(i);
             //chi_gioca();
 
-            if (ball.x > 640 || ball.x < 0 || ball.z > 480 || ball.z < 0){
+            if (ball.x > WIDTH || ball.x < 0 || ball.z > HEIGTH || ball.z < 0){
 
                 if (home) {
                     
