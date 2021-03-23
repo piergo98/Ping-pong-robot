@@ -28,5 +28,7 @@
         "stdexcept": "c",
         "bit": "cpp",
         "terminal.integrated.fontFamily": "Hack",
+        "limits": "cpp",
+        "typeinfo": "cpp"
     }
 } 

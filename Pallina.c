@@ -25,8 +25,6 @@ void* balltask(void* arg)
             pthread_mutex_unlock(&s13);
 
             handle_bounce(i);
-            store_trail(i);
-            //chi_gioca();
 
             if (ball.x > WIDTH || ball.x < 0 || ball.z > HEIGTH || ball.z < 0){
 
@@ -56,20 +54,6 @@ void* balltask(void* arg)
                 
             wait_for_activation(i);
         }
-}
-
-void store_trail( int i)
-{ 
-    int k;
-
-    k = trail.top;
-    k = (k + 1) % TLEN;
-    pthread_mutex_lock(&s13);
-    trail.x[k] = ball.x;
-    trail.z[k] = ball.z;
-    trail.y[k] = ball.y;
-    pthread_mutex_unlock(&s13);
-    trail.top = k;
 }
 
 void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racchetta e il tavolo

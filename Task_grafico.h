@@ -54,6 +54,7 @@ struct gpos gcord;
 int     pview_flag;     //indicatore per rappresentazione prospettica
 int pov;
 float angle;
+int tempo, pos_old, vel_old;
 
 void init_screen(void);  /* Inizializza lo schermo e crea il task grafico */
 
@@ -77,4 +78,4 @@ void prospective_view(int x, int y, int z);      /* Genera cordinate per vista p
 
 void* command(void* arg);          // aggiorna i flag in base ai tasti premuti
 
-
+void draw_graph(BITMAP* buf);

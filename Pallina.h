@@ -64,8 +64,6 @@ int     p_avv;          //punteggio avversario
 struct cbuf trail;          
 //struct status ball;
 
-void store_trail( int i);
-
 void handle_bounce(int i);
 
 float frand(float vxmin, float vxmax);

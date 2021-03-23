@@ -65,6 +65,10 @@ void init_screen(void){
     pov = 1000;
     angle = 0;
 
+    tempo = 0;
+    pos_old = 160;
+    vel_old = 0;
+
     memory = create_bitmap(WIDTH, HEIGTH);
     clear_bitmap(memory);
 }
@@ -87,65 +91,6 @@ void testo(BITMAP* buf){
     textout_ex(buf, font, "U -> Gioca utente", X_LEG, P_Z + 40, WHITE, TRASP);
     textout_ex(buf, font, "SPACE -> Battuta", X_LEG, P_Z + 80, WHITE, TRASP);
     textout_ex(buf, font, "utente", X_LEG + 80, P_Z + 90, WHITE, TRASP); 
-    
-    /* Coordinate pallina e racchette 
-    pthread_mutex_lock(&s13);
-    sprintf(string, "Xp = %f", ball.x);
-    pthread_mutex_unlock(&s13);
-    textout_ex(buf, font, string, 500, 140, WHITE, TRASP);
-    pthread_mutex_lock(&s13);
-    sprintf(string, "Yp = %f", ball.y);
-    pthread_mutex_unlock(&s13);
-    textout_ex(buf, font, string, 500, 160, WHITE, TRASP);
-    pthread_mutex_lock(&s13);
-    sprintf(string, "Zp = %f", ball.z);
-    pthread_mutex_unlock(&s13);
-    textout_ex(buf, font, string, 500, 180, WHITE, TRASP);*/    
-
-    /*pthread_mutex_lock(&s8);
-    sprintf(string, "Xa = %d", adversary_x.position);
-    pthread_mutex_unlock(&s8);
-    textout_ex(buf, font, string, 500, 200, WHITE, TRASP);    
-
-    pthread_mutex_lock(&s9);
-    sprintf(string, "Za = %d", adversary_z.position);
-    pthread_mutex_unlock(&s9);
-    textout_ex(buf, font, string, 500, 220, WHITE, TRASP);
-
-    pthread_mutex_lock(&s6);
-    sprintf(string, "Xr = %d", robot_x.position);
-    pthread_mutex_unlock(&s6);
-    textout_ex(buf, font, string, 500, 240, WHITE, TRASP);
-
-    pthread_mutex_lock(&s7);
-    sprintf(string, "Zr = %d", robot_z.position);
-    pthread_mutex_unlock(&s7);
-    textout_ex(buf, font, string, 500, 260, WHITE, TRASP);
-
-    pthread_mutex_lock(&s13);
-    sprintf(string, "V_X = %f", ball.vx);
-    pthread_mutex_unlock(&s13);
-    textout_ex(buf, font, string, 500, 360, WHITE, TRASP);
-    pthread_mutex_lock(&s13);
-    sprintf(string, "V_Z = %f", ball.vz);
-    pthread_mutex_unlock(&s13);
-    textout_ex(buf, font, string, 500, 380, WHITE, TRASP);
-    pthread_mutex_lock(&s3);
-    sprintf(string, "R_X = %d", buffer[NOW].x);
-    pthread_mutex_unlock(&s3);
-    textout_ex(buf, font, string, 30, 400, WHITE, TRASP);
-    pthread_mutex_lock(&s3);
-    sprintf(string, "R_Z = %d", buffer[NOW].z);
-    pthread_mutex_unlock(&s3);
-    textout_ex(buf, font, string, 30, 420, WHITE, TRASP);
-    pthread_mutex_lock(&s3);
-    sprintf(string, "A_X = %d", buffer[NEXT].x);
-    pthread_mutex_unlock(&s3);
-    textout_ex(buf, font, string, 30, 440, WHITE, TRASP);
-    pthread_mutex_lock(&s3);
-    sprintf(string, "A_Z = %d", buffer[NEXT].z);
-    pthread_mutex_unlock(&s3);
-    textout_ex(buf, font, string, 30, 460, WHITE, TRASP);*/
 
 }
 
@@ -162,10 +107,10 @@ void draw_screen(BITMAP* buf){
         prospective_view(P1_X, 0, P1_Z);       //in basso a sinistra
         vertici[0] = gcord.x;
         vertici[1] = gcord.z;
-        prospective_view(P2_X, 0, P2_Z);      //in alto a sinistra
+        prospective_view(P2_X + (pov / 20), 0, P2_Z);      //in alto a sinistra
         vertici[2] = gcord.x;
         vertici[3] = gcord.z;
-        prospective_view(P3_X, 0, P3_Z);      //in alto a destra
+        prospective_view(P3_X - (pov / 20), 0, P3_Z);      //in alto a destra
         vertici[4] = gcord.x;
         vertici[5] = gcord.z;
         prospective_view(P4_X, 0, P4_Z);      //in basso a destra
@@ -188,10 +133,10 @@ void draw_screen(BITMAP* buf){
         // Disegna il tavolo
         polygon(buf, 4, vertici, FIELD);
 
-        prospective_view(140, 0, 240);
+        prospective_view(140 + (pov /25), 0, 240 - (pov / 50));
         x_l1 = gcord.x;
         z_l1 = gcord.z;
-        prospective_view(500, 0, 240);
+        prospective_view(500 - (pov / 25), 0, 240 - (pov / 50));
         x_l2 = gcord.x;
         z_l2 = gcord.z; 
 
@@ -256,12 +201,13 @@ void racchetta_avversario(BITMAP* bmp, BITMAP* finestra, int w, int h){
 
 void racchetta_robot(BITMAP* bmp, BITMAP* finestra, int w, int h){
 
-    int x, z, x_old, z_old;
+    int x, z, x_old, z_old, temp_x;
 
         if (pview_flag)
         {
             pthread_mutex_lock(&s7);
             pthread_mutex_lock(&s6);
+            //temp_x = (robot_x.position - P2_X)*(1 - (2 * (pov / 20) / (P3_X - P2_X))) + P2_X + (pov / 20);
             prospective_view(robot_x.position, Y_0, robot_z.position);
             pthread_mutex_unlock(&s6);
             pthread_mutex_unlock(&s7);
@@ -325,10 +271,10 @@ void* display(void* arg){
 
         while(!end){
            
-            if (pview_flag)
+            /*if (pview_flag)
                 draw_screen(memory);
-            else
-                display_camera_view(memory);
+            else*/
+            display_camera_view(memory);
 
             draw_ball(memory);            
             racchetta_avversario(rac_a, memory, we , he);
@@ -406,9 +352,9 @@ void* command(void* arg){
                     case KEY_V:
                         pview_flag = 0;
                         break;
-                    case KEY_P:
-                        pview_flag = 1;
-                        break;
+                    //case KEY_P:
+                        //pview_flag = 1;
+                        //break;
                     case KEY_U:
                         pthread_mutex_lock(&s10);
                         player = 1;
@@ -454,3 +400,18 @@ void* command(void* arg){
             wait_for_activation(i);
 }
 
+void draw_graph(BITMAP* buf){
+
+
+        pthread_mutex_lock(&s6);
+        line(buf, tempo, pos_old, tempo+1, robot_x.position, WHITE);
+        pos_old = robot_x.position;
+        line(buf, tempo, vel_old, tempo+1, robot_x.speed, BLUE);
+        vel_old = robot_x.speed;
+        pthread_mutex_unlock(&s6);
+        tempo++;
+        if (tempo > 639){
+            clear_bitmap(buf);
+            tempo = 0;
+        }             
+}
