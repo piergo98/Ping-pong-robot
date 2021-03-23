@@ -2,7 +2,7 @@
 #include    <math.h>
 
 
-#define     COLOR   32              //profondita di colori: 16 bit
+#define     COLOR_DEPTH   32              //profondita di colori: 16 bit
 #define     VERTEX  8
 #define     P_X     20
 #define     P_Z     20
@@ -15,27 +15,16 @@
 #define     TRASP   -1
 #define     DIM_RAC 70              //dimensioni racchetta
 //------------------------------------------------------------------------------
-// PUNTI TAVOLO IN PROSPETTIVA
-//------------------------------------------------------------------------------
-#define     P1_X   160  
-#define     P1_Z   420 
-#define     P2_X   160        
-#define     P2_Z   60          
-#define     P3_X   480         
-#define     P3_Z   60 
-#define     P4_X   480           
-#define     P4_Z   420 
-//------------------------------------------------------------------------------
 // PUNTI TAVOLO VISTO DALL'ALTO
 //------------------------------------------------------------------------------
-#define     C_X1    160  //(X3,Z3)  |-----------------|  (X2,Z2)
-#define     C_Z1    420  //         |                 |
-#define     C_X2    480  //         |                 |
-#define     C_Z2    60   //         |                 |
-#define     C_X3    160  //         |                 |
-#define     C_Z3    60   //         |                 |
-#define     C_X4    480  //         |                 |
-#define     C_Z4    420  //(X1,Z1)  |-----------------| (X4,Z4)
+#define     P1_X   160  //(X2,Z2)  |-----------------|  (X3,Z3)
+#define     P1_Z   420  //         |                 |
+#define     P2_X   160  //         |                 |
+#define     P2_Z   60   //         |                 |
+#define     P3_X   480  //         |                 |
+#define     P3_Z   60   //         |                 |
+#define     P4_X   480  //         |                 |
+#define     P4_Z   420  //(X1,Z1)  |-----------------| (X4,Z4)
 
 #define     HALF_Z  240
 #define     HALF_X  320 

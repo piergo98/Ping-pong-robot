@@ -9,13 +9,13 @@ char    punti_rob[DIM_S];
 char    punti_avv[DIM_S];
 char    string[DIM_S];
 
-BITMAP* rac_r, *rac_a;  //buffer per copiare lo schermo
+BITMAP* rac_r, *rac_a;  //buffer per copiare la racchetta
 BITMAP* memory;         //bitmap provvisoria in cui ho una replica dell'interfaccia da disegnare
 
 void init_screen(void){
 
     allegro_init();
-    set_color_depth(COLOR);
+    set_color_depth(COLOR_DEPTH);
     set_gfx_mode(GFX_AUTODETECT_WINDOWED, WIDTH, HEIGTH, 0, 0);
     clear_to_color(screen, BLACK);  //schermo nero
     install_keyboard();
@@ -378,8 +378,8 @@ void prospective_view(int x, int y, int z)
 
         k = pov / (pov - z1);
 
-        a = 400 + x1 * k;      //non so perche' se assegno direttamente a gcord non funge 
-        b = 100 - y1 * k;      //stesso problema di su
+        a = 160 + x1 * k;      //non so perche' se assegno direttamente a gcord non funge 
+        b = 60 - y1 * k;      //stesso problema di su
 
         gcord.x = a;
         gcord.z = b;

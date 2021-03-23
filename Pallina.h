@@ -20,8 +20,8 @@
 #define     BETA        0.2    // adimensional braking coefficient
 #define     ERR_MIN     -5
 #define     ERR_MAX     5
-#define     WIDTH       1200 //640
-#define     HEIGTH      800  //480
+#define     WIDTH       1024 //640
+#define     HEIGTH      768  //480
 
 
 #define     RACC_MAX    20     // max racchetta

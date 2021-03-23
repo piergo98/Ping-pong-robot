@@ -133,7 +133,7 @@ void init_ball(void)
    pthread_mutex_lock(&s13); 
    ball.vx = 0;
    ball.vy = 0;
-   ball.vz = 0;
+   ball.vz = 10;
    
    ball.x = 320;
    ball.y = Y_0;

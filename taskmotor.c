@@ -4,22 +4,22 @@ void init_motor(){
 
     /* Inizializza le posizioni e le velocità dei robot */
     pthread_mutex_lock(&s6);
-    robot_x.position = C_X3;
+    robot_x.position = P2_X;
     robot_x.speed = 0;
     pthread_mutex_unlock(&s6);
     
     pthread_mutex_lock(&s7);
-    robot_z.position = C_Z3;
+    robot_z.position = P2_Z;
     robot_z.speed = 0;
     pthread_mutex_unlock(&s7);
    
     pthread_mutex_lock(&s8);
-    adversary_x.position = C_X4;
+    adversary_x.position = P4_X;
     adversary_x.speed = 0;
     pthread_mutex_unlock(&s8);
     
     pthread_mutex_lock(&s9);
-    adversary_z.position = C_Z4;
+    adversary_z.position = P4_Z;
     adversary_z.speed = 0;
     pthread_mutex_unlock(&s9);
 
@@ -33,23 +33,23 @@ void init_motor(){
 
     rob_x_angle.in[NOW] = 0;      
     rob_x_angle.in[BEFORE] = 0;
-    rob_x_angle.out[NOW] = C_X3 / R;
-    rob_x_angle.out[BEFORE] =  C_X3 / R;
+    rob_x_angle.out[NOW] = P2_X / R;
+    rob_x_angle.out[BEFORE] =  P2_X / R;
 
     rob_z_angle.in[NOW] = 0;        
     rob_z_angle.in[BEFORE] = 0;
-    rob_z_angle.out[NOW] = C_Z3 / R;
-    rob_z_angle.out[BEFORE] = C_Z3 / R;
+    rob_z_angle.out[NOW] = P2_Z / R;
+    rob_z_angle.out[BEFORE] = P2_Z / R;
 
     adv_x_angle.in[NOW] = 0;        
     adv_x_angle.in[BEFORE] = 0;
-    adv_x_angle.out[NOW] = C_X4 / R;
-    adv_x_angle.out[BEFORE] = C_X4 / R;
+    adv_x_angle.out[NOW] = P4_X / R;
+    adv_x_angle.out[BEFORE] = P4_X / R;
 
     adv_z_angle.in[NOW] = 0;        
     adv_z_angle.in[BEFORE] = 0;
-    adv_z_angle.out[NOW] = C_Z4 / R;
-    adv_z_angle.out[BEFORE] = C_Z4 / R;
+    adv_z_angle.out[NOW] = P4_Z / R;
+    adv_z_angle.out[BEFORE] = P4_Z / R;
 }
 
 void* motortask_x(void* arg)
@@ -64,8 +64,8 @@ void* motortask_x(void* arg)
             i = get_task_index(arg);
             set_activation(i);
 
-            x_min = C_X3 - OFFSET_X;    //70
-            x_max = C_X2 + OFFSET_X;    //570
+            x_min = P2_X - OFFSET_X;    //70
+            x_max = P3_X + OFFSET_X;    //570
 
             err[NOW] = err[BEFORE] = 0;
             u1[NOW] = u1[BEFORE]  = 0;
@@ -141,7 +141,7 @@ void* motortask_z(void* arg)
             i = get_task_index(arg);
             set_activation(i);
 
-            z_min = C_Z3 - OFFSET_Z / 3;    //0
+            z_min = P2_Z - OFFSET_Z / 3;    //0
             z_max = 140; //C_Z3 + OFFSET_Z - 20;        //240
 
             err[NOW] = err[BEFORE] = 0;
@@ -161,7 +161,7 @@ void* motortask_z(void* arg)
                     pthread_mutex_lock(&s12);
                     if (!home) {
 
-                        zd = C_Z3;
+                        zd = P2_Z;
                     }
                     else {
                         pthread_mutex_lock(&s3);

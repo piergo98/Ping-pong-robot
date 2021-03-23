@@ -14,8 +14,8 @@ void* adversarytask_x(void* arg)
         i = get_task_index(arg);
         set_activation(i);        
 
-        x_min = C_X1 - OFFSET_X;    //70
-        x_max = C_X4 + OFFSET_X;    //570
+        x_min = P1_X - OFFSET_X;    //70
+        x_max = P4_X + OFFSET_X;    //570
 
         err[NOW] = err[BEFORE] = 0;
         u1[NOW] = u1[BEFORE]  = 0;
@@ -91,7 +91,7 @@ void* adversarytask_z(void* arg)
         set_activation(i);
 
         z_min = 320; //C_Z1 - OFFSET_Z + 20;        //240
-        z_max = C_Z1 + OFFSET_Z / 3;    //480
+        z_max = P1_Z + OFFSET_Z / 3;    //480
 
         err[NOW] = err[BEFORE] = 0;
         u1[NOW] = u1[BEFORE]  = 0;

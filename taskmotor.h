@@ -27,14 +27,14 @@
 //------------------------------------------------------------------------------
 // PUNTI TAVOLO VISTO DALL'ALTO
 //------------------------------------------------------------------------------
-#define     C_X1    160
-#define     C_Z1    420
-#define     C_X2    480
-#define     C_Z2    60
-#define     C_X3    160
-#define     C_Z3    60
-#define     C_X4    480
-#define     C_Z4    420
+#define     P1_X   160  //(X2,Z2)  |-----------------|  (X3,Z3)
+#define     P1_Z   420  //         |                 |
+#define     P2_X   160  //         |                 |
+#define     P2_Z   60   //         |                 |
+#define     P3_X   480  //         |                 |
+#define     P3_Z   60   //         |                 |
+#define     P4_X   480  //         |                 |
+#define     P4_Z   420  //(X1,Z1)  |-----------------| (X4,Z4)
 
 struct m_tfunc     //va inizializzata nel motortask (?)                                   
 {
