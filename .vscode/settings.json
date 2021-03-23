@@ -26,6 +26,7 @@
         "system_error": "cpp",
         "optional": "c",
         "stdexcept": "c",
-        "bit": "cpp"
+        "bit": "cpp",
+        "terminal.integrated.fontFamily": "Hack",
     }
-}
+} 

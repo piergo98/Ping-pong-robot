@@ -1,4 +1,8 @@
 
 *.json
 
+<<<<<<< Updated upstream
 *.o
+=======
+.vscode/
+>>>>>>> Stashed changes

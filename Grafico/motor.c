@@ -148,3 +148,6 @@ void get_state(int *xi, int *vi, struct state *robot_tmp)
     *xi = robot_tmp->position;
     *vi = robot_tmp->speed;
 }
+
+//z_min = C_Z3 - OFFSET_Z / 3;
+//z_max = C_Z3 + OFFSET_Z;
