@@ -10,13 +10,14 @@ char    punti_avv[DIM_S];
 char    string[DIM_S];
 
 BITMAP* rac_r, *rac_a;  //buffer per copiare la racchetta
-BITMAP* memory;         //bitmap provvisoria in cui ho una replica dell'interfaccia da disegnare
+BITMAP* memory;         //bitmap provvisoria in cui disegno l'area di gioco e la legenda
+BITMAP* mem;            //bitmap provvisoria in cui disegno i grafici
 
 void init_screen(void){
 
     allegro_init();
     set_color_depth(COLOR_DEPTH);
-    set_gfx_mode(GFX_AUTODETECT_WINDOWED, WIDTH, HEIGTH, 0, 0);
+    set_gfx_mode(GFX_AUTODETECT_WINDOWED, WIDTH, HEIGHT, 0, 0);
     clear_to_color(screen, BLACK);  //schermo nero
     install_keyboard();
     install_mouse();
@@ -62,35 +63,40 @@ void init_screen(void){
     tastiera_miss = 0;
     pthread_mutex_unlock(&s21);
 
-    pov = 1000;
+    pov = POV_DIST;
     angle = 0;
 
-    tempo = 0;
-    pos_old = 160;
-    vel_old = 0;
+    tempo = TEMPO_INIT;
+    pos_old_1 = H_GRAPH_1;
+    pos_old_2 = H_GRAPH_2;
+    pos_old_3 = H_GRAPH_3;
+    pos_old_4 = H_GRAPH_4;
 
-    memory = create_bitmap(WIDTH, HEIGTH);
+    memory = create_bitmap(WIDTH_GAME, HEIGHT_GAME);
+    mem = create_bitmap(WIDTH_GRAPH, HEIGHT_GRAPH);
     clear_bitmap(memory);
+    clear_bitmap(mem);
 }
 
-void testo(BITMAP* buf){ 
+void legenda(BITMAP* buf){ 
 
+    /* Disegno il rettangolo che contiene tutti i dati*/
+    rect(buf, 0, DELTA, WIDTH_GAME, 0, WHITE);
     /* Punteggio */
     textout_ex(buf, font, "PUNTEGGIO", P_X, P_Z, WHITE, TRASP);
     pthread_mutex_lock(&s1);
     sprintf(punti_rob, "ROB = %d", p_rob);
     pthread_mutex_unlock(&s1);
-    textout_ex(buf, font, punti_rob, P_X, P_Z + 20, WHITE, TRASP);
+    textout_ex(buf, font, punti_rob, P_X, P_Z + Z_DIST, WHITE, TRASP);
     pthread_mutex_lock(&s2);  
     sprintf(punti_avv, "AVV = %d", p_avv);
     pthread_mutex_unlock(&s2);
-    textout_ex(buf, font, punti_avv, P_X, P_Z + 40, WHITE, TRASP);
+    textout_ex(buf, font, punti_avv, P_X, P_Z + 2 * Z_DIST, WHITE, TRASP);
     /* Legenda */
     textout_ex(buf, font, "LEGENDA:", X_LEG, P_Z, WHITE, TRASP);
-    textout_ex(buf, font, "R -> Gioca robot", X_LEG, P_Z + 20, WHITE, TRASP);
-    textout_ex(buf, font, "U -> Gioca utente", X_LEG, P_Z + 40, WHITE, TRASP);
-    textout_ex(buf, font, "SPACE -> Battuta", X_LEG, P_Z + 80, WHITE, TRASP);
-    textout_ex(buf, font, "utente", X_LEG + 80, P_Z + 90, WHITE, TRASP); 
+    textout_ex(buf, font, "R -> Gioca robot", X_LEG, P_Z + Z_DIST, WHITE, TRASP);
+    textout_ex(buf, font, "U -> Gioca utente", X_LEG, P_Z + 2 * Z_DIST, WHITE, TRASP);
+    textout_ex(buf, font, "SPACE -> Battuta", X_LEG, P_Z + 3 * Z_DIST, WHITE, TRASP); 
 
 }
 
@@ -181,8 +187,6 @@ void racchetta_avversario(BITMAP* bmp, BITMAP* finestra, int w, int h){
 
             x = gcord.x;
             z = gcord.z;
-            //printf("racchetta_adv_Z = %d \t", z);
-            //printf("racchetta_adv_X = %d \n", x);
             stretch_sprite(finestra, bmp, x, z, w, h);
             
         }
@@ -195,7 +199,7 @@ void racchetta_avversario(BITMAP* bmp, BITMAP* finestra, int w, int h){
             z = adversary_z.position;
             pthread_mutex_unlock(&s9);            
 
-            rectfill(finestra, x - 20, z - 5, x + 20, z + 5, RED);
+            rectfill(finestra, x - RACC_MIN, z - D, x + RACC_MAX, z + D, RED);
         } 
 }
 
@@ -226,7 +230,7 @@ void racchetta_robot(BITMAP* bmp, BITMAP* finestra, int w, int h){
             pthread_mutex_lock(&s7);
             z = robot_z.position;
             pthread_mutex_unlock(&s7);
-            rectfill(finestra, x - 20, z - 5, x + 20, z + 5, BLUE);
+            rectfill(finestra, x - RACC_MIN, z - D, x + RACC_MAX, z + D, BLUE);
         } 
 } 
 
@@ -263,8 +267,6 @@ void draw_ball(BITMAP* finestra)
 void* display(void* arg){
 
     int i;              //task index
-    int we = DIM_RAC;
-    int he = DIM_RAC;
 
         i = get_task_index(arg);
         set_activation(i);
@@ -277,10 +279,12 @@ void* display(void* arg){
             display_camera_view(memory);
 
             draw_ball(memory);            
-            racchetta_avversario(rac_a, memory, we , he);
-            racchetta_robot(rac_r, memory, we, he);
+            racchetta_avversario(rac_a, memory, DIM_RAC , DIM_RAC);
+            racchetta_robot(rac_r, memory, DIM_RAC, DIM_RAC);
+            draw_graph(mem);
 
-            blit(memory, screen, 0, 0, 0, 0, WIDTH, HEIGTH);
+            blit(memory, screen, 0, 0, 0, 0, WIDTH_GAME, HEIGHT_GAME);
+            blit(mem, screen, 0, 0, WIDTH_GAME, 0, WIDTH_GRAPH, HEIGHT_GRAPH);
 
             if (deadline_miss(i))
                 show_dmiss(i);
@@ -295,16 +299,16 @@ void display_camera_view(BITMAP* buf){
     // Disegna il tavolo visto dall'alto
     clear_bitmap(buf);
     polygon(buf, 4, vertici, FIELD);
-    line(buf, 320, 420, 320, 60, WHITE);     // linea che divide il campo in due meta verticalmente
-    line(buf, 140, 240, 500, 240, WHITE);    // linea della rete
+    line(buf, HALF_X, Z1_V, HALF_X, Z2_V, WHITE);       // linea che divide il campo in due meta verticalmente
+    line(buf, X1_O, HALF_Z, X2_O, HALF_Z, WHITE);       // linea della rete
+    rect(buf, 0, HEIGHT, WIDTH_GAME, DELTA, WHITE);
     
     /* Disegna la finestra di ricerca della pallina */
     pthread_mutex_lock(&s4);
     rect(buf, window.x0, window.z0+window.zsize, window.x0+window.xsize, window.z0, RED);
     pthread_mutex_unlock(&s4);
 
-    testo(buf);
-    textout_ex(buf, font, "P -> Indietro", X_LEG + 40, P_Z + 60, WHITE, TRASP);
+    legenda(buf);
 }
 
 void prospective_view(int x, int y, int z)
@@ -402,16 +406,46 @@ void* command(void* arg){
 
 void draw_graph(BITMAP* buf){
 
+    int pos_1, pos_2, pos_3, pos_4;
 
         pthread_mutex_lock(&s6);
-        line(buf, tempo, pos_old, tempo+1, robot_x.position, WHITE);
-        pos_old = robot_x.position;
-        line(buf, tempo, vel_old, tempo+1, robot_x.speed, BLUE);
-        vel_old = robot_x.speed;
+        pos_1 = H_GRAPH_1 - (robot_x.position / SCALE);
         pthread_mutex_unlock(&s6);
+
+        pthread_mutex_lock(&s7);
+        pos_2 = H_GRAPH_2 - (robot_z.position / SCALE);
+        pthread_mutex_unlock(&s7);
+
+        pthread_mutex_lock(&s8);
+        pos_3 = H_GRAPH_3 - (adversary_x.position / SCALE);
+        pthread_mutex_unlock(&s8);
+
+        pthread_mutex_lock(&s9);
+        pos_4 = H_GRAPH_4 - (adversary_z.position / SCALE);
+        pthread_mutex_unlock(&s9);
+
+        /* Disegno l'area dei grafici */
+        rect(buf, 0, H_GRAPH_1, WIDTH_GRAPH, 0, WHITE);
+        textout_ex(buf, font, "Robot_X", X_GRAPH, Z_GRAPH_1, BLUE, TRASP);
+        rect(buf, 0, H_GRAPH_2, WIDTH_GRAPH, H_GRAPH_1, WHITE);
+        textout_ex(buf, font, "Robot_Z", X_GRAPH, Z_GRAPH_2, RED, TRASP);
+        rect(buf, 0, H_GRAPH_3, WIDTH_GRAPH, H_GRAPH_2, WHITE);
+        textout_ex(buf, font, "Avversario_X", X_GRAPH, Z_GRAPH_3, GREEN, TRASP);
+        rect(buf, 0, H_GRAPH_4, WIDTH_GRAPH, H_GRAPH_3, WHITE);
+        textout_ex(buf, font, "Avversario_Z", X_GRAPH, Z_GRAPH_4, FUCSIA, TRASP);
+        /* Traccio i grafici */
+        line(buf, tempo, pos_old_1, tempo+1, pos_1, BLUE);
+        pos_old_1 = pos_1;
+        line(buf, tempo, pos_old_2, tempo+1, pos_2, RED);
+        pos_old_2 = pos_2;
+        line(buf, tempo, pos_old_3, tempo+1, pos_3, GREEN);
+        pos_old_3 = pos_3;
+        line(buf, tempo, pos_old_4, tempo+1, pos_4, FUCSIA);
+        pos_old_4 = pos_4;
+        
         tempo++;
-        if (tempo > 639){
+        if (tempo > TEMPO_MAX){
             clear_bitmap(buf);
-            tempo = 0;
+            tempo = TEMPO_INIT;
         }             
 }

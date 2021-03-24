@@ -4,8 +4,8 @@ void init_camera(){
 
     /* Inizializzo la struttura puntata da window */
     pthread_mutex_lock(&s4);
-    window.x0 = 160;                // punto in alto a sinistra della finestra
-    window.z0 = 60;
+    window.x0 = P2_X;               // punto in alto a sinistra della finestra
+    window.z0 = P2_Z;
     window.xsize = SIZE_X;          // dimensioni della finestra
     window.zsize = SIZE_Z;
     pthread_mutex_unlock(&s4);
@@ -63,8 +63,8 @@ void prediction(struct win* w, struct coord memory[DIM]){
 
     if (trovato){
         
-        w->xsize = 50;
-        w->zsize = 50;
+        w->xsize = RESIZE_X;
+        w->zsize = RESIZE_Z;
         /* sposto la finestra di ricerca */
         w->x0 = memory[NEXT].x - (w->xsize / 2);
         //w->x0 = memory[NOW].x;
@@ -75,8 +75,8 @@ void prediction(struct win* w, struct coord memory[DIM]){
     {
         w->xsize = SIZE_X;
         w->zsize = SIZE_Z;
-        w->x0 = 160;
-        w->z0 = 60;
+        w->x0 = P2_X;
+        w->z0 = P2_Z;
     }
 }
 

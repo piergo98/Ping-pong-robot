@@ -4,25 +4,20 @@ int col = 14;       // yellow color
 
 void* adversarytask_x(void* arg)
 {
-    int   i, T;                     // task index
-    int   x_min, x_max;             // limiti di movimento      
-    int   xd, vd;                   // desired position and speed
-    int   x,  v;                    // actual  position and speed
-    float   u1[2],      y,   err[2],    u; // temporary variables
-    struct  state   temp;           //temporary structure
+    int   i, T;                                 // task index      
+    int   xd, vd;                               // desired position and speed
+    int   x,  v;                                // actual  position and speed
+    float   u1[2],      y,   err[2],    u;      // temporary variables
+    struct  state   temp;                       //temporary structure
         
         i = get_task_index(arg);
         set_activation(i);        
-
-        x_min = P1_X - OFFSET_X;    //70
-        x_max = P4_X + OFFSET_X;    //570
 
         err[NOW] = err[BEFORE] = 0;
         u1[NOW] = u1[BEFORE]  = 0;
 
         while(!end) {
-            
-            //pthread_mutex_lock(&s11);
+        
             if (start  || player) {
                 vd = 0;
 
@@ -34,7 +29,7 @@ void* adversarytask_x(void* arg)
                 pthread_mutex_lock(&s12);
                 if (home){
 
-                    xd  = 320;
+                    xd  = HALF_X;
 
                 }
                 else {
@@ -52,13 +47,10 @@ void* adversarytask_x(void* arg)
                 //controllo di velocita'
                 u = u1[NOW] + KD * (vd - v);
 
-                //printf("Adv_x = %d\t", x);
-                //printf("Adv_v_x = %d\n", v);
-
                 y = motor(u, &adv_x_angle);
                 
                 pthread_mutex_lock(&s10);
-                update_adversary_state_x(y, T, x_min, x_max, &temp);
+                update_adversary_state_x(y, T, &temp);
                 pthread_mutex_unlock(&s10);
 
                 u1[BEFORE] = u1[NOW];
@@ -69,7 +61,6 @@ void* adversarytask_x(void* arg)
                 adversary_x.speed = temp.speed;
                 pthread_mutex_unlock(&s8);
             }
-            //pthread_mutex_unlock(&s11);
 
             if (deadline_miss(i))
                 show_dmiss(i);
@@ -80,25 +71,20 @@ void* adversarytask_x(void* arg)
 
 void* adversarytask_z(void* arg)
 {
-    int   i, T, home_tmp;                         // task index
-    int   z_min, z_max;                 // limiti di movimento
-    int   zd, vd;                       // desired position and speed
-    int   x,  v;                        // actual  position and speed
-    float   u1[2],      y,   err[2],    u;     // temporary variables
-    struct  state   temp;               //temporary structure
+    int   i, T, home_tmp;                           // task index
+    int   zd, vd;                                   // desired position and speed
+    int   x,  v;                                    // actual  position and speed
+    float   u1[2],      y,   err[2],    u;          // temporary variables
+    struct  state   temp;                           //temporary structure
         
         i = get_task_index(arg);
         set_activation(i);
-
-        z_min = 320; //C_Z1 - OFFSET_Z + 20;        //240
-        z_max = P1_Z + OFFSET_Z / 3;    //480
 
         err[NOW] = err[BEFORE] = 0;
         u1[NOW] = u1[BEFORE]  = 0;
 
         while(!end) {
 
-            //pthread_mutex_lock(&s11);
             if (start || player) {
                 
                 vd = 0;
@@ -114,13 +100,13 @@ void* adversarytask_z(void* arg)
 
                 if (home_tmp){
 
-                    zd  = 420;
+                    zd  = P4_Z;
 
                 }
                 else {
 
                     pthread_mutex_lock(&s3);
-                    zd = buffer[NEXT].z + 2;
+                    zd = buffer[NEXT].z + D;
                     pthread_mutex_unlock(&s3);
                 }
                 
@@ -133,14 +119,10 @@ void* adversarytask_z(void* arg)
                 //controllo di velocita'
                 u = u1[NOW] + KD * (vd - v);
 
-                //printf("Adv_z = %d\t", x);
-                //printf("Adv_v_z = %d\n", v);
-
-
                 y = motor(u, &adv_z_angle);
                 
                 pthread_mutex_lock(&s10);
-                update_adversary_state_z(y, T, z_min, z_max, &temp);
+                update_adversary_state_z(y, T, &temp);
                 pthread_mutex_unlock(&s10);
 
                 u1[BEFORE] = u1[NOW];
@@ -151,7 +133,6 @@ void* adversarytask_z(void* arg)
                 adversary_z.speed = temp.speed;
                 pthread_mutex_unlock(&s9);
             }
-            //pthread_mutex_unlock(&s11);
 
             if (deadline_miss(i))
                 show_dmiss(i);
@@ -161,25 +142,21 @@ void* adversarytask_z(void* arg)
         
 }
 
-void update_adversary_state_x(float y, int T, int p_min, int p_max, struct state *robot_tmp)
+void update_adversary_state_x(float y, int T, struct state *robot_tmp)
 {
   
     int delta;
-
-    //if (ball.z <= 240) return;
-
-    //else {
 
         if(!player){
 
             delta = (int)y * R;                              //converte rotazione del motore in movimento lineare
         
-            if (delta > p_max ){
-                robot_tmp->position = p_max;
+            if (delta > X_MAX ){
+                robot_tmp->position = X_MAX;
                 robot_tmp->speed = 0;
             }
-            else if (delta < p_min){
-                robot_tmp->position = p_min;
+            else if (delta < X_MIN){
+                robot_tmp->position = X_MIN;
                 robot_tmp->speed = 0;
             }
             else{
@@ -192,10 +169,9 @@ void update_adversary_state_x(float y, int T, int p_min, int p_max, struct state
             robot_tmp->speed = (mouse_x - robot_tmp->position)/ Ts;
             robot_tmp->position = mouse_x;
         }
-    //}
 }
 
-void update_adversary_state_z(float y, int T, int p_min, int p_max, struct state *robot_tmp)
+void update_adversary_state_z(float y, int T, struct state *robot_tmp)
 {
   
     int delta;
@@ -204,12 +180,12 @@ void update_adversary_state_z(float y, int T, int p_min, int p_max, struct state
 
         delta = y * R;                              //converte rotazione del motore in movimento cinghia
     
-        if (delta > p_max ){
-            robot_tmp->position = p_max;
+        if (delta > Z_MAX + OFFSET_Z ){
+            robot_tmp->position = Z_MAX + OFFSET_Z;
             robot_tmp->speed = 0;
         }
-        else if (delta < p_min){
-            robot_tmp->position = p_min;
+        else if (delta < X_MIN + OFFSET_Z){
+            robot_tmp->position = X_MIN + OFFSET_Z;
             robot_tmp->speed = 0;
         }
         else{
