@@ -16,13 +16,14 @@
 #define     VXMIN           20      // min initial hor. speed
 #define     VXMAX           10      // max initial hor. speed
 #define     Y_0             20      // initial heigth
-#define     DAMP            0.0001  // damping coefficient
+#define     DAMP_X          0.001   // damping coefficient
+#define     DAMP_Z          0.0001  // damping coefficient
 #define     BETA            0.2     // adimensional braking coefficient
 //---------------------------------------------------------------------------------------------
 // LIMITI ERRORI CASUALI
 //---------------------------------------------------------------------------------------------
-#define     ERR_MIN         -5
-#define     ERR_MAX         5
+#define     ERR_MIN         -7
+#define     ERR_MAX         7
 //---------------------------------------------------------------------------------------------
 // LUNGHEZZA E LARGHEZZA AREA DI GIOCO (640X480)
 //---------------------------------------------------------------------------------------------
@@ -35,6 +36,10 @@
 #define     INIT_X          320
 #define     INIT_Z          248
 #define     BALL_RADIUS     5
+#define     VZ_FACILE       20
+#define     VZ_MEDIO        30
+#define     VZ_DIFFICILE    40
+#define     VZ_ESTREMA      50
 //---------------------------------------------------------------------------------------------
 // DIMENSIONI RACCHETTA
 //---------------------------------------------------------------------------------------------

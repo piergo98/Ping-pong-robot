@@ -8,31 +8,32 @@
 //------------------------------------------------------------------------------
 // LIMITI DI POSIZIONE RACCHETTE LUNGO X E Z
 //------------------------------------------------------------------------------
-#define X_MAX   570    
-#define X_MIN   70
-#define Z_MAX   268 
-#define Z_MIN   128
+#define X_MAX       570    
+#define X_MIN       70
+#define Z_MAX       268 
+#define Z_MIN       128
 
-#define OFFSET_Z 340    //offset per i limiti di movimento della racchetta avversario
+#define OFFSET_Z    340    //offset per i limiti di movimento della racchetta avversario
 //------------------------------------------------------------------------------
 // PARAMETRI FUNZIONE DI TRASFERIMENTO MOTORI CON:
 // TAU = 0.19 s      T = 50 ms      K = 19.23
 //------------------------------------------------------------------------------
-#define P 0.769     
-#define A 0.116
-#define B 0.106
-#define Ts 0.005           //tempo campionamento motore
+#define P           0.769     
+#define A           0.116
+#define B           0.106
+#define Ts          0.005           //tempo campionamento motore
 //------------------------------------------------------------------------------
 // COSTANTI PROPORZIONALI, DERIVATIV E INTEGRATIVE DEL CONTROLLORE PID
 //------------------------------------------------------------------------------
-#define KP 0.5        
-#define KD 0.008
-#define KI 0.01
+#define KP          0.5        
+#define KD          0.008
+#define KI          0.01
 //------------------------------------------------------------------------------
 // ALTRE COSTANTI
 //------------------------------------------------------------------------------
-#define R 0.5       //raggio puleggia in mm
-#define D 5         //offset usato lungo z sia per motor_z che per adversary_z e ball_z
+#define R           0.5       //raggio puleggia in mm
+#define D           5         //offset usato lungo z sia per motor_z che per adversary_z e ball_z
+#define DIM_B       2
 //------------------------------------------------------------------------------
 
 

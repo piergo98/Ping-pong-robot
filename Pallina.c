@@ -17,7 +17,6 @@ void* balltask(void* arg)
             
             pthread_mutex_lock(&s13);
             ball.x  += ball.vx * dt - BETA * ball.vx * dt;
-            //ball.y  += 0.01*(Y_0 + ball.vy * dt - g * dt * dt / 2);
             ball.y = Y_0;
             ball.z  += ball.vz * dt - BETA * ball.vz * dt;
             pthread_mutex_unlock(&s13);
@@ -31,7 +30,6 @@ void* balltask(void* arg)
                     pthread_mutex_lock(&s2);
                     p_avv++;   
                     pthread_mutex_unlock(&s2);
-                    
                 }
                 else {
                    
@@ -64,8 +62,8 @@ void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racc
     if ((robot_z.position - EPS <= ball.z - ball.r) && (robot_z.position + D >= ball.z - ball.r) && (ball.x + ball.r >= robot_x.position - RACC_MIN) && (ball.x - ball.r <= robot_x.position + RACC_MAX))
     {
         ball.z = robot_z.position + 2 * ball.r;
-        ball.vz = -ball.vz + DAMP * robot_z.speed;
-        ball.vx = - ball.vx + DAMP * robot_x.speed + frand(ERR_MIN, ERR_MAX);     //robusto a rimbalzo dritto continuo
+        ball.vz = -ball.vz + DAMP_Z * robot_z.speed;
+        ball.vx = - ball.vx + DAMP_X * robot_x.speed + frand(ERR_MIN, ERR_MAX);     //robusto a rimbalzo dritto continuo
         home = 0;
     }
     pthread_mutex_unlock(&s12);
@@ -82,8 +80,8 @@ void handle_bounce(int i)           //gestioni dei rimbalzi quando incontra racc
     if ((adversary_z.position - D <= ball.z + ball.r) && (adversary_z.position + EPS >= ball.z + ball.r) && (ball.x + ball.r >= adversary_x.position - RACC_MIN) && (ball.x - ball.r <= adversary_x.position + RACC_MAX))
     {
         ball.z = adversary_z.position -  2 * ball.r;
-        ball.vz = -ball.vz + DAMP * adversary_z.speed;
-        ball.vx = - ball.vx + DAMP * adversary_x.speed + frand(ERR_MIN, ERR_MAX);          //robusto a rimbalzo dritto continuo
+        ball.vz = -ball.vz + DAMP_Z * adversary_z.speed;
+        ball.vx = - ball.vx + DAMP_X * adversary_x.speed + frand(ERR_MIN, ERR_MAX);          //robusto a rimbalzo dritto continuo
         home = 1;
     }
     pthread_mutex_unlock(&s12);
@@ -113,7 +111,7 @@ void init_ball(void)
    pthread_mutex_lock(&s13); 
    ball.vx = 0;
    ball.vy = 0;
-   ball.vz = 10;
+   ball.vz = 0;
    
    ball.x = INIT_X;
    ball.y = Y_0;

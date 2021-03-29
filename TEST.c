@@ -47,8 +47,6 @@ int main(void){
     int     i, j;
     char    scan;
 
-            
-    
             init();
 
             task_create(balltask, 0, PER_BALL, D_BALL, PRIO_BALL);

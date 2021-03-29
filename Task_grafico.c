@@ -15,22 +15,29 @@ BITMAP* mem;            //bitmap provvisoria in cui disegno i grafici
 
 void init_screen(void){
 
+    /* Inizializzo allegro e la finestra grafica */
     allegro_init();
     set_color_depth(COLOR_DEPTH);
     set_gfx_mode(GFX_AUTODETECT_WINDOWED, WIDTH, HEIGHT, 0, 0);
     clear_to_color(screen, BLACK);  //schermo nero
     install_keyboard();
     install_mouse();
-    rac_r = load_bitmap("racchetta_nosfondo32.bmp", NULL);
-    white2pink(rac_r);
-    rac_r = load_bitmap("racp.bmp", NULL);
-    rac_a = rac_r;
 
+    /* Carica la bitmap della racchetta (per prospettiva) */
+    //rac_r = load_bitmap("racchetta_nosfondo32.bmp", NULL);
+    //white2pink(rac_r);
+    //rac_r = load_bitmap("racp.bmp", NULL);
+    //rac_a = rac_r;
+
+    /* Inizializza variabili prospettiva */
     pview_flag = 0;                  //valore di default
 
     gcord.x = 0;
     gcord.z = 0;
+    pov = POV_DIST;
+    angle = 0;
 
+    /* Inizializza i contatori delle deadline miss */
     pthread_mutex_lock(&s14);
     ball_miss = 0; 
     pthread_mutex_unlock(&s14);
@@ -63,15 +70,17 @@ void init_screen(void){
     tastiera_miss = 0;
     pthread_mutex_unlock(&s21);
 
-    pov = POV_DIST;
-    angle = 0;
-
+    /* Inizializza variabili per grafici */
     tempo = TEMPO_INIT;
     pos_old_1 = H_GRAPH_1;
     pos_old_2 = H_GRAPH_2;
     pos_old_3 = H_GRAPH_3;
     pos_old_4 = H_GRAPH_4;
 
+    /* Inizializzo la difficoltà di gioco*/
+    level = 0;
+
+    /* Inizializza bitmap provvisorie su cui vengono disegnati il campo e i grafici */
     memory = create_bitmap(WIDTH_GAME, HEIGHT_GAME);
     mem = create_bitmap(WIDTH_GRAPH, HEIGHT_GRAPH);
     clear_bitmap(memory);
@@ -96,8 +105,23 @@ void legenda(BITMAP* buf){
     textout_ex(buf, font, "LEGENDA:", X_LEG, P_Z, WHITE, TRASP);
     textout_ex(buf, font, "R -> Gioca robot", X_LEG, P_Z + Z_DIST, WHITE, TRASP);
     textout_ex(buf, font, "U -> Gioca utente", X_LEG, P_Z + 2 * Z_DIST, WHITE, TRASP);
-    textout_ex(buf, font, "SPACE -> Battuta", X_LEG, P_Z + 3 * Z_DIST, WHITE, TRASP); 
-
+    textout_ex(buf, font, "SPACE -> Battuta", X_LEG, P_Z + 3 * Z_DIST, WHITE, TRASP);
+    textout_ex(buf, font, "SU -> Aumenta", X_DIF, P_Z + Z_DIST, WHITE, TRASP);
+    textout_ex(buf, font, "difficoltà", X_DIF + X_DIST, P_Z + 1.5 * Z_DIST, WHITE, TRASP);
+    textout_ex(buf, font, "GIÙ -> Riduci", X_DIF, P_Z + 2 * Z_DIST, WHITE, TRASP);
+    textout_ex(buf, font, "difficoltà", X_DIF + X_DIST, P_Z + 2.5 * Z_DIST, WHITE, TRASP);
+    /* Livello */
+    textout_ex(buf, font, "DIFFICOLTÀ:", X_LEV, P_Z, WHITE, TRASP);
+    if (level <= FACILE) {                                                                                  //facile
+        textout_ex(buf, font, "Facile", X_LEV, P_Z + Z_DIST, WHITE, TRASP);
+        level = FACILE;  //protezione per non far diventare level negativo
+    }             
+    else if (level == MEDIA) textout_ex(buf, font, "Media", X_LEV, P_Z + Z_DIST, WHITE, TRASP);             //media
+    else if (level == DIFFICILE) textout_ex(buf, font, "Difficile", X_LEV, P_Z + Z_DIST, WHITE, TRASP);     //difficile
+    else if (level >= ESTREMA) {                                                                            //estrema
+        textout_ex(buf, font, "Estrema", X_LEV, P_Z + Z_DIST, WHITE, TRASP);
+        level = ESTREMA;  //protezione per non far diventare troppo grande level
+    }                    
 }
 
 void draw_screen(BITMAP* buf){
@@ -273,9 +297,6 @@ void* display(void* arg){
 
         while(!end){
            
-            /*if (pview_flag)
-                draw_screen(memory);
-            else*/
             display_camera_view(memory);
 
             draw_ball(memory);            
@@ -344,6 +365,7 @@ void prospective_view(int x, int y, int z)
 void* command(void* arg){
 
     int     i;
+    float   vel;
     char    scan;
 
             i = get_task_index(arg);
@@ -354,11 +376,11 @@ void* command(void* arg){
                 if (keypressed()) scan = readkey() >> 8;
                 switch(scan){
                     case KEY_V:
-                        pview_flag = 0;
+                        //pview_flag = 0;
                         break;
-                    //case KEY_P:
+                    case KEY_P:
                         //pview_flag = 1;
-                        //break;
+                        break;
                     case KEY_U:
                         pthread_mutex_lock(&s10);
                         player = 1;
@@ -373,20 +395,24 @@ void* command(void* arg){
                         pthread_mutex_lock(&s11);
                         start = 1;
                         pthread_mutex_unlock(&s11);
+                        vel = difficulty();
+                        pthread_mutex_lock(&s13);
+                        ball.vz = vel;
+                        pthread_mutex_unlock(&s13);
                         break;
                     case KEY_UP:
-                        pov += 5;
+                        level += 1;
                         break;
                     case KEY_DOWN:
-                        pov -= 5;
+                        level -= 1;
                         break;
                     case KEY_RIGHT:
-                        angle += 0.01;
+                        //angle += 0.01;
                         break;
                     case KEY_LEFT:
-                        angle -= 0.01;
+                        //angle -= 0.01;
                         break;
-                    default: break; //da aggiungere altre opzioni
+                    default: break;
 
                 }
                
@@ -448,4 +474,12 @@ void draw_graph(BITMAP* buf){
             clear_bitmap(buf);
             tempo = TEMPO_INIT;
         }             
+}
+
+float difficulty(){
+
+    if (level <= FACILE) return VZ_FACILE;                          //facile
+    else if (level == MEDIA) return VZ_MEDIO;                       //media
+    else if (level == DIFFICILE) return VZ_DIFFICILE;               //difficile
+    else if (level >= ESTREMA)  return VZ_ESTREMA;                  //estrema
 }

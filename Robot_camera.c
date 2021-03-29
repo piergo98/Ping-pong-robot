@@ -67,9 +67,7 @@ void prediction(struct win* w, struct coord memory[DIM]){
         w->zsize = RESIZE_Z;
         /* sposto la finestra di ricerca */
         w->x0 = memory[NEXT].x - (w->xsize / 2);
-        //w->x0 = memory[NOW].x;
         w->z0 = memory[NEXT].z - (w->zsize / 2);
-        //w->z0 = memory[NEXT].z;
     }
     else
     {
@@ -89,9 +87,6 @@ void* camera(void* arg){
 
         i = get_task_index(arg);
         set_activation(i);
-
-        //centroid(finestra, &temp[NOW]);
-        //centroid(finestra, &temp[NEXT]);
 
         while(!end){
 

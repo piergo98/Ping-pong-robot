@@ -54,11 +54,11 @@ void init_motor(){
 
 void* motortask_x(void* arg)
 {
-    int     i,      T;                          // task index      
-    int     xd,     vd;                         // desired position and speed
-    int     x,      v;                          // actual  position and speed
-    float   u1[2],      y,   err[2],    u;      // temporary variables
-    struct  state   temp;                       // temporary structure
+    int     i,      T;                                  // task index      
+    int     xd,     vd;                                 // desired position and speed
+    int     x,      v;                                  // actual  position and speed
+    float   u1[DIM_B],      y,   err[DIM_B],    u;      // temporary variables
+    struct  state   temp;                               // temporary structure
         
             i = get_task_index(arg);
             set_activation(i);
@@ -120,11 +120,11 @@ void* motortask_x(void* arg)
 
 void* motortask_z(void* arg)
 {
-    int     i,      T;                      // task index     
-    int     zd,     vd;                     // desired position and speed
-    int     x,      v;                      // actual  position and speed
-    float   u1[2],      y,   err[2],    u;  // temporary variables
-    struct  state   temp;                   // temporary structure
+    int     i,      T;                                  // task index     
+    int     zd,     vd;                                 // desired position and speed
+    int     x,      v;                                  // actual  position and speed
+    float   u1[DIM_B],      y,   err[DIM_B],    u;      // temporary variables
+    struct  state   temp;                               // temporary structure
         
             i = get_task_index(arg);
             set_activation(i);

@@ -14,8 +14,11 @@
 //------------------------------------------------------------------------------
 #define     P_X             20
 #define     P_Z             20
-#define     X_LEG           200
+#define     X_LEG           150
+#define     X_DIST          50
 #define     Z_DIST          20
+#define     X_DIF           320
+#define     X_LEV           500
 //------------------------------------------------------------------------------
 // COLORI A 32 BIT
 //------------------------------------------------------------------------------
@@ -41,8 +44,8 @@
 //------------------------------------------------------------------------------
 #define     DIM_RAC         70              //dimensioni racchetta
 #define     POV_DIST        1000
-#define     COS_THETA       0.866 //0.866  //0.866
-#define     SIN_THETA       0.5 //0.5  //-0.5
+#define     COS_THETA       0.866       
+#define     SIN_THETA       0.5               
 //------------------------------------------------------------------------------
 // PARAMETRI GRAFICI
 //------------------------------------------------------------------------------
@@ -59,6 +62,13 @@
 #define     Z_GRAPH_3       404             // Z legenda dei grafici
 #define     Z_GRAPH_4       596             // Z legenda dei grafici
 //------------------------------------------------------------------------------
+// DIFFICOLTÀ
+//------------------------------------------------------------------------------
+#define     FACILE          0
+#define     MEDIA           1
+#define     DIFFICILE       2
+#define     ESTREMA         3
+
 
 struct gpos{
 
@@ -72,6 +82,7 @@ int     pview_flag;     //indicatore per rappresentazione prospettica
 int     pov;
 float   angle;
 int     tempo, pos_old_1, pos_old_2, pos_old_3, pos_old_4;
+int     level;
 
 void init_screen(void);  /* Inizializza lo schermo e crea il task grafico */
 
@@ -96,3 +107,5 @@ void prospective_view(int x, int y, int z);      /* Genera cordinate per vista p
 void* command(void* arg);          // aggiorna i flag in base ai tasti premuti
 
 void draw_graph(BITMAP* buf);       //disegna i grafici dei motori
+
+float difficulty(void);          //cambia vz della pallina a seconda della difficoltà impostata
