@@ -10,7 +10,7 @@
 //------------------------------------------------------------------------------
 #define X_MAX       570    
 #define X_MIN       70
-#define Z_MAX       268 
+#define Z_MAX       308    //268 altro valore ammissibile
 #define Z_MIN       128
 
 #define OFFSET_Z    340    //offset per i limiti di movimento della racchetta avversario
