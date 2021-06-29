@@ -5,62 +5,61 @@
 #include    <pthread.h>
 #include    <time.h>
 
-#include    "taskmotor.h"
+#include    "Avversario.h"
 
+//---------------------------------------------------------------------------------------------
+// COSTANTI FISICHE
+//---------------------------------------------------------------------------------------------
+#define     G0              9.8     // acceleration of gravity
+#define     HMIN            200     // min initial height
+#define     HMAX            390     // max initial height
+#define     VXMIN           20      // min initial hor. speed
+#define     VXMAX           10      // max initial hor. speed
+#define     Y_0             20      // initial heigth
+#define     DAMP_X          0.001   // damping coefficient
+#define     DAMP_Z          0.0001  // damping coefficient
+#define     BETA            0.2     // adimensional braking coefficient
+//---------------------------------------------------------------------------------------------
+// LIMITI ERRORI CASUALI
+//---------------------------------------------------------------------------------------------
+#define     ERR_MIN         -7
+#define     ERR_MAX         7
+//---------------------------------------------------------------------------------------------
+// LUNGHEZZA E LARGHEZZA AREA DI GIOCO (640X480)
+//---------------------------------------------------------------------------------------------
+#define     WIDTH_GAME      640
+#define     HEIGHT_GAME     768
+#define     DELTA           128     //traslazione lungo z della zona di gioco
+//---------------------------------------------------------------------------------------------
+// COORDINATE INIZIALI DELLA PALLINA
+//---------------------------------------------------------------------------------------------
+#define     INIT_X          320
+#define     INIT_Z          248
+#define     BALL_RADIUS     5
+#define     VZ_FACILE       20
+#define     VZ_MEDIO        30
+#define     VZ_DIFFICILE    40
+#define     VZ_ESTREMA      50
+//---------------------------------------------------------------------------------------------
+// DIMENSIONI RACCHETTA
+//---------------------------------------------------------------------------------------------
+#define     RACC_MAX    20      // max racchetta
+#define     RACC_MIN    20      // min racchetta
+//---------------------------------------------------------------------------------------------
+// DIMENSIONI RACCHETTA
+//---------------------------------------------------------------------------------------------
+#define     EPS         30      // offset usato per le condizioni di rimbalzo
+//---------------------------------------------------------------------------------------------
 
-#define G0           9.8    // acceleration of gravity
-#define TLEN         30     // trail length
-#define HMIN         200    // min initial height
-#define HMAX         390    // max initial height
-#define VXMIN        20     // min initial hor. speed
-#define VXMAX        10     // max initial hor. speed
-#define Y_0          100    // initial heigth
-#define DUMP         0.9    // dumping coefficient
-#define TSCALE       10     // time scale factor
-#define BETA         0.2    // adimensional braking coefficient
-#define ERR_MIN      0
-#define ERR_MAX      1 
-
-
-#define RACC_MAX     70     // max racchetta
-#define RACC_MIN     20     // min racchetta
-
-//int tflag;                  //trail flag
-//int tl;                     //actual trail lenght
-//float g;                    //acceleration of gravity
-
-/* guardando il PO vediamo solo le coordinate x e z */
-
-struct status {             // ball structure
-    
-    int c;                  // color [1,15]
-    float r;                // radius (m)
-    float x;                // x coordinate (m)
-    float y;
-    float z;                // z coordinate (m)
-    float vx;               // x velocity (m/s)
-    float vz;               // z velocity (m/s)
-    float vy;
-    //float v0;               // jumping velocity (m/s)
-
-};
-
-struct cbuf {               // circular buffer structure
-    
-    int top;                // index of the current element
-    int x[TLEN];            // array of x coordinates
-    int y[TLEN];            // array of y coordinates
-    int z[TLEN];            // array of z coordinates
-    
-};
-
-struct cbuf trail;          
-struct status ball;
-
-void store_trail( int i);
+int     p_rob;          //punteggio robot
+int     p_avv;          //punteggio avversario
 
 void handle_bounce(int i);
 
 float frand(float vxmin, float vxmax);
 
 void init_ball(void);
+
+void* balltask(void* arg);
+
+void chi_gioca();

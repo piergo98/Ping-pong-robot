@@ -5,6 +5,13 @@
 #include    <pthread.h>
 #include    <time.h>
 
-#include    "PTask.h"
 #include    "taskmotor.h"
-#include    "Robot_camera.h"
+
+
+void* adversarytask_x(void* arg);
+
+void* adversarytask_z(void* arg);
+
+void update_adversary_state_x(float y, int T, struct state *robot_tmp);
+
+void update_adversary_state_z(float y, int T, struct state *robot_tmp);

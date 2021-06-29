@@ -2,23 +2,29 @@
 
 void init_camera(){
 
-    /* Inizializzo la struttura puntata da window (DA METTERE NELLA FUNZIONE INIT()*/
-    window.x0 = 320;
-    window.z0 = 240;
-    window.xsize = SIZE_X;
+    /* Inizializzo la struttura puntata da window */
+    pthread_mutex_lock(&s4);
+    window.x0 = P2_X;               // punto in alto a sinistra della finestra
+    window.z0 = P2_Z;
+    window.xsize = SIZE_X;          // dimensioni della finestra
     window.zsize = SIZE_Z;
+    pthread_mutex_unlock(&s4);
+
+    pthread_mutex_lock(&s3);
     buffer[BEFORE].x = 0;
     buffer[BEFORE].z = 0;
     buffer[NOW].x = 0;
     buffer[NOW].z = 0;
     buffer[NEXT].x = 0;
     buffer[NEXT].z = 0;
+    pthread_mutex_unlock(&s3);
 }
 
 int centroid(struct win w, struct coord *target){
 
     int c, i, j;
     int sample, xc, zc;
+
     sample = xc = zc = 0;
 
     for (i = 0; i < w.xsize; i++){
@@ -26,8 +32,8 @@ int centroid(struct win w, struct coord *target){
             c = getpixel(screen, i + w.x0, j + w.z0);
             if (c == TARGET_COLOR){
                 sample++;
-                xc += (i - xc) / sample;    /* calcolo la media incrementale sia per x che per y */
-                zc += (j - zc) / sample;
+                xc += (i + w.x0 - xc) / sample;    /* calcolo la media incrementale sia per x che per y */
+                zc += (j + w.z0 - zc) / sample;
             }
         }
     }
@@ -39,42 +45,136 @@ int centroid(struct win w, struct coord *target){
         return 0;                       //target non trovato    
 }
 
-void prediction(struct win* w){
+void prediction(struct win* w, struct coord memory[DIM]){
 
-    int i, r;
+    int i, r, trovato;
 
-    buffer[BEFORE].x = buffer[NEXT].x;
-    buffer[BEFORE].z = buffer[NEXT].z;
+    memory[BEFORE].x = memory[NOW].x;
+    memory[BEFORE].z = memory[NOW].z;    
 
-    while (!centroid(*w, &buffer[NOW])){    //vede dove si trova la pallina adesso
-        w->xsize += DELTA_X;
-        w->zsize += DELTA_Z;
-    }
+    trovato = centroid(*w, &memory[NOW]);
+   
     /* predizione lungo x */
-    buffer[NEXT].x = (2 * buffer[NOW].x) - buffer[BEFORE].x;
-    /* predizione lungo y */
-    buffer[NEXT].z = (2 * buffer[NOW].z) - buffer[BEFORE].z;
+    memory[NEXT].x = (2 * memory[NOW].x) - memory[BEFORE].x;   //0.7
+    /* predizione lungo z */
+    memory[NEXT].z = (2 * memory[NOW].z) - memory[BEFORE].z;   //0.9
     
-    /* sposto la finestra di ricerca */
-    w->x0 = buffer[NEXT].x - (w->xsize / 2);
-    w->z0 = buffer[NEXT].z - (w->zsize / 2);
+    
+
+    if (trovato){
+        
+        w->xsize = RESIZE_X;
+        w->zsize = RESIZE_Z;
+        /* sposto la finestra di ricerca */
+        w->x0 = memory[NEXT].x - (w->xsize / 2);
+        w->z0 = memory[NEXT].z - (w->zsize / 2);
+    }
+    else
+    {
+        w->xsize = SIZE_X;
+        w->zsize = SIZE_Z;
+        w->x0 = P2_X;
+        w->z0 = P2_Z;
+    }
 }
 
 void* camera(void* arg){
 
-    int i;      //task index
-    
-    /* Inizializzo la struttura puntata da window */
-    /*window.x0 = 320;
-    window.z0 = 240;
-    window.xsize = SIZE_X;
-    window.zsize = SIZE_Z;*/
+    int             i;          //task index
+    int             xd;         //posizione desiderata
+    struct coord    temp[DIM];  //struttura di appoggio
+    struct win      finestra;   //struttura di appoggio
+
+        i = get_task_index(arg);
+        set_activation(i);
+
+        while(!end){
+
+            pthread_mutex_lock(&s3);
+            temp[BEFORE].x = buffer[BEFORE].x;
+            temp[BEFORE].z = buffer[BEFORE].z;
+            temp[NOW].x = buffer[NOW].x;
+            temp[NOW].z = buffer[NOW].z;
+            temp[NEXT].x = buffer[NEXT].x;
+            temp[NEXT].z = buffer[NEXT].z;
+            pthread_mutex_unlock(&s3);
+
+            pthread_mutex_lock(&s4);
+            finestra.x0 = window.x0;
+            finestra.z0 = window.z0;
+            finestra.xsize = window.xsize;
+            finestra.zsize = window.zsize;
+            pthread_mutex_unlock(&s4);
+            
+            prediction(&finestra, temp);
+
+            pthread_mutex_lock(&s3);
+            buffer[BEFORE].x = temp[BEFORE].x;
+            buffer[BEFORE].z = temp[BEFORE].z;
+            buffer[NOW].x = temp[NOW].x;
+            buffer[NOW].z = temp[NOW].z;
+            buffer[NEXT].x = temp[NEXT].x;
+            buffer[NEXT].z = temp[NEXT].z;
+            pthread_mutex_unlock(&s3);
+
+            pthread_mutex_lock(&s4);
+            window.x0 = finestra.x0;
+            window.z0 = finestra.z0;
+            window.xsize = finestra.xsize;
+            window.zsize = finestra.zsize;
+            pthread_mutex_unlock(&s4);
+
+            if (deadline_miss(i))
+                show_dmiss(i);
+                
+            wait_for_activation(i);
+        }
+}
+
+void *miss_stamp(void *arg) {
+
+    int i;
 
     i = get_task_index(arg);
+    set_activation(i);
 
-    while(!end){
+    while (!end)
+    {   
 
-        prediction(&window);
+        pthread_mutex_lock(&s14);
+        printf("ball = %d \n", ball_miss);
+        pthread_mutex_unlock(&s14);
+        
+        pthread_mutex_lock(&s15);
+        printf("camera = %d \n", camera_miss);
+        pthread_mutex_unlock(&s15);
+        
+        pthread_mutex_lock(&s16);
+        printf("motor_x = %d \n", motor_x_miss);
+        pthread_mutex_unlock(&s16);
+        
+        pthread_mutex_lock(&s17);
+        printf("motor_z = %d \n", motor_z_miss);
+        pthread_mutex_unlock(&s17);
+                
+        pthread_mutex_lock(&s18);
+        printf("adv_x = %d \n", adv_x_miss);
+        pthread_mutex_unlock(&s18);
+        
+        pthread_mutex_lock(&s19);
+        printf("adv_z = %d \n", adv_z_miss);
+        pthread_mutex_unlock(&s19);
+        
+        pthread_mutex_lock(&s20);
+        printf("display = %d \n", display_miss);
+        pthread_mutex_unlock(&s20);
+        
+        pthread_mutex_lock(&s21);
+        printf("tastiera = %d \n", tastiera_miss);
+        pthread_mutex_unlock(&s21);
+
         wait_for_activation(i);
+
     }
+
 }
