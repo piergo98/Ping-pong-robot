@@ -1,4 +1,4 @@
-###Ping-pong-robot
+### Ping-pong-robot
 
 _Project of Real Time Systems Course (Prof. G.C. Buttazzo) at University of Pisa._
 
